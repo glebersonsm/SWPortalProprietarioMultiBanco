@@ -1,0 +1,76 @@
+export type IncomingUserReserve = {
+  confidencial: string;
+  idReservasFront: number;
+  tipoUh: string;
+  numReserva: number;
+  dataReserva: string;
+  checkin: string;
+  checkout: string;
+  tipoHospede: string;
+  nomeHospede: string;
+  segmento: string;
+  origem: string;
+  adultos: number;
+  criancas1: number;
+  criancas2: number;
+  numeroContrato: string;
+  idPessoa: number;
+  nomeCliente: string;
+  hotel: string;
+  numDocumentoCliente: string;
+  emailCliente: string;
+  contratoCancelado: string;
+  statusReserva: string;
+  dataCancelamento: string;
+  observacoes: string;
+  tarifa: string;
+  clienteHotel: string;
+  razaoSocialClienteHotel: string;
+};
+
+export type UserReserve = {
+  confidential: string;
+  idFrontReservations: number;
+  uhType: string;
+  reserveNumber: number;
+  reserveDate: string;
+  checkin: string;
+  checkout: string;
+  hostType: string;
+  hostName: string;
+  segment: string;
+  origin: string;
+  adults: number;
+  children1: number;
+  children2: number;
+  numberContract: string;
+  personId: number;
+  clientName: string;
+  hotel: string;
+  clientDocument: string;
+  clientEmail: string;
+  cancellationContract: string;
+  reserveStatus: string;
+  cancellationDate: string;
+  observations: string;
+  tariff: string;
+  hotelClient: string;
+  reasonSocialClientHotel: string;
+};
+
+export type UserReserves = {
+  reserves: UserReserve[];
+  lastPageNumber: number;
+  pageNumber: number;
+};
+
+export type FiltersProps = {
+  showAllHosts: boolean;
+  reserveNumber: string;
+  contractNumber: string;
+  reserveStatus: string | null;
+  initialCheckin: string;
+  finalCheckin: string;
+  initialCheckout: string;
+  finalCheckout: string;
+};

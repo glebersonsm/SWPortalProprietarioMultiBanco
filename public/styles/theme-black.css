@@ -1,0 +1,151 @@
+:root {
+  --color-primary: #000000;
+  --color-secondary: #000000;
+  --color-sidebar-user-name: #dba827;
+  --color-text-light: #ffffff;
+  --color-white: #ffffff;
+  --color-typography: #0c0c0c;
+  --color-email-text: #dba827;
+  --color-label-text: #000000;
+  --color-title: #dba827;
+  --color-info-text: #000000;
+  --color-breadcrumb-home: #000000;
+  --color-breadcrumb-dashboard: #1f1f1f;
+  --color-breadcrumb-final: #565656;
+  --color-label-text-doc: #000000;
+  --breadcrumb-text-color: #dba827;
+  --CircularProgress-Color: #dba827;
+  --color-highlight-border: #dba827;
+
+  --form-label-color: #dba827;
+
+  --Sidebar-bg: linear-gradient(180deg, #2a2a2a 0%, #0d0d0d 100%);
+  --sidebar-text-color: #ffffff;
+  --Header-bg: #1c1c1c;
+  
+  /* Gallery gradients based on sidebar colors */
+  --gallery-bg-gradient: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.1) 100%);
+  --gallery-bg-gradient-expanded: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.15) 100%);
+  --gallery-bg-gradient-hover: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.12) 100%);
+  --gallery-details-gradient: linear-gradient(180deg, #2a2a2a 0%, rgba(42, 42, 42, 0.05) 100%);
+  --gallery-border-gradient: linear-gradient(90deg, #2a2a2a 0%, rgba(42, 42, 42, 0.3) 100%);
+  --gallery-border-color: rgba(42, 42, 42, 0.2);
+  --gallery-shadow-color: rgba(42, 42, 42, 0.15);
+  --gallery-shadow-color-hover: rgba(42, 42, 42, 0.2);
+  --gallery-shadow-color-expanded: rgba(42, 42, 42, 0.25);
+
+  /* Card gradients and colors based on sidebar theme */
+  --card-bg-gradient: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.1) 100%);
+  --card-bg-gradient-hover: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.15) 100%);
+  --card-bg-gradient-expanded: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.2) 100%);
+  --card-details-gradient: linear-gradient(180deg, #2a2a2a 0%, rgba(42, 42, 42, 0.05) 100%);
+  --card-border-gradient: linear-gradient(90deg, #2a2a2a 0%, rgba(42, 42, 42, 0.3) 100%);
+  --card-border-color: rgba(42, 42, 42, 0.2);
+  --card-shadow-color: rgba(42, 42, 42, 0.15);
+  --card-shadow-color-hover: rgba(42, 42, 42, 0.2);
+  --card-shadow-color-expanded: rgba(42, 42, 42, 0.25);
+  --card-text-color: #ffffff;
+  --card-accent-color: #dba827;
+  --card-bg-solid: #2a2a2a;
+  --card-bg-paper: rgba(42, 42, 42, 0.95);
+  --card-bg-surface: #3a3a3a;
+  --card-bg-primary: #2a2a2a;
+  --card-bg-hover: rgba(42, 42, 42, 0.12);
+  
+  /* Form editing lighter theme variables */
+  --form-bg-light: #6a6a6a;
+  --form-input-bg: #7a7a7a;
+  --form-input-border: rgba(255, 255, 255, 0.4);
+  --form-container-bg: #5f5f5f;
+  --form-section-bg: #656565;
+  --form-field-bg-white: #ffffff;
+  --color-hover-bg: #303030;
+  --color-hover-text: #ffffff;
+  --color-selected-bg: #303030;
+  --color-selected-bg: #303030;
+  --color-selected-text: #ffffff;
+
+  --color-button-primary: #dba827;
+  --color-button-primary-hover: #b8941f;
+  --color-button-text: #000000;
+  --color-icon-secondary: #dba827;
+  
+  --color-success-main: #dba827;
+  --color-success-dark: #b8941f;
+  --color-success-bg: rgba(219, 168, 39, 0.1);
+  --color-warning-main: #dba827;
+  --color-warning-dark: #b8941f;
+  --color-warning-bg: rgba(219, 168, 39, 0.1);
+  --color-info-main: #dba827;
+  --color-info-dark: #b8941f;
+  --color-info-bg: rgba(219, 168, 39, 0.1);
+  --color-text-tertiary: #b8941f;
+
+  --color-error-bg: #330000;
+  --color-error-border: #ff5c5c;
+
+  --color-bg-card: #2a2a2a;
+  --color-hover-bg: #303030;
+  --color-text-primary: #ffffff;
+  --color-badge-bg: #dba827;
+  --color-badge-text: #000000;
+
+  --color-doc-item-bg: #1f1f1f;
+  --color-doc-item-bg-inf: #1f1f1f;
+  --color-doc-item-border: #333;
+  --color-doc-item-text: #ffffff;
+  --color-doc-item-hover-bg: #1f1f1f;
+  --color-doc-icon: #e6c200;
+
+  --color-surface: #1e1e1e;
+  --color-surface-hover: #1f1f1f;
+  --color-panel-bg: #2f2f2f;
+
+  --faq-panel-bg: #1f1f1f;
+  --faq-panel-bg-hover: #2f2f2f;
+  --faq-text-color: #ffffff;
+  --faq-icon-color: #ffffff;
+  --faq-badge-bg: #dba827;
+  --faq-badge-text: #2a2a2a;
+  --faq-badge-border: #ffff;
+  --faq-filter-label-color: #000000;
+  --faq-response-text: #dba827;
+
+  --color-button-exit-text: #dba827;
+  --color-button-exit-border: #dba827;
+  --color-button-exit-hover-bg: rgba(219, 168, 39, 0.1);
+  --color-button-exit-hover-text: #e6c200;
+  --color-button-exit-hover-border: #e6c200;
+
+  /* Users page specific variables */
+  --users-filter-focus-shadow: rgba(219, 168, 39, 0.2);
+  --users-filter-border-color: #dba827;
+  --users-filter-hover-border: #e6c200;
+  --users-table-selected-bg: #303030;
+  --users-table-selected-text: #ffffff;
+  --users-table-hover-bg: #2a2a2a;
+  --users-button-clear-bg: #dba827;
+  --users-button-clear-hover: #e6c200;
+  --users-button-add-bg: #dba827;
+  --users-button-add-hover: #e6c200;
+
+  /* DataGrid zebra stripe color */
+  --zebra-stripe-color: rgba(13, 13, 13, 0.3);
+}
+
+[aria-label="breadcrumbs"] a,
+[aria-label="breadcrumbs"] a:focus,
+[aria-label="breadcrumbs"] a:focus-visible,
+[aria-label="breadcrumbs"] a:hover {
+  outline: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+[data-theme="Black"] *:focus-visible {
+  outline: 2px solid var(--color-button-primary) !important;
+  outline-offset: 2px;
+  border-radius: 6px;
+  box-shadow: none !important;
+  transition: outline-color 0.2s ease-in-out;
+}

@@ -1,0 +1,265 @@
+:root {
+  --color-primary: #1e7a9c;
+  --color-secondary: #155a73;
+  --color-sidebar-user-name: #1e7a9c;
+  --color-text-light: #ffffff;
+  --color-white: #ffffff;
+  --color-typography: #ffffff;
+  --color-email-text: #1e7a9c;
+  --Sidebar-width: 320px;
+  --color-label-text: #ffffff;
+  --color-title: #155a73;
+  --color-info-text: #155a73;
+  --color-breadcrumb-home: #155a73;
+  --color-breadcrumb-dashboard: #155a73;
+  --color-breadcrumb-final: #1e7a9c;
+  --color-label-text-doc: #155a73;
+  --breadcrumb-text-color: #1e7a9c;
+  --CircularProgress-Color: #1e7a9c;
+  --color-highlight-border: rgba(30, 122, 156, 0.4);
+
+  --color-button-primary: #1e7a9c;
+  --color-button-primary-hover: #155a73;
+  --color-button-text: #ffffff;
+  --color-icon-secondary: #155a73;
+  
+  --color-success-main: #2e7d32;
+  --color-success-dark: #1b5e20;
+  --color-success-bg: #e8f5e8;
+  --color-warning-main: #ed6c02;
+  --color-warning-dark: #e65100;
+  --color-warning-bg: #fff3e0;
+  --color-info-main: #0288d1;
+   --color-info-dark: #01579b;
+   --color-info-bg: #e1f5fe;
+   --color-text-tertiary: #9e9e9e;
+
+  --form-label-color: #155a73;
+
+  --color-hover-bg: #1e7a9c;
+  --color-hover-text: #ffffff;
+  --color-selected-bg: #1e7a9c;
+  --color-selected-text: #ffffff;
+
+  --color-bg-card: #155a73;
+  --color-hover-bg: #2699b8;
+  --color-text-primary: #ffffff;
+  --color-badge-bg: #1e7a9c;
+  --color-badge-text: #ffffff;
+
+  --color-doc-item-bg: #155a73;
+  --color-doc-item-border: #cdd7e1;
+  --color-doc-item-text: #ffffff;
+  --color-doc-item-hover-bg: #2699b8;
+  --color-doc-icon: #ffffff;
+  --color-doc-item-bg-inf: #155a73;
+  --color-doc-item-icon: #ffffff;
+
+  --faq-panel-bg: #155a73;
+  --faq-panel-bg-hover: #2699b8;
+  --faq-text-color: #ffffff;
+  --faq-icon-color: #ffffff;
+  --faq-badge-bg: #1e7a9c;
+  --faq-badge-text: #ffffff;
+  --faq-badge-border: #ffffff;
+  --faq-question-text: #ffffff;
+  --faq-response-text: #155a73;
+  --faq-filter-label-color: #155a73;
+
+  --color-button-exit-text: #1e7a9c;
+  --color-button-exit-border: #1e7a9c;
+  --color-button-exit-hover-bg: rgba(30, 122, 156, 0.1);
+  --color-button-exit-hover-text: #155a73;
+  --color-button-exit-hover-border: #155a73;
+
+  /* Card variables for documents */
+  --card-bg-primary: #1e7a9c;
+  --card-bg-surface: #155a73;
+  --card-bg-hover: rgba(30, 122, 156, 0.12);
+  --card-border-color: rgba(30, 122, 156, 0.3);
+  --card-shadow-color: rgba(30, 122, 156, 0.08);
+  --card-shadow-color-hover: rgba(30, 122, 156, 0.15);
+  --card-shadow-color-expanded: rgba(30, 122, 156, 0.2);
+  --card-bg-gradient: linear-gradient(135deg, #1e7a9c 0%, #155a73 100%);
+  --card-bg-gradient-hover: linear-gradient(135deg, #1e7a9c 0%, rgba(30, 122, 156, 0.12) 100%);
+  --card-bg-gradient-expanded: linear-gradient(135deg, #1e7a9c 0%, rgba(30, 122, 156, 0.15) 100%);
+  
+  /* Form editing lighter theme variables */
+  --form-bg-light: #f8f9fa;
+  --form-input-bg: #ffffff;
+  --form-input-border: rgba(3, 87, 129, 0.3);
+  --form-container-bg: #f5f5f5;
+  --form-section-bg: #fafafa;
+  --form-field-bg-white: #ffffff;
+
+  /* Users page specific variables */
+  --users-filter-focus-shadow: rgba(30, 122, 156, 0.2);
+  --users-filter-border-color: #1e7a9c;
+  --users-filter-hover-border: #155a73;
+  --users-table-selected-bg: #e0f7fa;
+  --users-table-selected-text: #000000;
+  --users-table-hover-bg: #f0f9ff;
+  --users-button-clear-bg: #1e7a9c;
+  --users-button-clear-hover: #155a73;
+  --users-button-add-bg: #155a73;
+  --users-button-add-hover: #2699b8;
+
+  /* DataGrid zebra stripe color */
+  --zebra-stripe-color: rgba(30, 122, 156, 0.3);
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-button-primary) !important;
+  box-shadow: none !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+fieldset.MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-button-primary) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--color-button-primary) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  border: 1px solid var(--color-button-primary) !important;
+  outline: none !important;
+}
+
+[data-joy-color-scheme] input:focus,
+[data-joy-color-scheme] textarea:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: var(--color-button-primary) !important;
+}
+
+.sidebar-item {
+  color: var(--sidebar-text-color, var(--color-typography)) !important;
+  font-weight: var(--sidebar-text-weight, normal) !important;
+  background-color: transparent;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 6px 0;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+.sidebar-item:hover::before {
+  left: 100%;
+}
+
+.sidebar-item *,
+.sidebar-item svg {
+  color: var(--sidebar-text-color, var(--color-typography)) !important;
+  fill: var(--sidebar-text-color, var(--color-typography)) !important;
+  font-weight: var(--sidebar-text-weight, normal) !important;
+  opacity: 1 !important;
+}
+
+.sidebar-item:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
+  color: var(--color-hover-text) !important;
+  transform: translateX(14px) translateZ(25px) rotateY(6deg) scale(1.02);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 6px 15px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.sidebar-item:hover *,
+.sidebar-item:hover svg {
+  color: var(--color-hover-text) !important;
+  fill: var(--color-hover-text) !important;
+}
+
+.sidebar-item.selected {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.18) 100%) !important;
+  color: var(--color-selected-text) !important;
+  box-shadow: 
+    0 14px 35px rgba(0, 0, 0, 0.3),
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    inset 0 3px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  transform: translateX(18px) translateZ(35px) rotateY(8deg) scale(1.03);
+  border-color: rgba(255, 255, 255, 0.45);
+  position: relative;
+}
+
+.sidebar-item.selected::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-item.selected *,
+.sidebar-item.selected svg {
+  color: var(--color-selected-text) !important;
+  fill: var(--color-selected-text) !important;
+}
+
+.sidebar-item:active {
+  transform: translateX(10px) translateZ(15px) rotateY(3deg) scale(0.99);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+thead th {
+  color: var(--color-title) !important;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+
+.MuiCheckbox-root.Mui-checked {
+  color: var(--color-secondary) !important;
+}
