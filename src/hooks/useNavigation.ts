@@ -41,63 +41,63 @@ export default function useNavigation() {
     },
   ];
 
-  const ADM_MULTIOWNERSHIP_DASHBOARD_ROUTES: RouteProps[] = [
-    {
-      name: "Multipropriedade",
-      icon: AccountTree,
-      path: `/dashboard/multiownership`,
-      segment: "multiownership",
-      submenu: [
-        {
-          name: "Imóveis",
-          icon: Apartment,
-          path: `/dashboard/multiownership/properties`,
-          segment: "multiownership/properties",
-        },
-        {
-          name: "Clientes MY MABU",
-          icon: Person4Icon,
-          path: `/dashboard/multiownership/owners`,
-          segment: "multiownership/owners",
-        },
-        {
-          name: "Agendamentos",
-          icon: BookIcon,
-          path: `/dashboard/multiownership/appointments`,
-          segment: "multiownership/appointments",
-        },
-      ],
-    },
-  ];
+  // const ADM_MULTIOWNERSHIP_DASHBOARD_ROUTES: RouteProps[] = [
+  //   {
+  //     name: "Multipropriedade",
+  //     icon: AccountTree,
+  //     path: `/dashboard/multiownership`,
+  //     segment: "multiownership",
+  //     submenu: [
+  //       {
+  //         name: "Imóveis",
+  //         icon: Apartment,
+  //         path: `/dashboard/multiownership/properties`,
+  //         segment: "multiownership/properties",
+  //       },
+  //       {
+  //         name: "Clientes MY MABU",
+  //         icon: Person4Icon,
+  //         path: `/dashboard/multiownership/owners`,
+  //         segment: "multiownership/owners",
+  //       },
+  //       {
+  //         name: "Agendamentos",
+  //         icon: BookIcon,
+  //         path: `/dashboard/multiownership/appointments`,
+  //         segment: "multiownership/appointments",
+  //       },
+  //     ],
+  //   },
+  // ];
 
-  const ADM_TIMESHARING_DASHBOARD_ROUTES: RouteProps[] = [
-    {
-      name: "Time Sharing",
-      icon: ScreenShareIcon,
-      path: `/dashboard/time-sharing`,
-      segment: "time-sharing",
-      submenu: [
-        {
-          name: "Contratos",
-          icon: MenuBookIcon,
-          path: `/dashboard/time-sharing/contracts`,
-          segment: "time-sharing/contracts",
-        },
-        {
-          name: "Reservas",
-          icon: BookmarkAddedIcon,
-          path: `/dashboard/time-sharing/reserves-written-off`,
-          segment: "time-sharing/reserves-written-off",
-        },
-        // {
-        //   name: "Reservas",
-        //   icon: BookIcon,
-        //   path: `/dashboard/time-sharing/reserves`,
-        //   segment: "time-sharing/reserves",
-        // },
-      ],
-    },
-  ];
+  // const ADM_TIMESHARING_DASHBOARD_ROUTES: RouteProps[] = [
+  //   {
+  //     name: "Time Sharing",
+  //     icon: ScreenShareIcon,
+  //     path: `/dashboard/time-sharing`,
+  //     segment: "time-sharing",
+  //     submenu: [
+  //       {
+  //         name: "Contratos",
+  //         icon: MenuBookIcon,
+  //         path: `/dashboard/time-sharing/contracts`,
+  //         segment: "time-sharing/contracts",
+  //       },
+  //       {
+  //         name: "Reservas",
+  //         icon: BookmarkAddedIcon,
+  //         path: `/dashboard/time-sharing/reserves-written-off`,
+  //         segment: "time-sharing/reserves-written-off",
+  //       },
+  //       // {
+  //       //   name: "Reservas",
+  //       //   icon: BookIcon,
+  //       //   path: `/dashboard/time-sharing/reserves`,
+  //       //   segment: "time-sharing/reserves",
+  //       // },
+  //     ],
+  //   },
+  // ];
 
   const ADM_DASHBOARD_ROUTES: RouteProps[] = [
     {
@@ -187,12 +187,12 @@ export default function useNavigation() {
       ? USER_DASHBOARD_TIMESHARING_ROUTES
       : []),
 
-    ...((isAdm || gestorReservasAgendamentos || gestorFinanceiro) &&
-        integratedWithTimeSharing ? ADM_TIMESHARING_DASHBOARD_ROUTES : []),
-    ...((isAdm || gestorReservasAgendamentos === 1) && 
-        (integratedWithTimeSharing === undefined || integratedWithTimeSharing === false)
-      ? ADM_MULTIOWNERSHIP_DASHBOARD_ROUTES
-      : []),
+    // ...((isAdm || gestorReservasAgendamentos || gestorFinanceiro) &&
+    //     integratedWithTimeSharing ? ADM_TIMESHARING_DASHBOARD_ROUTES : []),
+    // ...((isAdm || gestorReservasAgendamentos === 1) && 
+    //     (integratedWithTimeSharing === undefined || integratedWithTimeSharing === false)
+    //   ? ADM_MULTIOWNERSHIP_DASHBOARD_ROUTES
+    //   : []),
     ...(isAdm ? ADM_DASHBOARD_ROUTES : USER_DASHBOARD_ROUTES),
 
     {
