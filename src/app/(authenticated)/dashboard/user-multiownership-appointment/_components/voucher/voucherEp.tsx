@@ -12,8 +12,8 @@ export const VoucherEp = ({ data }: Props) => {
   const isTropical = data?.tipoCliente === "Tropical";
   const primaryColor = isTropical ? "#055F34" : "#17476E";
   const saudacao = !isTropical
-    ? "¡Bienvenidos al My Mabu Homes!"
-    : "¡Bienvenidos al My Mabu Tropical!";
+    ? "¡Bienvenidos al Barretos Country!"
+    : "¡Bienvenidos al Barretos Country!";
 
   return (
     <>
@@ -37,8 +37,8 @@ export const VoucherEp = ({ data }: Props) => {
           }}
         >
           <Image
-            src="/logo/My-Mabu-branca.png"
-            alt="Logo My Mabu"
+            src="/logo/BarretosCountry.png"
+            alt="Logo Barretos Country"
             fill
             style={{ objectFit: "contain" }}
             priority
@@ -112,7 +112,7 @@ export const VoucherEp = ({ data }: Props) => {
                 <Typography
                   sx={{ color: "white", fontFamily: "Montserrat, sans-serif" }}
                 >
-                  <strong>CLIENTE MY MABU:</strong> {data?.cliente ?? "---"}
+                  <strong>CLIENTE:</strong> {data?.cliente ?? "---"}
                 </Typography>
               </Box>
               <Box mb={1}>
@@ -174,7 +174,7 @@ export const VoucherEp = ({ data }: Props) => {
                 <Typography
                   sx={{ color: "white", fontFamily: "Montserrat, sans-serif" }}
                 >
-                  <strong>CLIENTE MY MABU:</strong> {data?.cliente ?? "---"}
+                  <strong>CLIENTE:</strong> {data?.cliente ?? "---"}
                 </Typography>
               </Box>
               <Box mb={1}>
@@ -405,7 +405,7 @@ export const VoucherEp = ({ data }: Props) => {
             fontFamily: "Montserrat, sans-serif",
           }}
         >
-          Recepción My Mabu Tropical
+          Recepción Barretos Country
           <br />
           Contacto: (45) 3521 2000 | recepcaomtr@hoteismabu.com.br
         </Typography>

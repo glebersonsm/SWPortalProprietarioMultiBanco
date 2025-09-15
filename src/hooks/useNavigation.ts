@@ -55,7 +55,7 @@ export default function useNavigation() {
   //         segment: "multiownership/properties",
   //       },
   //       {
-  //         name: "Clientes MY MABU",
+  //         name: "Clientes",
   //         icon: Person4Icon,
   //         path: `/dashboard/multiownership/owners`,
   //         segment: "multiownership/owners",
@@ -221,7 +221,7 @@ export default function useNavigation() {
       .with("user-multiownership-contracts", () => "Meus contratos")
       .with("user-multiownership-reserves", () => "Minhas reservas")
       .with("reserves-written-off", () => "Reservas")
-      .with("owners", () => "Clientes My Mabu")
+      .with("owners", () => "Clientes")
       .with("bookings", () => "Reservas")
       .with("appointments", () => "Agendamentos")
       .with("reserve-exchange", () => "Trocar a semana")

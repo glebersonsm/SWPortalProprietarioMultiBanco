@@ -78,7 +78,7 @@ export default function ListAppointments({
           <tr>
             <th className="id">Id</th>
             <th className="year">Ano</th>
-            <th className="owner">Cliente MY MABU</th>
+            <th className="owner">Cliente</th>
             <th className="initialDate">Data inicial</th>
             <th className="finalDate">Data final</th>
             <th className="weekType">Tipo</th>

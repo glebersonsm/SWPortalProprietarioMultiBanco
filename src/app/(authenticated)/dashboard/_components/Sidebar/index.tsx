@@ -185,8 +185,8 @@ export default function Sidebar() {
           }}
         >
           <Image
-            src="/logo/My-Mabu-branca.png"
-            alt="Logo My Mabu Homes"
+            src="/logo/BarretosCountry.png"
+            alt="Logo Barretos Country"
             fill
             style={{ objectFit: "contain" }}
             priority

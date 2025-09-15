@@ -82,8 +82,8 @@ export default function AuthLayout({
               }}
             >
               <Image
-                src="/logo/My-Mabu.png"
-                alt="Logo My Mabu"
+                src="/logo/BarretosCountry.png"
+                alt="Logo Barretos Country"
                 fill
                 style={{ objectFit: "contain" }}
                 priority

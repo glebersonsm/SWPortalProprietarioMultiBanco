@@ -192,18 +192,18 @@ export default function OutstandingAccountsPage() {
   }
 
   // Função de seleção desativada temporariamente devido a erros
-  // const handleSelectionModelChange = React.useCallback((newSelection: any) => {
-  //   const selectionIds = Array.isArray(newSelection) ? newSelection : [];
-  //   const selectedBills = outstandingBills.filter((bill) => 
-  //     selectionIds.includes(bill.id) &&
-  //     bill.status.toLowerCase().includes("aberto") &&
-  //     !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s")
-  //   );
-  //   const companyIds = Array.from(new Set(selectedBills.map(bill => bill.companyId)));
-  //   if (companyIds.length <= 1) {
-  //     setSelectedAccounts(selectedBills);
-  //   }
-  // }, [outstandingBills]);
+   const handleSelectionModelChange = React.useCallback((newSelection: any) => {
+     const selectionIds = Array.isArray(newSelection) ? newSelection : [];
+     const selectedBills = outstandingBills.filter((bill) => 
+       selectionIds.includes(bill.id) &&
+       bill.status.toLowerCase().includes("aberto") &&
+       !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s")
+     );
+     const companyIds = Array.from(new Set(selectedBills.map(bill => bill.companyId)));
+     if (companyIds.length <= 1) {
+       setSelectedAccounts(selectedBills);
+     }
+   }, [outstandingBills]);
 
   return (
     <>
@@ -232,16 +232,16 @@ export default function OutstandingAccountsPage() {
               columns={columns}
               loading={isLoading}
               // checkboxSelection desativado temporariamente
-              // checkboxSelection
-              // onSelectionModelChange={handleSelectionModelChange}
-              // additionalProps={{
-              //   isRowSelectable: (params: any) => {
-              //     const bill = params.row as UserOutstandingBill;
-              //     return bill.status.toLowerCase().includes("aberto") &&
-              //            !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
-              //   },
-              //   rowSelectionModel: selectedAccounts.map(bill => bill.id)
-              // }}
+              checkboxSelection={false}
+              onSelectionModelChange={handleSelectionModelChange}
+               additionalProps={{
+                 isRowSelectable: (params: any) => {
+                   const bill = params.row as UserOutstandingBill;
+                   return bill.status.toLowerCase().includes("aberto") &&
+                          !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+                 }
+                 // rowSelectionModel removido quando checkboxSelection=false
+               }}
               pagination={{
                 enabled: false,
               }}

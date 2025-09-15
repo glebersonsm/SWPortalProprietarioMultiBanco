@@ -1,56 +1,56 @@
 :root {
   --color-primary: #000000;
   --color-secondary: #000000;
-  --color-sidebar-user-name: #dba827;
+  --color-sidebar-user-name: #ff6b9d;
   --color-text-light: #ffffff;
   --color-white: #ffffff;
   --color-typography: #0c0c0c;
-  --color-email-text: #dba827;
+  --color-email-text: #ff6b9d;
   --color-label-text: #000000;
-  --color-title: #dba827;
+  --color-title: #ff6b9d;
   --color-info-text: #000000;
   --color-breadcrumb-home: #000000;
   --color-breadcrumb-dashboard: #1f1f1f;
   --color-breadcrumb-final: #565656;
   --color-label-text-doc: #000000;
-  --breadcrumb-text-color: #dba827;
-  --CircularProgress-Color: #dba827;
-  --color-highlight-border: #dba827;
+  --breadcrumb-text-color: #ff6b9d;
+  --CircularProgress-Color: #ff6b9d;
+  --color-highlight-border: #ff6b9d;
 
-  --form-label-color: #dba827;
+  --form-label-color: #ff8c42;
 
-  --Sidebar-bg: linear-gradient(180deg, #2a2a2a 0%, #0d0d0d 100%);
+  --Sidebar-bg: linear-gradient(180deg, #4a1a4a 0%, #2d1b69 50%, #1a0d2e 100%);
   --sidebar-text-color: #ffffff;
-  --Header-bg: #1c1c1c;
+  --Header-bg: linear-gradient(90deg, #4a1a4a 0%, #2d1b69 100%);
   
   /* Gallery gradients based on sidebar colors */
-  --gallery-bg-gradient: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.1) 100%);
-  --gallery-bg-gradient-expanded: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.15) 100%);
-  --gallery-bg-gradient-hover: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.12) 100%);
-  --gallery-details-gradient: linear-gradient(180deg, #2a2a2a 0%, rgba(42, 42, 42, 0.05) 100%);
-  --gallery-border-gradient: linear-gradient(90deg, #2a2a2a 0%, rgba(42, 42, 42, 0.3) 100%);
-  --gallery-border-color: rgba(42, 42, 42, 0.2);
-  --gallery-shadow-color: rgba(42, 42, 42, 0.15);
-  --gallery-shadow-color-hover: rgba(42, 42, 42, 0.2);
-  --gallery-shadow-color-expanded: rgba(42, 42, 42, 0.25);
+  --gallery-bg-gradient: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.1) 100%);
+  --gallery-bg-gradient-expanded: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.15) 100%);
+  --gallery-bg-gradient-hover: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.12) 100%);
+  --gallery-details-gradient: linear-gradient(180deg, #4a1a4a 0%, rgba(74, 26, 74, 0.05) 100%);
+  --gallery-border-gradient: linear-gradient(90deg, #4a1a4a 0%, rgba(74, 26, 74, 0.3) 100%);
+  --gallery-border-color: rgba(74, 26, 74, 0.2);
+  --gallery-shadow-color: rgba(74, 26, 74, 0.15);
+  --gallery-shadow-color-hover: rgba(74, 26, 74, 0.2);
+  --gallery-shadow-color-expanded: rgba(74, 26, 74, 0.25);
 
   /* Card gradients and colors based on sidebar theme */
-  --card-bg-gradient: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.1) 100%);
-  --card-bg-gradient-hover: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.15) 100%);
-  --card-bg-gradient-expanded: linear-gradient(135deg, #2a2a2a 0%, rgba(42, 42, 42, 0.2) 100%);
-  --card-details-gradient: linear-gradient(180deg, #2a2a2a 0%, rgba(42, 42, 42, 0.05) 100%);
-  --card-border-gradient: linear-gradient(90deg, #2a2a2a 0%, rgba(42, 42, 42, 0.3) 100%);
-  --card-border-color: rgba(42, 42, 42, 0.2);
-  --card-shadow-color: rgba(42, 42, 42, 0.15);
-  --card-shadow-color-hover: rgba(42, 42, 42, 0.2);
-  --card-shadow-color-expanded: rgba(42, 42, 42, 0.25);
+  --card-bg-gradient: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.1) 100%);
+  --card-bg-gradient-hover: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.15) 100%);
+  --card-bg-gradient-expanded: linear-gradient(135deg, #4a1a4a 0%, rgba(74, 26, 74, 0.2) 100%);
+  --card-details-gradient: linear-gradient(180deg, #4a1a4a 0%, rgba(74, 26, 74, 0.05) 100%);
+  --card-border-gradient: linear-gradient(90deg, #4a1a4a 0%, rgba(74, 26, 74, 0.3) 100%);
+  --card-border-color: rgba(74, 26, 74, 0.2);
+  --card-shadow-color: rgba(74, 26, 74, 0.15);
+  --card-shadow-color-hover: rgba(74, 26, 74, 0.2);
+  --card-shadow-color-expanded: rgba(74, 26, 74, 0.25);
   --card-text-color: #ffffff;
-  --card-accent-color: #dba827;
-  --card-bg-solid: #2a2a2a;
-  --card-bg-paper: rgba(42, 42, 42, 0.95);
-  --card-bg-surface: #3a3a3a;
-  --card-bg-primary: #2a2a2a;
-  --card-bg-hover: rgba(42, 42, 42, 0.12);
+  --card-accent-color: #ff8c42;
+  --card-bg-solid: #4a1a4a;
+  --card-bg-paper: rgba(74, 26, 74, 0.95);
+  --card-bg-surface: #5a2a5a;
+  --card-bg-primary: #4a1a4a;
+  --card-bg-hover: rgba(74, 26, 74, 0.12);
   
   /* Form editing lighter theme variables */
   --form-bg-light: #6a6a6a;
@@ -65,30 +65,30 @@
   --color-selected-bg: #303030;
   --color-selected-text: #ffffff;
 
-  --color-button-primary: #dba827;
-  --color-button-primary-hover: #b8941f;
-  --color-button-text: #000000;
-  --color-icon-secondary: #dba827;
+  --color-button-primary: #ff8c42;
+  --color-button-primary-hover: #ff6b9d;
+  --color-button-text: #ffffff;
+  --color-icon-secondary: #ff8c42;
   
-  --color-success-main: #dba827;
-  --color-success-dark: #b8941f;
-  --color-success-bg: rgba(219, 168, 39, 0.1);
-  --color-warning-main: #dba827;
-  --color-warning-dark: #b8941f;
-  --color-warning-bg: rgba(219, 168, 39, 0.1);
-  --color-info-main: #dba827;
-  --color-info-dark: #b8941f;
-  --color-info-bg: rgba(219, 168, 39, 0.1);
-  --color-text-tertiary: #b8941f;
+  --color-success-main: #ff8c42;
+  --color-success-dark: #e67a3a;
+  --color-success-bg: rgba(255, 140, 66, 0.1);
+  --color-warning-main: #ff6b9d;
+  --color-warning-dark: #e55a8a;
+  --color-warning-bg: rgba(255, 107, 157, 0.1);
+  --color-info-main: #ff8c42;
+  --color-info-dark: #e67a3a;
+  --color-info-bg: rgba(255, 140, 66, 0.1);
+  --color-text-tertiary: #ff6b9d;
 
   --color-error-bg: #330000;
   --color-error-border: #ff5c5c;
 
-  --color-bg-card: #2a2a2a;
-  --color-hover-bg: #303030;
+  --color-bg-card: #4a1a4a;
+  --color-hover-bg: #5a2a5a;
   --color-text-primary: #ffffff;
-  --color-badge-bg: #dba827;
-  --color-badge-text: #000000;
+  --color-badge-bg: #ff8c42;
+  --color-badge-text: #ffffff;
 
   --color-doc-item-bg: #1f1f1f;
   --color-doc-item-bg-inf: #1f1f1f;
@@ -105,29 +105,29 @@
   --faq-panel-bg-hover: #2f2f2f;
   --faq-text-color: #ffffff;
   --faq-icon-color: #ffffff;
-  --faq-badge-bg: #dba827;
-  --faq-badge-text: #2a2a2a;
-  --faq-badge-border: #ffff;
+  --faq-badge-bg: #ff8c42;
+  --faq-badge-text: #ffffff;
+  --faq-badge-border: #ffffff;
   --faq-filter-label-color: #000000;
-  --faq-response-text: #dba827;
+  --faq-response-text: #ff6b9d;
 
-  --color-button-exit-text: #dba827;
-  --color-button-exit-border: #dba827;
-  --color-button-exit-hover-bg: rgba(219, 168, 39, 0.1);
-  --color-button-exit-hover-text: #e6c200;
-  --color-button-exit-hover-border: #e6c200;
+  --color-button-exit-text: #ff8c42;
+  --color-button-exit-border: #ff8c42;
+  --color-button-exit-hover-bg: rgba(255, 140, 66, 0.1);
+  --color-button-exit-hover-text: #ff6b9d;
+  --color-button-exit-hover-border: #ff6b9d;
 
   /* Users page specific variables */
-  --users-filter-focus-shadow: rgba(219, 168, 39, 0.2);
-  --users-filter-border-color: #dba827;
-  --users-filter-hover-border: #e6c200;
-  --users-table-selected-bg: #303030;
+  --users-filter-focus-shadow: rgba(255, 140, 66, 0.2);
+  --users-filter-border-color: #ff8c42;
+  --users-filter-hover-border: #ff6b9d;
+  --users-table-selected-bg: #5a2a5a;
   --users-table-selected-text: #ffffff;
-  --users-table-hover-bg: #2a2a2a;
-  --users-button-clear-bg: #dba827;
-  --users-button-clear-hover: #e6c200;
-  --users-button-add-bg: #dba827;
-  --users-button-add-hover: #e6c200;
+  --users-table-hover-bg: #4a1a4a;
+  --users-button-clear-bg: #ff8c42;
+  --users-button-clear-hover: #ff6b9d;
+  --users-button-add-bg: #ff8c42;
+  --users-button-add-hover: #ff6b9d;
 
   /* DataGrid zebra stripe color */
   --zebra-stripe-color: rgba(13, 13, 13, 0.3);

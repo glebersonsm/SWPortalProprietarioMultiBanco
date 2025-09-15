@@ -82,7 +82,7 @@ export default function AppointmentsPage() {
     },
     {
       field: 'ownershipName',
-      headerName: 'Cliente MY MABU',
+      headerName: 'Cliente',
       width: 200,
       flex: 1,
     },

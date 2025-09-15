@@ -288,7 +288,7 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
                         fontWeight: 600,
                       }}
                     >
-                      Imagens Homes
+                      Imagens Barretos Country
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -333,7 +333,7 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
                         fontWeight: 600,
                       }}
                     >
-                      Imagens Tropical
+                      Imagens Serra Madre
                     </Typography>
                   </AccordionSummary>
 

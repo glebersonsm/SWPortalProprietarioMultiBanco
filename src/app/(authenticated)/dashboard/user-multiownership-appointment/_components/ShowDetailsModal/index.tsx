@@ -187,7 +187,7 @@ export default function MultiOwnershipShowDetailsModal({
                         </Grid>
                         <Grid xs={12} sm={6} md={4}>
                           <FormControl>
-                            <FormLabel>Cliente MY MABU</FormLabel>
+                            <FormLabel>Cliente</FormLabel>
                             <Textarea
                               defaultValue={booking.ownerName}
                               readOnly
@@ -205,7 +205,7 @@ export default function MultiOwnershipShowDetailsModal({
                         </Grid>
                         <Grid xs={12} sm={6} md={4}>
                           <FormControl>
-                            <FormLabel>Id do Cliente MY MABU</FormLabel>
+                            <FormLabel>Id do Cliente</FormLabel>
                             <Textarea defaultValue={booking.ownerId} readOnly />
                           </FormControl>
                         </Grid>

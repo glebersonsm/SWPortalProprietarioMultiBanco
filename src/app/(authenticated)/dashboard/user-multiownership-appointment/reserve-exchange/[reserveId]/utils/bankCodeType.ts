@@ -160,7 +160,6 @@ export const getBankCodeType = [
     { name: "755 - BANK OF AMERICA MERRILL LYNCH BANCO MULTIPLO S.A.", id: "755"},
     { name: "756 - BANCO COOPERATIVO DO BRASIL S.A. - BANCOOB", id: "756"},
     { name: "757 - Banco KEB do BrasiS.A.", id: "757"},
-    { name: "758 - My Mabu Incorp Py - Recebimentos", id: "758"},
     { name: "A005 - The Royal Bank of Scotland N.V.", id: "A005"},
     { name: "A007 - Banco de Galicia 14​ y Buenos Aires S.A.", id: "A007"},
     { name: "A011 - Banco de la Nación Argentina", id: "A011"},

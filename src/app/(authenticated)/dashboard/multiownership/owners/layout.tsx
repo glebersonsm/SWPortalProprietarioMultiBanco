@@ -6,5 +6,5 @@ export default function PropertiesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <PageLayout title="Clientes MY MABU">{children}</PageLayout>;
+  return <PageLayout title="Clientes">{children}</PageLayout>;
 }

@@ -12,8 +12,8 @@ export const VoucherPt = ({ data }: Props) => {
   const isTropical = data?.tipoCliente === "Tropical";
   const primaryColor = isTropical ? "#055F34" : "#17476E";
   const saudacao = isTropical
-    ? "Seja bem-vindo ao My Mabu Tropical!"
-    : "Seja bem-vindo ao My Mabu Homes!";
+    ? "Seja bem-vindo ao Barretos Country!"
+    : "Seja bem-vindo ao Barretos Country!";
 
   return (
     <>
@@ -37,8 +37,8 @@ export const VoucherPt = ({ data }: Props) => {
           }}
         >
           <Image
-            src="/logo/My-Mabu-branca.png"
-            alt="Logo My Mabu"
+            src="/logo/BarretosCountry.png"
+            alt="Logo Barretos Country"
             fill
             style={{ objectFit: "contain" }}
             priority
@@ -321,9 +321,9 @@ export const VoucherPt = ({ data }: Props) => {
         <Typography
           sx={{ color: "white", fontFamily: "Montserrat, sans-serif" }}
         >
-          Recepção My Mabu Tropical
+          Recepção Barretos Country
           <br />
-          Contato: (45) 3521 2000 | recepcaomtr@hoteismabu.com.br
+          Contato: (XX) XXXX XXXX | recepcaomtr@hoteibarretoscountry.com.br
         </Typography>
       </Box>
     </>
