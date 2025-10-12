@@ -1,27 +1,27 @@
 :root {
-  --color-primary: #1e7a9c;
-  --color-secondary: #155a73;
-  --color-sidebar-user-name: #1e7a9c;
+  --color-primary: #0e2a47; /* GR Group azul navy */
+  --color-secondary: #1f5a85; /* Azul médio de apoio */
+  --color-sidebar-user-name: var(--color-primary);
   --color-text-light: #ffffff;
   --color-white: #ffffff;
   --color-typography: #ffffff;
-  --color-email-text: #1e7a9c;
+  --color-email-text: var(--color-primary);
   --Sidebar-width: 320px;
   --color-label-text: #ffffff;
-  --color-title: #155a73;
-  --color-info-text: #155a73;
-  --color-breadcrumb-home: #155a73;
-  --color-breadcrumb-dashboard: #155a73;
-  --color-breadcrumb-final: #1e7a9c;
-  --color-label-text-doc: #155a73;
-  --breadcrumb-text-color: #1e7a9c;
-  --CircularProgress-Color: #1e7a9c;
-  --color-highlight-border: rgba(30, 122, 156, 0.4);
+  --color-title: var(--color-secondary);
+  --color-info-text: var(--color-secondary);
+  --color-breadcrumb-home: var(--color-secondary);
+  --color-breadcrumb-dashboard: var(--color-secondary);
+  --color-breadcrumb-final: var(--color-primary);
+  --color-label-text-doc: var(--color-secondary);
+  --breadcrumb-text-color: var(--color-primary);
+  --CircularProgress-Color: var(--color-primary);
+  --color-highlight-border: rgba(14, 42, 71, 0.35);
 
-  --color-button-primary: #1e7a9c;
-  --color-button-primary-hover: #155a73;
+  --color-button-primary: var(--color-primary);
+  --color-button-primary-hover: var(--color-secondary);
   --color-button-text: #ffffff;
-  --color-icon-secondary: #155a73;
+  --color-icon-secondary: var(--color-secondary);
   
   --color-success-main: #2e7d32;
   --color-success-dark: #1b5e20;
@@ -34,78 +34,101 @@
    --color-info-bg: #e1f5fe;
    --color-text-tertiary: #9e9e9e;
 
-  --form-label-color: #155a73;
+  --form-label-color: var(--color-secondary);
 
-  --color-hover-bg: #1e7a9c;
+  --color-hover-bg: #2b7fbf;
   --color-hover-text: #ffffff;
-  --color-selected-bg: #1e7a9c;
+  --color-selected-bg: var(--color-primary);
   --color-selected-text: #ffffff;
 
-  --color-bg-card: #155a73;
-  --color-hover-bg: #2699b8;
+  --color-bg-card: var(--color-secondary);
+  --color-hover-bg: rgba(31, 90, 133, 0.18);
   --color-text-primary: #ffffff;
-  --color-badge-bg: #1e7a9c;
+  --color-badge-bg: var(--color-primary);
   --color-badge-text: #ffffff;
 
-  --color-doc-item-bg: #155a73;
-  --color-doc-item-border: #cdd7e1;
+  --color-doc-item-bg: var(--color-secondary);
+  --color-doc-item-border: rgba(14, 42, 71, 0.25);
   --color-doc-item-text: #ffffff;
-  --color-doc-item-hover-bg: #2699b8;
+  --color-doc-item-hover-bg: rgba(43, 127, 191, 0.25);
   --color-doc-icon: #ffffff;
-  --color-doc-item-bg-inf: #155a73;
+  --color-doc-item-bg-inf: var(--color-secondary);
   --color-doc-item-icon: #ffffff;
 
-  --faq-panel-bg: #155a73;
-  --faq-panel-bg-hover: #2699b8;
+  --faq-panel-bg: var(--color-secondary);
+  --faq-panel-bg-hover: rgba(31, 90, 133, 0.18);
   --faq-text-color: #ffffff;
   --faq-icon-color: #ffffff;
-  --faq-badge-bg: #1e7a9c;
+  --faq-badge-bg: var(--color-primary);
   --faq-badge-text: #ffffff;
   --faq-badge-border: #ffffff;
   --faq-question-text: #ffffff;
-  --faq-response-text: #155a73;
-  --faq-filter-label-color: #155a73;
+  --faq-response-text: var(--color-secondary);
+  --faq-filter-label-color: var(--color-secondary);
 
-  --color-button-exit-text: #1e7a9c;
-  --color-button-exit-border: #1e7a9c;
-  --color-button-exit-hover-bg: rgba(30, 122, 156, 0.1);
-  --color-button-exit-hover-text: #155a73;
-  --color-button-exit-hover-border: #155a73;
+  --color-button-exit-text: var(--color-primary);
+  --color-button-exit-border: var(--color-primary);
+  --color-button-exit-hover-bg: rgba(14, 42, 71, 0.1);
+  --color-button-exit-hover-text: var(--color-secondary);
+  --color-button-exit-hover-border: var(--color-secondary);
 
   /* Card variables for documents */
-  --card-bg-primary: #1e7a9c;
-  --card-bg-surface: #155a73;
-  --card-bg-hover: rgba(30, 122, 156, 0.12);
-  --card-border-color: rgba(30, 122, 156, 0.3);
-  --card-shadow-color: rgba(30, 122, 156, 0.08);
-  --card-shadow-color-hover: rgba(30, 122, 156, 0.15);
-  --card-shadow-color-expanded: rgba(30, 122, 156, 0.2);
-  --card-bg-gradient: linear-gradient(135deg, #1e7a9c 0%, #155a73 100%);
-  --card-bg-gradient-hover: linear-gradient(135deg, #1e7a9c 0%, rgba(30, 122, 156, 0.12) 100%);
-  --card-bg-gradient-expanded: linear-gradient(135deg, #1e7a9c 0%, rgba(30, 122, 156, 0.15) 100%);
+  --card-bg-primary: var(--color-primary);
+  --card-bg-surface: var(--color-secondary);
+  --card-bg-hover: rgba(43, 127, 191, 0.18);
+  --card-border-color: rgba(14, 42, 71, 0.28);
+  --card-shadow-color: rgba(14, 42, 71, 0.1);
+  --card-shadow-color-hover: rgba(14, 42, 71, 0.18);
+  --card-shadow-color-expanded: rgba(14, 42, 71, 0.22);
+  --card-bg-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --card-bg-gradient-hover: linear-gradient(135deg, var(--color-primary) 0%, rgba(43, 127, 191, 0.18) 100%);
+  --card-bg-gradient-expanded: linear-gradient(135deg, var(--color-primary) 0%, rgba(43, 127, 191, 0.22) 100%);
   
   /* Form editing lighter theme variables */
   --form-bg-light: #f8f9fa;
   --form-input-bg: #ffffff;
-  --form-input-border: rgba(3, 87, 129, 0.3);
+  --form-input-border: rgba(14, 42, 71, 0.3);
   --form-container-bg: #f5f5f5;
   --form-section-bg: #fafafa;
   --form-field-bg-white: #ffffff;
 
   /* Users page specific variables */
-  --users-filter-focus-shadow: rgba(30, 122, 156, 0.2);
-  --users-filter-border-color: #1e7a9c;
-  --users-filter-hover-border: #155a73;
-  --users-table-selected-bg: #e0f7fa;
+  --users-filter-focus-shadow: rgba(14, 42, 71, 0.2);
+  --users-filter-border-color: var(--color-primary);
+  --users-filter-hover-border: var(--color-secondary);
+  --users-table-selected-bg: #e6f0f8;
   --users-table-selected-text: #000000;
-  --users-table-hover-bg: #f0f9ff;
-  --users-button-clear-bg: #1e7a9c;
-  --users-button-clear-hover: #155a73;
-  --users-button-add-bg: #155a73;
-  --users-button-add-hover: #2699b8;
+  --users-table-hover-bg: #f4f8fc;
+  --users-button-clear-bg: var(--color-primary);
+  --users-button-clear-hover: var(--color-secondary);
+  --users-button-add-bg: var(--color-secondary);
+  --users-button-add-hover: #2b7fbf;
 
   /* DataGrid zebra stripe color */
-  --zebra-stripe-color: rgba(30, 122, 156, 0.3);
+  --zebra-stripe-color: rgba(14, 42, 71, 0.18);
+
+  /* Gallery (Images) */
+  --gallery-bg-gradient: linear-gradient(135deg, var(--color-secondary) 0%, rgba(31, 90, 133, 0.10) 100%);
+  --gallery-bg-gradient-expanded: linear-gradient(135deg, var(--color-secondary) 0%, rgba(31, 90, 133, 0.15) 100%);
+  --gallery-bg-gradient-hover: linear-gradient(135deg, var(--color-secondary) 0%, rgba(31, 90, 133, 0.12) 100%);
+  --gallery-details-gradient: linear-gradient(180deg, var(--color-secondary) 0%, rgba(31, 90, 133, 0.05) 100%);
+  --gallery-border-gradient: linear-gradient(90deg, var(--color-secondary) 0%, rgba(31, 90, 133, 0.30) 100%);
+  --gallery-border-color: rgba(31, 90, 133, 0.20);
+  --gallery-shadow-color: rgba(14, 42, 71, 0.15);
+  --gallery-shadow-color-hover: rgba(14, 42, 71, 0.20);
+  --gallery-shadow-color-expanded: rgba(14, 42, 71, 0.25);
+  --gallery-pagination-bullet: rgba(14, 42, 71, 0.40);
+  --gallery-pagination-active: var(--color-primary);
+
+  /* Gallery summary overlays (darker tone) */
+  --gallery-summary-bg: rgba(14, 42, 71, 0.20);
+  --gallery-summary-bg-hover: rgba(14, 42, 71, 0.25);
+  --gallery-summary-bg-expanded: rgba(14, 42, 71, 0.30);
+
+  /* Gallery item cards */
+  --gallery-item-gradient: linear-gradient(135deg, var(--color-primary) 0%, rgba(14, 42, 71, 0.18) 100%);
+  --gallery-item-hover-gradient: linear-gradient(135deg, var(--color-primary) 0%, rgba(14, 42, 71, 0.25) 100%);
+  --gallery-item-border: var(--gallery-border-color);
 }
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {

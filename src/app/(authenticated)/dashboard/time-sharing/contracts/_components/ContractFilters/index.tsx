@@ -250,15 +250,15 @@ export default function ContractFilters({
           <Button
             sx={{
               minWidth: "150px",
-              bgcolor: "#2ca2cc",
+              bgcolor: "var(--color-button-primary)",
               fontFamily: "Montserrat, sans-serif",
-              color: "white",
+              color: "var(--color-button-text)",
               fontWeight: 500,
               "&:hover": {
-                bgcolor: "#035781",
+                bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             onClick={() => setShowFilters(!showFilters)}
             fullWidth
           >

@@ -55,7 +55,7 @@ export default function ListGroupImages({
         expandIcon={
           <ExpandMoreIcon
             sx={{ 
-              color: "white",
+              color: "var(--color-text-light)",
               fontSize: "1.5rem",
               filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
               transition: "all 0.3s ease"
@@ -64,19 +64,19 @@ export default function ListGroupImages({
         }
         disableRipple
         sx={{
-          background: "rgba(255, 255, 255, 0.1)",
+          background: "var(--gallery-summary-bg)",
           backdropFilter: "blur(10px)",
           flexDirection: "row-reverse",
           borderRadius: "12px 12px 0 0",
           minHeight: "64px !important",
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
-            background: "rgba(255, 255, 255, 0.15)",
+            background: "var(--gallery-summary-bg-hover)",
             transform: "scale(1.01)"
           },
           "&.Mui-expanded": {
             borderRadius: "12px 12px 0 0",
-            background: "rgba(255, 255, 255, 0.2)"
+            background: "var(--gallery-summary-bg-expanded)"
           },
           py: 2,
           px: 3,

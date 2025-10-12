@@ -60,16 +60,16 @@ export default function GroupOfDocumentsFilters({
           <Button
             sx={{
               width: "100%",
-              backgroundColor: "var(--color-button-primary)",
+              bgcolor: "var(--color-button-primary)",
               color: "var(--color-button-text)",
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 500,
               border: "none",
               "&:hover": {
-                backgroundColor: "var(--color-button-primary-hover)",
+                bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             endDecorator={<DeleteIcon />}
             onClick={() => setValue(initialFilters)}
           >

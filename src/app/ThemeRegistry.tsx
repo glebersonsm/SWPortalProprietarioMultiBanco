@@ -75,11 +75,11 @@ export default function ThemeRegistry({
   const baseTheme = {
     light: {
       primary: {
-        main: "#2ca2cc",
+        main: "#0e2a47",
         contrastText: "#ffffff",
       },
       secondary: {
-        main: "#035781",
+        main: "#1f5a85",
         contrastText: "#ffffff",
       },
       background: {

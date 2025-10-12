@@ -25,15 +25,15 @@ export default function SearchAndClearFilters({
               width: "100%",
               height: "100%",
               minWidth: "150px",
-              bgcolor: "#2ca2cc",
+              bgcolor: "var(--color-button-primary)",
               fontFamily: "Montserrat, sans-serif",
-              color: "white",
+              color: "var(--color-button-text)",
               fontWeight: 500,
               "&:hover": {
-                bgcolor: "#035781",
+                bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             endDecorator={<SearchIcon />}
             onClick={handleSearch}
           >
@@ -48,15 +48,15 @@ export default function SearchAndClearFilters({
             width: "100%",
             height: "100%",
             minWidth: "150px",
-            bgcolor: "#2ca2cc",
+            bgcolor: "var(--color-button-primary)",
             fontFamily: "Montserrat, sans-serif",
-            color: "white",
+            color: "var(--color-button-text)",
             fontWeight: 500,
             "&:hover": {
-              bgcolor: "#035781",
+              bgcolor: "var(--color-button-primary-hover)",
             },
           }}
-          variant="outlined"
+          variant="solid"
           endDecorator={<DeleteIcon />}
           onClick={handleClear}
         >

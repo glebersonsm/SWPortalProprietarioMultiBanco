@@ -25,18 +25,18 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { closeSidebar } from "../../_utils";
 
 const HoverSummary = styled(AccordionSummary)({
-  backgroundColor: "#035781",
+  backgroundColor: "var(--color-secondary)",
   borderRadius: 6,
   height: "32px",
   padding: "0 8px",
   "&:hover": {
-    backgroundColor: "#2ca2cc",
+    backgroundColor: "var(--color-hover-bg)",
   },
   "&.Mui-expanded": {
-    backgroundColor: "#035781",
+    backgroundColor: "var(--color-secondary)",
   },
   "&.Mui-expanded:hover": {
-    backgroundColor: "#2ca2cc",
+    backgroundColor: "var(--color-hover-bg)",
   },
 
   "&:before": {

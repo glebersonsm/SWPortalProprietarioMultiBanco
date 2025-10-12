@@ -96,7 +96,7 @@ export default function ShowImagesModal({
           borderRadius: "16px",
           boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
           background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-          border: "1px solid rgba(44, 162, 204, 0.1)",
+          border: "1px solid var(--gallery-border-color)",
         }}
       >
         <DialogTitle sx={{ p: 3, pb: 2 }}>
@@ -110,7 +110,7 @@ export default function ShowImagesModal({
                 color: "var(--color-title)",
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" },
-                background: "linear-gradient(135deg, #035781 0%, #2ca2cc 100%)",
+                background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)",
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -141,7 +141,7 @@ export default function ShowImagesModal({
             p: { xs: 1, sm: 2 },
             display: "flex",
             flexDirection: "column",
-            background: "linear-gradient(180deg, rgba(3, 87, 129, 0.02) 0%, rgba(44, 162, 204, 0.05) 100%)",
+            background: "var(--gallery-details-gradient)",
             borderRadius: "12px",
             margin: "0 8px 8px 8px",
           }}
@@ -152,12 +152,12 @@ export default function ShowImagesModal({
               borderRadius: "12px",
               overflow: "hidden",
               boxShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
-              border: "1px solid rgba(44, 162, 204, 0.1)",
+              border: "1px solid var(--gallery-border-color)",
               "& .swiper": {
                 borderRadius: "12px",
               },
               "& .swiper-button-next, & .swiper-button-prev": {
-                color: "#035781",
+                color: "var(--color-primary)",
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 borderRadius: "50%",
                 width: "44px",
@@ -175,16 +175,16 @@ export default function ShowImagesModal({
                 },
               },
               "& .swiper-pagination-bullet": {
-                backgroundColor: "rgba(3, 87, 129, 0.4)",
+                backgroundColor: "var(--gallery-pagination-bullet)",
                 opacity: 1,
                 width: "12px",
                 height: "12px",
                 transition: "all 0.3s ease",
               },
               "& .swiper-pagination-bullet-active": {
-                backgroundColor: "#035781",
+                backgroundColor: "var(--gallery-pagination-active)",
                 transform: "scale(1.2)",
-                boxShadow: "0 2px 8px rgba(3, 87, 129, 0.4)",
+                boxShadow: "0 2px 8px var(--gallery-pagination-bullet)",
               },
             }}
           >

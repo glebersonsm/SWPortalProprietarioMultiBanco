@@ -24,16 +24,16 @@ export default function ListImages({ groupImages }: ListImagesProps) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              background: "linear-gradient(135deg, var(--card-bg-primary, #035781) 0%, var(--card-bg-surface, rgba(3, 87, 129, 0.03)) 100%)",
+              background: "var(--gallery-item-gradient)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              border: "1px solid var(--gallery-item-border)",
               borderRadius: "10px",
               margin: "8px 16px",
               padding: "12px 20px",
               boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)",
               transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               "&:hover": {
-                background: "linear-gradient(135deg, var(--card-bg-primary, #035781) 0%, var(--card-bg-hover, rgba(3, 87, 129, 0.05)) 100%)",
+                background: "var(--gallery-item-hover-gradient)",
                 transform: "translateY(-2px)",
                 boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
               },
@@ -42,7 +42,7 @@ export default function ListImages({ groupImages }: ListImagesProps) {
             <Typography
               sx={{
                 fontFamily: "Montserrat, sans-serif",
-                color: "white",
+                color: "var(--color-text-light)",
                 fontWeight: 600,
                 fontSize: "0.95rem",
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",

@@ -45,7 +45,7 @@ export default function GroupImagesFilters({
                 },
                 "&.Mui-focused": {
                   borderColor: "primary.500",
-                  boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
+                  boxShadow: "0 0 0 2px var(--card-shadow-color-expanded)",
                 },
                 "&.Mui-error": {
                   borderColor: "danger.500",
@@ -69,7 +69,7 @@ export default function GroupImagesFilters({
                 bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             endDecorator={<DeleteIcon />}
             onClick={() => setFilters(initialFilters)}
           >

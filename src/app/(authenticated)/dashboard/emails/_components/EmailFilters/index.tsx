@@ -581,8 +581,7 @@ export default function EmailFilters({
          }}>
           {/* Botão Limpar Filtros */}
           <Button
-            variant="outlined"
-            color="danger"
+            variant="solid"
             endDecorator={<DeleteIcon />}
             onClick={() => {
               if (thereIsLocalStorage) localStorage.removeItem(FILTERS_STORAGE_KEY);
@@ -590,13 +589,13 @@ export default function EmailFilters({
             }}
             sx={{
               width: "20%",
-              bgcolor: "var(--users-button-clear-bg)",
+              bgcolor: "var(--color-button-primary)",
               fontFamily: "Montserrat, sans-serif",
-              color: "white",
+              color: "var(--color-button-text)",
               border:"none",
               fontWeight: 500,
               "&:hover": {
-                bgcolor: "var(--users-button-clear-hover)",
+                bgcolor: "var(--color-button-primary-hover)",
               },
             }}
           >
@@ -605,8 +604,7 @@ export default function EmailFilters({
 
           {/* Botão Mostrar/Ocultar Filtros Avançados */}
           <Button
-            variant="soft"
-            color="primary"
+            variant="solid"
             onClick={() => setShowFilters(!showFilters)}
             startDecorator={
               showFilters 
@@ -624,18 +622,10 @@ export default function EmailFilters({
               minWidth: { xs: '220px', sm: 'auto' },
               position: 'relative',
               overflow: 'hidden',
-              color: 'white',
+              color: 'var(--color-button-text)',
               border: 'none',
-              
-              // Gradientes dinâmicos
-              background: showFilters 
-                ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
-                : 'linear-gradient(135deg, #2ca2cc 0%, #1976d2 100%)',
-              
-              // Sombras dinâmicas
-              boxShadow: showFilters 
-                ? '0 6px 16px rgba(244, 67, 54, 0.3)'
-                : '0 6px 16px rgba(44, 162, 204, 0.3)',
+              bgcolor: 'var(--color-button-primary)',
+              boxShadow: 'none',
               
               // Transições suaves
               transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -654,13 +644,8 @@ export default function EmailFilters({
               
               // Estados de hover
               "&:hover": {
-                background: showFilters 
-                  ? 'linear-gradient(135deg, #d32f2f 0%, #c62828 100%)'
-                  : 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
                 transform: 'translateY(-3px) scale(1.02)',
-                boxShadow: showFilters 
-                  ? '0 12px 28px rgba(244, 67, 54, 0.4)'
-                  : '0 12px 28px rgba(44, 162, 204, 0.4)',
+                bgcolor: 'var(--color-button-primary-hover)',
                 "&::before": {
                   left: '100%',
                 },
@@ -669,9 +654,7 @@ export default function EmailFilters({
               // Estados de active
               "&:active": {
                 transform: 'translateY(-1px) scale(1.01)',
-                boxShadow: showFilters 
-                  ? '0 6px 16px rgba(244, 67, 54, 0.3)'
-                  : '0 6px 16px rgba(44, 162, 204, 0.3)',
+                boxShadow: 'none',
               },
             }}
           >

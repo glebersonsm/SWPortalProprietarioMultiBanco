@@ -136,7 +136,7 @@ export default function UserOutstandingBillsFilters({
                 bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             endDecorator={<DeleteIcon />}
             onClick={() => setFilters(initialFilters)}
           >

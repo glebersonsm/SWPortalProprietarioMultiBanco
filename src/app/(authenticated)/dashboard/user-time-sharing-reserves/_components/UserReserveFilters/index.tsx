@@ -131,15 +131,15 @@ export default function UserReserveFilters({
           <Button
             sx={{
               width: "100%",
-              bgcolor: "#2ca2cc",
+              bgcolor: "var(--color-button-primary)",
               fontFamily: "Montserrat, sans-serif",
-              color: "white",
+              color: "var(--color-button-text)",
               fontWeight: 500,
               "&:hover": {
-                bgcolor: "#035781",
+                bgcolor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="outlined"
+            variant="solid"
             startDecorator={<DeleteIcon />}
             onClick={() => setFilters(initialFilters)}
           >
