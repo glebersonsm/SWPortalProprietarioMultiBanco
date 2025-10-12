@@ -20,6 +20,13 @@ const nextConfig = {
         // port: "",
         pathname: "/**",
       },
+      // Allow images served from local backend with HTTPS and specific port
+      {
+        protocol: "https",
+        hostname: "localhost",
+        port: "44336",
+        pathname: "/**",
+      },
       {
         protocol: "http",
         hostname: "177.66.74.242",

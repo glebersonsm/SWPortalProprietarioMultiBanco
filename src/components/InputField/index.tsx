@@ -99,8 +99,8 @@ export default function InputField({
               cursor: "pointer",
             },
             "& input[type='file']::-webkit-file-upload-button": {
-              backgroundColor: "#2ca2cc",
-              color: "white",
+              backgroundColor: "var(--color-button-primary)",
+              color: "var(--color-button-text)",
               border: "none",
               borderRadius: "8px",
               padding: "8px 16px",
@@ -110,21 +110,21 @@ export default function InputField({
               fontWeight: 600,
               fontSize: "0.875rem",
               transition: "all 0.3s ease",
-              boxShadow: "0 2px 4px rgba(44, 162, 204, 0.2)",
+              boxShadow: "0 2px 4px rgba(14, 42, 71, 0.15)",
             },
             "& input[type='file']::-webkit-file-upload-button:hover": {
-              backgroundColor: "#035781",
+              backgroundColor: "var(--color-button-primary-hover)",
               transform: "translateY(-1px)",
-              boxShadow: "0 4px 8px rgba(44, 162, 204, 0.3)",
+              boxShadow: "0 4px 8px rgba(14, 42, 71, 0.20)",
             },
             "& input[type='file']::-webkit-file-upload-button:active": {
               transform: "translateY(0)",
-              boxShadow: "0 2px 4px rgba(44, 162, 204, 0.2)",
+              boxShadow: "0 2px 4px rgba(14, 42, 71, 0.15)",
             },
             // Para Firefox
             "& input[type='file']::-moz-file-upload-button": {
-              backgroundColor: "#2ca2cc",
-              color: "white",
+              backgroundColor: "var(--color-button-primary)",
+              color: "var(--color-button-text)",
               border: "none",
               borderRadius: "8px",
               padding: "8px 16px",
@@ -136,7 +136,7 @@ export default function InputField({
               transition: "all 0.3s ease",
             },
             "& input[type='file']::-moz-file-upload-button:hover": {
-              backgroundColor: "#035781",
+              backgroundColor: "var(--color-button-primary-hover)",
             },
           }),
           ...sx,

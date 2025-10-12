@@ -48,21 +48,25 @@ export default function FormModal<T extends FieldValues>({
             closeModal(false);
           }
         }}
+        sx={{ backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" }}
       >
         <ModalDialog
           sx={{
             maxWidth: { xs: '95vw', sm: '600px', md: '700px' },
             width: '100%',
             borderRadius: 16,
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
-            border: 'none',
             p: { xs: 3, md: 4 },
+            background: 'var(--modal-bg-gradient)',
+            border: '1px solid var(--modal-border-color)',
+            boxShadow: '0 12px 28px var(--modal-shadow-color)',
+            color: 'var(--modal-text-color)',
           }}
         >
           {/* Cabeçalho do Modal */}
           <DialogTitle
             sx={{
-              color: "primary.solidHoverBg",
+              color: 'var(--modal-header-text-color)',
+              backgroundColor: 'var(--modal-header-bg)',
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 700,
               fontSize: { xs: '1.25rem', md: '1.5rem' },
@@ -76,7 +80,7 @@ export default function FormModal<T extends FieldValues>({
           
           <DialogContent
             sx={{
-              color: "text.secondary",
+              color: 'var(--modal-text-color)',
               fontSize: { xs: '0.875rem', md: '1rem' },
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 500,
@@ -100,7 +104,7 @@ export default function FormModal<T extends FieldValues>({
                       fontFamily: 'Montserrat, sans-serif',
                       fontWeight: 600,
                       fontSize: '0.875rem',
-                      color: 'text.primary',
+                      color: 'var(--form-label-color)',
                       mb: 1,
                     },
                     '& .MuiInput-root': {
@@ -108,12 +112,8 @@ export default function FormModal<T extends FieldValues>({
                       fontSize: '0.875rem',
                       fontFamily: 'Montserrat, sans-serif',
                       transition: 'all 0.2s ease-in-out',
-                      '&:hover': {
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                      },
-                      '&.Mui-focused': {
-                        boxShadow: '0 4px 12px rgba(44, 162, 204, 0.2)',
-                      },
+                      backgroundColor: 'var(--form-input-bg)',
+                      border: '1px solid var(--form-input-border)',
                     },
                   },
                 }}
@@ -135,7 +135,6 @@ export default function FormModal<T extends FieldValues>({
                 >
                   <Button
                     variant="outlined"
-                    color="danger"
                     onClick={() => closeModal(false)}
                     sx={{
                       minWidth: { xs: '100%', sm: '140px' },
@@ -145,10 +144,14 @@ export default function FormModal<T extends FieldValues>({
                       fontWeight: 600,
                       fontSize: '0.875rem',
                       border: '1.5px solid',
+                      color: 'var(--color-button-exit-text)',
+                      borderColor: 'var(--color-button-exit-border)',
                       transition: 'all 0.2s ease-in-out',
                       '&:hover': {
                         transform: 'translateY(-1px)',
-                        boxShadow: '0 4px 12px rgba(211, 47, 47, 0.2)',
+                        backgroundColor: 'var(--color-button-exit-hover-bg)',
+                        color: 'var(--color-button-exit-hover-text)',
+                        borderColor: 'var(--color-button-exit-hover-border)',
                       },
                     }}
                   >
@@ -157,6 +160,7 @@ export default function FormModal<T extends FieldValues>({
                   
                   <Button
                     type="submit"
+                    variant="solid"
                     sx={{
                       minWidth: { xs: '100%', sm: '140px' },
                       height: 44,
@@ -164,19 +168,19 @@ export default function FormModal<T extends FieldValues>({
                       fontFamily: "Montserrat, sans-serif",
                       fontWeight: 600,
                       fontSize: '0.875rem',
-                      background: 'linear-gradient(135deg, #2ca2cc 0%, #1976d2 100%)',
-                      color: 'white',
+                      bgcolor: 'var(--color-button-primary)',
+                      color: 'var(--color-button-text)',
                       border: 'none',
-                      boxShadow: '0 6px 16px rgba(44, 162, 204, 0.3)',
+                      boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+                        bgcolor: 'var(--color-button-primary-hover)',
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 20px rgba(44, 162, 204, 0.4)',
+                        boxShadow: '0 8px 20px rgba(14, 42, 71, 0.30)',
                       },
                       '&:active': {
                         transform: 'translateY(-1px)',
-                        boxShadow: '0 6px 16px rgba(44, 162, 204, 0.3)',
+                        boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
                       },
                     }}
                   >

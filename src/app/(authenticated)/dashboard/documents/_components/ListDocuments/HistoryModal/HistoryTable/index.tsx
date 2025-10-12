@@ -54,7 +54,7 @@ export default function HistoryTable({ document }: HistoryTableProps) {
         >
           <thead>
             <tr>
-              <th>Id</th>
+              <th>Id do usuário</th>
               <th>Usuário</th>
               <th>Ação</th>
               <th>Data</th>
@@ -66,7 +66,7 @@ export default function HistoryTable({ document }: HistoryTableProps) {
                 <td>{item.userId}</td>
                 <td>{item.userName}</td>
                 <td>{item.action}</td>
-                <td>{formatDate(item.date)}</td>
+                <td>{formatDate(item.date, "dd/MM/yyyy HH:mm:ss")}</td>
               </tr>
             ))}
           </tbody>

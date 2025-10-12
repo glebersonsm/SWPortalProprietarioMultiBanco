@@ -39,12 +39,19 @@ export default function ValidateCertificateModal({
   };
 
   return (
-    <Modal open={shouldOpen} onClose={closeModal}>
+    <Modal open={shouldOpen} onClose={closeModal} sx={{ backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" }}>
       <ModalOverflow>
-        <ModalDialog>
+        <ModalDialog sx={{
+          p: 0,
+          background: "var(--modal-bg-gradient)",
+          border: "1px solid var(--modal-border-color)",
+          boxShadow: "0 12px 28px var(--modal-shadow-color)",
+          color: "var(--modal-text-color)",
+        }}>
           <DialogTitle   sx={{
           textAlign: "center",
-          color: "primary.solidHoverBg",
+          color: "var(--modal-text-color)",
+          backgroundColor: "var(--modal-header-bg)",
           fontFamily: "Montserrat, sans-serif",
           fontWeight: 500,
         }} >Validar certidão positiva/negativa</DialogTitle>
@@ -53,12 +60,15 @@ export default function ValidateCertificateModal({
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack gap={2}>
                   <InputField field="protocol" label="Digite o protocolo" />
-                  <Button sx={{
-                      bgcolor: "#2ca2cc",
+                  <Button 
+                    variant="solid"
+                    sx={{
+                      bgcolor: "var(--color-button-primary)",
                       fontFamily: "Montserrat, sans-serif",
                       fontWeight: 500,
+                      color: "var(--color-button-text)",
                       "&:hover": {
-                        bgcolor: "#035781",
+                        bgcolor: "var(--color-button-primary-hover)",
                       },
                     }}
                    type="submit">Validar</Button>

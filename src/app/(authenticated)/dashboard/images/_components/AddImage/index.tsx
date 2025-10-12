@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { setFormErrors } from "@/services/errors/formErrors";
 import useCloseModal from "@/hooks/useCloseModal";
-import { FormLabel, Typography, Box } from "@mui/joy";
+import { FormLabel, Typography, Box, Button } from "@mui/joy";
 import { AxiosError } from "axios";
 import { GroupImages } from "@/utils/types/groupImages";
 import { addImage } from "@/services/querys/images";
@@ -34,6 +34,9 @@ export default function AddImageModal({
     formState: { errors },
     register,
   } = form;
+
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [selectedFileName, setSelectedFileName] = React.useState<string>("");
 
   const onErrorHandler = (error: AxiosError<{ errors?: string[] }>) => {
     setFormErrors({
@@ -89,72 +92,50 @@ export default function AddImageModal({
       <FormLabel>Imagem</FormLabel>
       <Box
         sx={{
-          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
           width: "100%",
-          "& input[type='file']": {
-            padding: "12px 16px",
-            cursor: "pointer",
-            border: "2px solid #e2e8f0",
-            borderRadius: "12px",
-            backgroundColor: "#ffffff",
-            fontFamily: "Montserrat, sans-serif",
-            fontSize: "0.875rem",
-            width: "100%",
-            transition: "all 0.3s ease",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
-            "&:hover": {
-              borderColor: "#2ca2cc",
-              backgroundColor: "#f8fafc",
-              boxShadow: "0 4px 8px rgba(44, 162, 204, 0.1)",
-            },
-            "&:focus": {
-              outline: "none",
-              borderColor: "#2ca2cc",
-              boxShadow: "0 0 0 3px rgba(44, 162, 204, 0.1)",
-            },
-          },
-          "& input[type='file']::-webkit-file-upload-button": {
-            backgroundColor: "#2ca2cc",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            padding: "8px 16px",
-            marginRight: "12px",
-            cursor: "pointer",
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: 600,
-            fontSize: "0.875rem",
-            transition: "all 0.3s ease",
-            boxShadow: "0 2px 4px rgba(44, 162, 204, 0.2)",
-            "&:hover": {
-              backgroundColor: "#035781",
-              transform: "translateY(-1px)",
-              boxShadow: "0 4px 8px rgba(44, 162, 204, 0.3)",
-            },
-            "&:active": {
-              transform: "translateY(0)",
-              boxShadow: "0 2px 4px rgba(44, 162, 204, 0.2)",
-            },
-          },
-          "& input[type='file']::-moz-file-upload-button": {
-            backgroundColor: "#2ca2cc",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            padding: "8px 16px",
-            marginRight: "12px",
-            cursor: "pointer",
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: 600,
-            fontSize: "0.875rem",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#035781",
-            },
-          },
+          border: "1px solid var(--form-input-border)",
+          borderRadius: "12px",
+          backgroundColor: "var(--form-input-bg)",
+          padding: "10px 12px",
         }}
       >
-        <input accept="image/*" type="file" {...register("url")} />
+        {(() => {
+          const urlRegister = register("url");
+          return (
+            <input
+              accept="image/*"
+              type="file"
+              id="image-upload"
+              style={{ display: "none" }}
+              {...urlRegister}
+              ref={(el) => {
+                urlRegister.ref(el);
+                fileInputRef.current = el;
+              }}
+              onChange={(e) => {
+                urlRegister.onChange(e);
+                const files = e.target.files;
+                setSelectedFileName(
+                  files && files.length ? files[0].name : ""
+                );
+              }}
+            />
+          );
+        })()}
+
+        <Button
+          variant="solid"
+          color="primary"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Escolha uma Imagem
+        </Button>
+        <Typography level="body-sm" sx={{ color: "var(--modal-text-color)" }}>
+          {selectedFileName || "Nenhum arquivo selecionado"}
+        </Typography>
       </Box>
     </FormModal>
   );

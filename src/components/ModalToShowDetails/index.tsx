@@ -32,7 +32,8 @@ export default function ModalToShowDetails({
         }
       }}
       sx={{
-        backdropFilter: "blur(2px)",
+        backdropFilter: "blur(3px)",
+        backgroundColor: "rgba(14, 42, 71, 0.25)",
       }}
     >
       <ModalDialog
@@ -45,13 +46,18 @@ export default function ModalToShowDetails({
           display: "flex",
           flexDirection: "column",
           p: 0,
+          background: "var(--modal-bg-gradient)",
+          border: "1px solid var(--modal-border-color)",
+          boxShadow: "0 12px 28px var(--modal-shadow-color)",
+          color: "var(--modal-text-color)",
         }}
       >
         <DialogTitle
           sx={{
             px: 2,
             py: 1,
-            color: "primary.solidHoverBg",
+            color: "var(--modal-header-text-color)",
+            backgroundColor: "var(--modal-header-bg)",
             fontFamily: "Montserrat, sans-serif",
             fontWeight: 700,
             fontSize: { xs: "1.1rem", sm: "1.3rem" },
@@ -66,6 +72,7 @@ export default function ModalToShowDetails({
             size="sm"
             variant="plain"
             color="neutral"
+            sx={{ color: "var(--modal-header-text-color)" }}
             onClick={closeModal}
           >
             <CloseIcon />
@@ -87,7 +94,15 @@ export default function ModalToShowDetails({
 
         {/* Rodapé fixo */}
         <DialogActions sx={{ px: 2, py: 1 }}>
-          <Button variant="outlined" color="danger" onClick={closeModal}>
+          <Button 
+            variant="solid" 
+            onClick={closeModal}
+            sx={{
+              bgcolor: "var(--color-button-primary)",
+              color: "var(--color-button-text)",
+              "&:hover": { bgcolor: "var(--color-button-primary-hover)" },
+            }}
+          >
             Sair
           </Button>
         </DialogActions>

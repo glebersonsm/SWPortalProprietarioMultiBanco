@@ -37,6 +37,7 @@ export default function AppointmentHistoryModal({
           closeModal();
         }
       }}
+      sx={{ backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" }}
     >
       <ModalOverflow>
         <ModalDialog
@@ -48,9 +49,13 @@ export default function AppointmentHistoryModal({
             display: "flex",
             flexDirection: "column",
             p: 0,
+            background: "var(--modal-bg-gradient)",
+            border: "1px solid var(--modal-border-color)",
+            boxShadow: "0 12px 28px var(--modal-shadow-color)",
+            color: "var(--modal-text-color)",
           }}
         >
-          <DialogTitle sx={{ p: 3, pb: 2 }}>
+          <DialogTitle sx={{ p: 3, pb: 2, color: "var(--modal-text-color)", backgroundColor: "var(--modal-header-bg)" }}>
             Históricos do agendamento
           </DialogTitle>
           
@@ -78,10 +83,9 @@ export default function AppointmentHistoryModal({
             sx={{ p: 3, pt: 2, borderTop: 1, borderColor: "divider" }}
           >
             <Button
-              variant="outlined"
-              color="danger"
+              variant="solid"
               onClick={closeModal}
-              sx={{ minWidth: "120px" }}
+              sx={{ minWidth: "120px", bgcolor: "var(--color-button-primary)", color: "var(--color-button-text)", "&:hover": { bgcolor: "var(--color-button-primary-hover)" } }}
             >
               Fechar
             </Button>

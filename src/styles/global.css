@@ -129,6 +129,14 @@
   --gallery-item-gradient: linear-gradient(135deg, var(--color-primary) 0%, rgba(14, 42, 71, 0.18) 100%);
   --gallery-item-hover-gradient: linear-gradient(135deg, var(--color-primary) 0%, rgba(14, 42, 71, 0.25) 100%);
   --gallery-item-border: var(--gallery-border-color);
+
+  /* Modal theme variables */
+  --modal-bg-gradient: linear-gradient(135deg, #f9fbfd 0%, #ffffff 100%);
+  --modal-header-bg: transparent;
+  --modal-header-text-color: var(--color-primary);
+  --modal-border-color: rgba(14, 42, 71, 0.28);
+  --modal-shadow-color: rgba(14, 42, 71, 0.25);
+  --modal-text-color: var(--color-primary);
 }
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
