@@ -118,18 +118,6 @@ React.useEffect(() => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid xs={12} sm={2}>
-          <FormControl>
-            <FormLabel>Id da pessoa</FormLabel>
-            <Input
-              placeholder="Id pessoa"
-              value={filters.personId}
-              onChange={(e) =>
-                setFilters({ ...filters, personId: e.target.value })
-              }
-            />
-          </FormControl>
-        </Grid>
         <Grid xs={12} sm={5}>
           <FormControl>
             <FormLabel>Nome do cliente</FormLabel>
