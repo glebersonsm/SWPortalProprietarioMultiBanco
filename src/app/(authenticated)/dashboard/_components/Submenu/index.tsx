@@ -95,13 +95,13 @@ export default function Submenu({ route, segment, collapsed = false }: SubmenuPr
               px: collapsed ? 1 : 2,
               "&:hover": {
                 background: "linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%) !important",
-                transform: "translateX(4px) scale(1.02)",
+                transform: collapsed ? "none" : "translateX(4px) scale(1.02)",
                 boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25), 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.1)",
                 borderColor: "rgba(255, 255, 255, 0.35)",
                 backdropFilter: "blur(15px)",
               },
               "&:active": {
-                transform: "translateX(2px) scale(0.99)",
+                transform: collapsed ? "none" : "translateX(2px) scale(0.99)",
                 transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
                 boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)",
               },

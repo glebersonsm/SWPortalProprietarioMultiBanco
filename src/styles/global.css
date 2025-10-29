@@ -285,6 +285,12 @@ select:-webkit-autofill:focus {
     0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Em modo colapsado, não deslocar itens no hover/active para manter ícones centralizados */
+.Sidebar.collapsed .sidebar-item:hover,
+.Sidebar.collapsed .sidebar-item:active {
+  transform: none !important;
+}
+
 thead th {
   color: var(--color-title) !important;
   font-family: "Montserrat", sans-serif;

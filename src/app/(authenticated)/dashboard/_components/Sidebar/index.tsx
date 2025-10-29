@@ -204,16 +204,24 @@ export default function Sidebar() {
           style={{ objectFit: "contain", display: "block" }}
           priority
         />
-        {/* Botão de recolher/expandir */}
+        {/* Botão de recolher/expandir removido deste container para não sobrepor a logo */}
+      </Box>
+
+      {/* Botão de recolher/expandir fora do painel da logo */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: collapsed ? "center" : "flex-end",
+          px: collapsed ? 1 : 2,
+          mb: 1,
+        }}
+      >
         <Tooltip title={collapsed ? "Expandir sidebar" : "Recolher sidebar"} placement="left" arrow>
           <IconButton
             onClick={toggleCollapsed}
             size="sm"
             variant="outlined"
             sx={{
-              position: "absolute",
-              right: collapsed ? 6 : 10,
-              top: 8,
               backgroundColor: "var(--color-white)",
               color: "var(--color-secondary)",
               borderColor: "var(--color-white)",
@@ -476,10 +484,11 @@ export default function Sidebar() {
           display: "flex",
           gap: 2,
           alignItems: "center",
+          justifyContent: collapsed ? "center" : "space-between",
           background: "linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)",
           backdropFilter: "blur(20px)",
           borderRadius: "24px 24px 0 0",
-          p: 3,
+          p: collapsed ? 2 : 3,
           width: "100%",
           boxShadow: "0 -4px 20px rgba(0, 0, 0, 0.15), 0 -2px 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
           mt: 2,
@@ -499,7 +508,7 @@ export default function Sidebar() {
           },
         }}
       >
-        <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Box sx={{ minWidth: 0, flex: 1, display: collapsed ? "none" : "block" }}>
           <Typography
             level="title-sm"
             sx={{
@@ -555,14 +564,14 @@ export default function Sidebar() {
                 backgroundColor: "var(--color-button-exit-hover-bg)",
                 color: "var(--color-button-exit-hover-text)",
                 borderColor: "var(--color-button-exit-hover-border)",
-                transform: "scale(1.08) translateY(-2px)",
+                transform: collapsed ? "none" : "scale(1.08) translateY(-2px)",
                 boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2), 0 3px 10px rgba(0, 0, 0, 0.1)",
                 "&::before": {
                   left: "100%",
                 },
               },
               "&:active": {
-                transform: "scale(1.02) translateY(0px)",
+                transform: collapsed ? "none" : "scale(1.02) translateY(0px)",
                 transition: "all 0.1s ease",
               },
             }}
