@@ -47,9 +47,10 @@ const HoverSummary = styled(AccordionSummary)({
 type SubmenuProps = {
   route: RouteProps;
   segment: string | null;
+  collapsed?: boolean;
 };
 
-export default function Submenu({ route, segment }: SubmenuProps) {
+export default function Submenu({ route, segment, collapsed = false }: SubmenuProps) {
   const [expanded, setExpanded] = useState(false);
   const segments = useSelectedLayoutSegments();
   const router = useRouter();
@@ -77,7 +78,7 @@ export default function Submenu({ route, segment }: SubmenuProps) {
     <>
       <ListItem
         component={Button}
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => !collapsed && setExpanded(!expanded)}
         sx={{ textDecoration: "none" }}
       >
         <Tooltip title={route.name} placement="right" arrow>
@@ -90,6 +91,8 @@ export default function Submenu({ route, segment }: SubmenuProps) {
               backdropFilter: "blur(10px)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              justifyContent: collapsed ? "center" : "flex-start",
+              px: collapsed ? 1 : 2,
               "&:hover": {
                 background: "linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%) !important",
                 transform: "translateX(4px) scale(1.02)",
@@ -104,26 +107,31 @@ export default function Submenu({ route, segment }: SubmenuProps) {
               },
             }}
           >
-            <route.icon sx={{ color: "white" }} />
-            <ListItemContent>
-              <Typography
-                level="title-sm"
-                sx={{ color: "white", fontWeight: 600, fontSize: "0.65rem" }}
-              >
-                {route.name}
-              </Typography>
-            </ListItemContent>
-            <ExpandMoreIcon
-              sx={{
-                color: "white",
-                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-              }}
-            />
+            <route.icon sx={{ color: "white", fontSize: collapsed ? "1.25rem" : "1rem" }} />
+            {!collapsed && (
+              <ListItemContent>
+                <Typography
+                  level="title-sm"
+                  sx={{ color: "white", fontWeight: 600, fontSize: "0.65rem" }}
+                >
+                  {route.name}
+                </Typography>
+              </ListItemContent>
+            )}
+            {!collapsed && (
+              <ExpandMoreIcon
+                sx={{
+                  color: "white",
+                  transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                }}
+              />
+            )}
           </ListItemButton>
         </Tooltip>
       </ListItem>
 
+      {!collapsed && (
       <Box
         sx={{
           overflow: "hidden",
@@ -212,6 +220,7 @@ export default function Submenu({ route, segment }: SubmenuProps) {
           </ListItem>
         ))}
       </Box>
+      )}
     </>
   );
 }

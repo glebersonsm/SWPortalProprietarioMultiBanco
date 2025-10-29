@@ -25,6 +25,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useLoading } from "@/contexts/LoadingContext";
 import "../../../../../styles/global.css";
+import React, { useEffect, useState } from "react";
+import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 
 export default function Sidebar() {
   const segment = useSelectedLayoutSegment();
@@ -34,6 +37,32 @@ export default function Sidebar() {
   const { userData, settingsParams, isAdm } = useUser();
   const { DASHBOARD_ROUTES } = useNavigation();
   const { setIsLoading, setLoadingMessage } = useLoading();
+
+  // Estado de recolhimento da sidebar (persistido em localStorage)
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("sidebarCollapsed");
+      const isCollapsed = saved === "true";
+      setCollapsed(isCollapsed);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      // Sincroniza a largura usada pelo layout principal
+      document.documentElement.style.setProperty(
+        "--Sidebar-width",
+        collapsed ? "72px" : "280px"
+      );
+    }
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sidebarCollapsed", String(collapsed));
+    }
+  }, [collapsed]);
+
+  const toggleCollapsed = () => setCollapsed((prev) => !prev);
 
   const handleNavigation = (path: string, routeName: string) => {
     // Verifica se já está na rota de destino
@@ -71,7 +100,7 @@ export default function Sidebar() {
 
   return (
     <Sheet
-      className="Sidebar"
+      className={`Sidebar ${collapsed ? "collapsed" : ""}`}
       sx={{
         position: "fixed",
         border: "none",
@@ -146,7 +175,7 @@ export default function Sidebar() {
           gap: 1,
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.05) 100%)",
+          background: collapsed ? "transparent" : "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.05) 100%)",
           backdropFilter: "blur(15px)",
           borderRadius: "0 0 24px 24px",
           mb: 2,
@@ -155,7 +184,7 @@ export default function Sidebar() {
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
           borderTop: "none",
-          px: 2,
+          px: collapsed ? 1 : 2,
           "&::before": {
             content: '""',
             position: "absolute",
@@ -172,16 +201,20 @@ export default function Sidebar() {
           sx={{
             position: "relative",
             width: "100%",
-            maxWidth: 130,
+            maxWidth: collapsed ? 56 : 130,
             aspectRatio: "1500 / 1094",
             overflow: "hidden",
             my: 3,
-            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
+            filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))",
             transition: "transform 0.3s ease, filter 0.3s ease",
             "&:hover": {
               transform: "scale(1.02)",
-              filter: "drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15))",
+              filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))",
             },
+            backgroundColor: "var(--color-white)",
+            borderRadius: collapsed ? "8px" : "12px",
+            border: "1px solid rgba(0,0,0,0.06)",
+            p: collapsed ? 0.5 : 1.5,
           }}
         >
           <Image
@@ -192,7 +225,30 @@ export default function Sidebar() {
             priority
           />
         </Box>
-        {/* Botão de fechar temporariamente oculto */}
+        {/* Botão de recolher/expandir */}
+        <Tooltip title={collapsed ? "Expandir sidebar" : "Recolher sidebar"} placement="left" arrow>
+          <IconButton
+            onClick={toggleCollapsed}
+            size="sm"
+            variant="outlined"
+            sx={{
+              position: "absolute",
+              right: collapsed ? 6 : 10,
+              top: 8,
+              backgroundColor: "var(--color-white)",
+              color: "var(--color-secondary)",
+              borderColor: "var(--color-white)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+              "&:hover": { backgroundColor: "var(--color-white)" },
+            }}
+          >
+            {collapsed ? (
+              <ChevronRightRoundedIcon />
+            ) : (
+              <ChevronLeftRoundedIcon />
+            )}
+          </IconButton>
+        </Tooltip>
       </Box>
 
       <Box
@@ -232,7 +288,7 @@ export default function Sidebar() {
           {DASHBOARD_ROUTES.map((route) => {
             const isSelected = segment === route.segment;
             return route.submenu ? (
-              <Submenu key={route.segment} route={route} segment={segment} />
+              <Submenu key={route.segment} route={route} segment={segment} collapsed={collapsed} />
             ) : (
               <ListItem
                 key={route.name}
@@ -242,28 +298,34 @@ export default function Sidebar() {
                   <ListItemButton
                     className={`sidebar-item ${isSelected ? "selected" : ""}`}
                     onClick={() => handleNavigation(route.path, route.name)}
+                    sx={{
+                      justifyContent: collapsed ? "center" : "flex-start",
+                      px: collapsed ? 1 : 2,
+                    }}
                   >
-                    <route.icon sx={{ color: "inherit" }} />
-                    <ListItemContent>
-                      <Typography
-                        level="title-sm"
-                        sx={{
-                          fontFamily: "Montserrat, sans-serif",
-                          fontWeight: 600,
-                          color: "inherit",
-                          fontSize: "0.65rem",
-                        }}
-                      >
-                        {route.name}
-                      </Typography>
-                    </ListItemContent>
+                    <route.icon sx={{ color: "inherit", fontSize: collapsed ? "1.25rem" : "1rem" }} />
+                    {!collapsed && (
+                      <ListItemContent>
+                        <Typography
+                          level="title-sm"
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontWeight: 600,
+                            color: "inherit",
+                            fontSize: "0.65rem",
+                          }}
+                        >
+                          {route.name}
+                        </Typography>
+                      </ListItemContent>
+                    )}
                   </ListItemButton>
                 </Tooltip>
               </ListItem>
             );
           })}
 
-          {settingsParams?.websiteToBook &&
+          {!collapsed && settingsParams?.websiteToBook &&
             settingsParams?.websiteToBook.length > 10 && (
               <>
                 <Box
@@ -379,19 +441,22 @@ export default function Sidebar() {
                   segment === "change-password" ? "selected" : ""
                 }`}
                 onClick={() => handleNavigation(`/dashboard/change-password`, "Alterar senha")}
+                sx={{ justifyContent: collapsed ? "center" : "flex-start", px: collapsed ? 1 : 2 }}
               >
-                <LockIcon sx={{ color: "inherit" }} />
-                <Typography
-                  level="title-sm"
-                  sx={{
-                    fontFamily: "Montserrat, sans-serif",
-                    fontWeight: 600,
-                    color: "inherit",
-                    fontSize: "0.65rem",
-                  }}
-                >
-                  Alterar senha
-                </Typography>
+                <LockIcon sx={{ color: "inherit", fontSize: collapsed ? "1.25rem" : "1rem" }} />
+                {!collapsed && (
+                  <Typography
+                    level="title-sm"
+                    sx={{
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 600,
+                      color: "inherit",
+                      fontSize: "0.65rem",
+                    }}
+                  >
+                    Alterar senha
+                  </Typography>
+                )}
               </ListItemButton>
             </Tooltip>
           </ListItem>
@@ -404,19 +469,22 @@ export default function Sidebar() {
                     segment === "settings" ? "selected" : ""
                   }`}
                   onClick={() => handleNavigation(`/dashboard/settings`, "Configurações")}
+                  sx={{ justifyContent: collapsed ? "center" : "flex-start", px: collapsed ? 1 : 2 }}
                 >
-                  <SettingsRoundedIcon sx={{ color: "inherit" }} />
-                  <Typography
-                    level="title-sm"
-                    sx={{
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 600,
-                      color: "inherit",
-                      fontSize: "0.65rem",
-                    }}
-                  >
-                    Configurações
-                  </Typography>
+                  <SettingsRoundedIcon sx={{ color: "inherit", fontSize: collapsed ? "1.25rem" : "1rem" }} />
+                  {!collapsed && (
+                    <Typography
+                      level="title-sm"
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 600,
+                        color: "inherit",
+                        fontSize: "0.65rem",
+                      }}
+                    >
+                      Configurações
+                    </Typography>
+                  )}
                 </ListItemButton>
               </Tooltip>
             </ListItem>
