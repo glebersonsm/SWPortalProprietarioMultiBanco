@@ -130,12 +130,12 @@ export default function useNavigation() {
     //   path: `/dashboard/user-multiownership-contracts`,
     //   segment: "user-multiownership-contracts",
     // },
-    {
-      name: "Meus agendamentos",
-      icon: BookIcon,
-      path: `/dashboard/user-multiownership-appointment`,
-      segment: "user-multiownership-appointment",
-    },
+    // {
+    //   name: "Meus agendamentos",
+    //   icon: BookIcon,
+    //   path: `/dashboard/user-multiownership-appointment`,
+    //   segment: "user-multiownership-appointment",
+    // },
   ];
 
   const USER_DASHBOARD_TIMESHARING_ROUTES: RouteProps[] = [
