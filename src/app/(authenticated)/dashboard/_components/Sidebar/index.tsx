@@ -175,16 +175,16 @@ export default function Sidebar() {
           gap: 1,
           alignItems: "center",
           justifyContent: "center",
-          background: collapsed ? "transparent" : "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.05) 100%)",
-          backdropFilter: "blur(15px)",
+          backgroundColor: "var(--color-white)",
           borderRadius: "0 0 24px 24px",
           mb: 2,
           position: "relative",
           overflow: "hidden",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
+          border: "1px solid rgba(0, 0, 0, 0.06)",
           borderTop: "none",
           px: collapsed ? 1 : 2,
+          py: collapsed ? 1 : 2,
           "&::before": {
             content: '""',
             position: "absolute",
@@ -192,39 +192,18 @@ export default function Sidebar() {
             left: 0,
             right: 0,
             height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent)",
           },
         }}
       >
-        <Box
-          component="section"
-          sx={{
-            position: "relative",
-            width: "100%",
-            maxWidth: collapsed ? 56 : 130,
-            aspectRatio: "1500 / 1094",
-            overflow: "hidden",
-            my: 3,
-            filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))",
-            transition: "transform 0.3s ease, filter 0.3s ease",
-            "&:hover": {
-              transform: "scale(1.02)",
-              filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))",
-            },
-            backgroundColor: "var(--color-white)",
-            borderRadius: collapsed ? "8px" : "12px",
-            border: "1px solid rgba(0,0,0,0.06)",
-            p: collapsed ? 0.5 : 1.5,
-          }}
-        >
-          <Image
-            src="/logo/BarretosCountry.png"
-            alt="Logo Barretos Country"
-            fill
-            style={{ objectFit: "contain" }}
-            priority
-          />
-        </Box>
+        <Image
+          src="/logo/BarretosCountry.png"
+          alt="Logo Barretos Country"
+          width={collapsed ? 56 : 130}
+          height={collapsed ? 41 : 95}
+          style={{ objectFit: "contain", display: "block" }}
+          priority
+        />
         {/* Botão de recolher/expandir */}
         <Tooltip title={collapsed ? "Expandir sidebar" : "Recolher sidebar"} placement="left" arrow>
           <IconButton

@@ -173,7 +173,6 @@ export default function Submenu({ route, segment, collapsed = false }: SubmenuPr
                   },
                   "&.Mui-selected": {
                     background: "linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%) !important",
-                    transform: "translateX(6px) scale(1.02)",
                     boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25), 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.1)",
                     borderColor: "rgba(255, 255, 255, 0.35)",
                     backdropFilter: "blur(15px)",
