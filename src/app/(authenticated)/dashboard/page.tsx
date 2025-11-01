@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useUser from "@/hooks/useUser";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
@@ -15,6 +15,8 @@ export default function DashboardPage() {
   const { settingsParams } = useUser();
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef<any>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   const imageUrls = Array.from({ length: 20 }, (_, i) => {
     const key = `homeImageUrl${i + 1}` as keyof typeof settingsParams;
@@ -29,9 +31,8 @@ export default function DashboardPage() {
     setActiveIndex(idx);
   };
 
-  return (
-    hasSomeImage && (
-      <>
+  return isMounted && hasSomeImage ? (
+    <>
         <Box
           sx={{
             width: "100%",
@@ -112,7 +113,6 @@ export default function DashboardPage() {
             </Box>
           ))}
         </Box>
-      </>
-    )
-  );
+    </>
+  ) : null;
 }

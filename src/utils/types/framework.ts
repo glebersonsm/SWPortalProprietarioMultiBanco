@@ -14,6 +14,7 @@ export type IncomingFramework = {
   permitirUsuarioAlterarSeuEmail?: number;
   permitirUsuarioAlterarSeuDoc?: number;
   exibirFinanceirosDasEmpresaIds?: string;
+  exibirFinanceiroPortalEmpresaIds?: string;
   imagemHomeUrl1?: string;
   imagemHomeUrl2?: string;
   imagemHomeUrl3?: string;
@@ -57,6 +58,7 @@ export type Framework = {
   enableCardPayment?: boolean;
   displayOverdueInvoices?: boolean;
   companyIds?: string;
+  ExibirFinanceiroPortalEmpresaIds?: string;
   maxNumberOfDaysDueInvoices?: number;
   allowUserChangeYourEmail?: boolean;
   allowUserChangeYourDoc?: boolean;

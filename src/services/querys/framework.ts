@@ -12,8 +12,8 @@ export const getFrameworkParams = async (): Promise<Framework> => {
 };
 
 function appendIfValid(form: FormData, key: string, value: any) {
-  if (value && value !== "string") {
-    form.append(key, value.toString());
+  if (value !== undefined && value !== null && value !== "") {
+    form.append(key, String(value));
   }
 }
 
@@ -22,105 +22,78 @@ export const editFrameworkParams = async (
 ) => {
   const form = new FormData();
 
-  appendIfValid(
-    form,
-    "siteParaReserva",
-    settingsParams.siteParaReserva!.toString()
-  );
+  appendIfValid(form, "siteParaReserva", settingsParams.siteParaReserva);
   appendIfValid(
     form,
     "agruparCertidaoPorCliente",
-    settingsParams.agruparCertidaoPorCliente!.toString()
+    settingsParams.agruparCertidaoPorCliente
   );
   appendIfValid(
     form,
     "emitirCertidaoPorUnidCliente",
-    settingsParams.emitirCertidaoPorUnidCliente!.toString()
+    settingsParams.emitirCertidaoPorUnidCliente
   );
   appendIfValid(
     form,
     "habilitarBaixarBoleto",
-    settingsParams.habilitarBaixarBoleto!.toString()
+    settingsParams.habilitarBaixarBoleto
   );
   appendIfValid(
     form,
     "habilitarPagamentosOnLine",
-    settingsParams.habilitarPagamentosOnLine!.toString()
+    settingsParams.habilitarPagamentosOnLine
   );
-  appendIfValid(
-    form,
-    "habilitarPagamentoEmPix",
-    settingsParams.habilitarPagamentoEmPix!.toString()
-  );
+  appendIfValid(form, "habilitarPagamentoEmPix", settingsParams.habilitarPagamentoEmPix);
   appendIfValid(
     form,
     "habilitarPagamentoEmCartao",
-    settingsParams.habilitarPagamentoEmCartao!.toString()
+    settingsParams.habilitarPagamentoEmCartao
   );
-  appendIfValid(
-    form,
-    "exibirContasVencidas",
-    settingsParams.exibirContasVencidas!.toString()
-  );
+  appendIfValid(form, "exibirContasVencidas", settingsParams.exibirContasVencidas);
   appendIfValid(
     form,
     "qtdeMaximaDiasContasAVencer",
-    settingsParams.qtdeMaximaDiasContasAVencer!.toString()
+    settingsParams.qtdeMaximaDiasContasAVencer
   );
-  appendIfValid(
-    form,
-    "permitirUsuarioAlterarSeuDoc",
-    settingsParams.permitirUsuarioAlterarSeuDoc!.toString()
-  );
+  appendIfValid(form, "permitirUsuarioAlterarSeuDoc", settingsParams.permitirUsuarioAlterarSeuDoc);
   appendIfValid(
     form,
     "integradoComMultiPropriedade",
-    settingsParams.integradoComMultiPropriedade!.toString()
+    settingsParams.integradoComMultiPropriedade
   );
-  appendIfValid(
-    form,
-    "integradoComTimeSharing",
-    settingsParams.integradoComTimeSharing!.toString()
-  );
-  appendIfValid(
-    form,
-    "nomeCondominio",
-    settingsParams.nomeCondominio!.toString()
-  );
-  appendIfValid(
-    form,
-    "cnpjCondominio",
-    settingsParams.cnpjCondominio!.toString()
-  );
-  appendIfValid(
-    form,
-    "enderecoCondominio",
-    settingsParams.enderecoCondominio!.toString()
-  );
+  appendIfValid(form, "integradoComTimeSharing", settingsParams.integradoComTimeSharing);
+  appendIfValid(form, "nomeCondominio", settingsParams.nomeCondominio);
+  appendIfValid(form, "cnpjCondominio", settingsParams.cnpjCondominio);
+  appendIfValid(form, "enderecoCondominio", settingsParams.enderecoCondominio);
   appendIfValid(
     form,
     "nomeAdministradoraCondominio",
-    settingsParams.nomeAdministradoraCondominio!.toString()
+    settingsParams.nomeAdministradoraCondominio
   );
   appendIfValid(
     form,
     "cnpjAdministradoraCondominio",
-    settingsParams.cnpjAdministradoraCondominio!.toString()
+    settingsParams.cnpjAdministradoraCondominio
   );
   appendIfValid(
     form,
     "enderecoAdministradoraCondominio",
-    settingsParams.enderecoAdministradoraCondominio!.toString()
+    settingsParams.enderecoAdministradoraCondominio
   );
   appendIfValid(
     form,
     "permitirUsuarioAlterarSeuEmail",
-    settingsParams.permitirUsuarioAlterarSeuEmail!.toString()
+    settingsParams.permitirUsuarioAlterarSeuEmail
   );
   appendIfValid(
     form,
     "exibirFinanceirosDasEmpresaIds",
-    settingsParams.exibirFinanceirosDasEmpresaIds!.toString()
+    settingsParams.exibirFinanceirosDasEmpresaIds
+  );
+  appendIfValid(
+    form,
+    "exibirFinanceiroPortalEmpresaIds",
+    settingsParams.exibirFinanceiroPortalEmpresaIds
   );
 
   for (let i = 1; i <= 20; i++) {

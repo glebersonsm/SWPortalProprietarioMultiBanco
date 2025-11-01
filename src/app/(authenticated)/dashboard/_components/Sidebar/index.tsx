@@ -40,8 +40,11 @@ export default function Sidebar() {
 
   // Estado de recolhimento da sidebar (persistido em localStorage)
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  // Evita mismatch de hidratação controlando renderizações dependentes do cliente
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("sidebarCollapsed");
       const isCollapsed = saved === "true";
@@ -96,7 +99,8 @@ export default function Sidebar() {
       ? settingsParams?.websiteToBook
       : `http://${settingsParams?.websiteToBook}`;
 
-  if (!userData) return null;
+  // Não interrompe a renderização completa para evitar erros de hidratação.
+  // Quando os dados do usuário não estiverem disponíveis, exibimos placeholders.
 
   return (
     <Sheet
@@ -272,15 +276,12 @@ export default function Sidebar() {
             mb: 2,
           }}
         >
-          {DASHBOARD_ROUTES.map((route) => {
+          {isMounted && DASHBOARD_ROUTES.map((route) => {
             const isSelected = segment === route.segment;
             return route.submenu ? (
-              <Submenu key={route.segment} route={route} segment={segment} collapsed={collapsed} />
+              <Submenu key={route.segment ?? route.name} route={route} segment={segment} collapsed={collapsed} />
             ) : (
-              <ListItem
-                key={route.name}
-                sx={{ textDecoration: "none" }}
-              >
+              <ListItem key={route.segment ?? route.name} sx={{ textDecoration: "none" }}>
                 <Tooltip title={route.name} placement="right" arrow>
                   <ListItemButton
                     className={`sidebar-item ${isSelected ? "selected" : ""}`}
@@ -312,7 +313,7 @@ export default function Sidebar() {
             );
           })}
 
-          {!collapsed && settingsParams?.websiteToBook &&
+          {isMounted && !collapsed && settingsParams?.websiteToBook &&
             settingsParams?.websiteToBook.length > 10 && (
               <>
                 <Box
@@ -448,7 +449,7 @@ export default function Sidebar() {
             </Tooltip>
           </ListItem>
 
-          {isAdm && (
+          {isMounted && isAdm && (
             <ListItem>
               <Tooltip title="Configurações" placement="right" arrow>
                 <ListItemButton
@@ -509,32 +510,36 @@ export default function Sidebar() {
         }}
       >
         <Box sx={{ minWidth: 0, flex: 1, display: collapsed ? "none" : "block" }}>
-          <Typography
-            level="title-sm"
-            sx={{
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: 600,
-              color: "var(--color-sidebar-user-name)",
-              fontSize: "0.65rem",
-            }}
-          >
-            {userData?.name}
-          </Typography>
-          <Typography
-            level="body-xs"
-            sx={{
-              maxWidth: "200px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: 500,
-              color: "var(--color-email-text)",
-              fontSize: "0.65rem",
-            }}
-          >
-            {userData?.email}
-          </Typography>
+          {isMounted && userData && (
+            <>
+              <Typography
+                level="title-sm"
+                sx={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: 600,
+                  color: "var(--color-sidebar-user-name)",
+                  fontSize: "0.65rem",
+                }}
+              >
+                {userData.name}
+              </Typography>
+              <Typography
+                level="body-xs"
+                sx={{
+                  maxWidth: "200px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: 500,
+                  color: "var(--color-email-text)",
+                  fontSize: "0.65rem",
+                }}
+              >
+                {userData.email}
+              </Typography>
+            </>
+          )}
         </Box>
         <Tooltip title="Sair do sistema" placement="top">
           <IconButton

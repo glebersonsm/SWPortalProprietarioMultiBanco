@@ -38,7 +38,7 @@ const DashboardContent: React.FC<{
   const { isAdm } = useUser();
   const { getCurrentRoute } = useNavigation();
   const currentRoute = getCurrentRoute(segment);
-  const isHomePage = currentRoute.name === "Home";
+  const isHomePage = currentRoute?.name === "Home";
   
   // Inicializa o hook de navegação com loading
   useNavigationLoading();
@@ -67,8 +67,8 @@ const DashboardContent: React.FC<{
     }
   }, []);
 
-  if (!currentRoute) return null;
-  if (!useUser) return null;
+  // Evita retornar null para não causar diferenças de hidratação entre SSR/CSR.
+  // O layout renderiza de forma estável e o breadcrumb só aparece quando a rota atual estiver disponível.
 
   if (!isAdm && segment && ADM_SEGMENTS.includes(segment)) {
     redirect("/dashboard");
@@ -104,7 +104,7 @@ const DashboardContent: React.FC<{
           marginLeft: { md: "var(--Sidebar-width)" },
         }}
       >
-        {!isHomePage && (
+        {currentRoute && !isHomePage && (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs
               size="sm"
@@ -115,7 +115,7 @@ const DashboardContent: React.FC<{
               <Link
                 underline="none"
                 color="neutral"
-                href="#some-link"
+                href="/dashboard"
                 aria-label="Home"
                 sx={{
                   fontFamily: "Montserrat, sans-serif",
@@ -154,7 +154,7 @@ const DashboardContent: React.FC<{
                   route?.name === "Time Sharing";
                 return likeLastItem || noRote ? (
                   <Typography
-                    key={route?.name}
+                    key={`${segment}-${index}`}
                     sx={{
                       fontFamily: "Montserrat, sans-serif",
                       fontWeight: 700,
@@ -165,7 +165,7 @@ const DashboardContent: React.FC<{
                   </Typography>
                 ) : (
                   <Link
-                    key={segment}
+                    key={`${segment}-${index}`}
                     underline="hover"
                     color="neutral"
                     href={noRote ? "#" : route?.path}

@@ -17,6 +17,7 @@ export function transformedFrameworks(framework: IncomingFramework): Framework {
     allowUserChangeYourEmail: !!framework.permitirUsuarioAlterarSeuEmail,
     allowUserChangeYourDoc: !!framework.permitirUsuarioAlterarSeuDoc,
     companyIds: framework.exibirFinanceirosDasEmpresaIds,
+    ExibirFinanceiroPortalEmpresaIds: framework.exibirFinanceiroPortalEmpresaIds,
     homeImageUrl1: framework?.imagemHomeUrl1,
     homeImageUrl2: framework?.imagemHomeUrl2,
     homeImageUrl3: framework?.imagemHomeUrl3,
@@ -67,6 +68,8 @@ export function untransformedFrameworks(
     habilitarPagamentoEmCartao: framework?.enableCardPayment ? 1 : 0,
     exibirContasVencidas: framework?.displayOverdueInvoices ? 1 : 0,
     exibirFinanceirosDasEmpresaIds: framework?.companyIds,
+    exibirFinanceiroPortalEmpresaIds:
+      framework?.ExibirFinanceiroPortalEmpresaIds,
     qtdeMaximaDiasContasAVencer: framework?.maxNumberOfDaysDueInvoices,
     permitirUsuarioAlterarSeuEmail: framework?.allowUserChangeYourEmail ? 1 : 0,
     permitirUsuarioAlterarSeuDoc: framework?.allowUserChangeYourDoc ? 1 : 0,

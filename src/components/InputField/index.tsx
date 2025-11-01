@@ -44,7 +44,7 @@ export default function InputField({
           color: colorLabel,
           fontFamily: "Montserrat, sans-serif",
           fontWeight: 500,
-          fontSize: "14px",
+          fontSize: { xs: "13px", md: "14px" },
           mb: 0.5,
           "&.Mui-focused": {
             color: colorLabel,
@@ -65,7 +65,7 @@ export default function InputField({
           fontFamily: "Montserrat, sans-serif",
           fontWeight: 500,
           color: "text.primary",
-          minHeight: "48px",
+          minHeight: { xs: "42px", md: "48px" },
           borderRadius: "12px",
           border: "1px solid",
           borderColor: "neutral.200",
