@@ -27,10 +27,11 @@ export default function useNavigation() {
     settingsParams,
   } = useUser();
 
-  const allowDocuments = isAdm || settingsParams?.sidebarShowDocuments !== false;
-  const allowFinance = isAdm || settingsParams?.sidebarShowFinance !== false;
-  const allowImages = isAdm || settingsParams?.sidebarShowImages !== false;
-  const allowFaqs = isAdm || settingsParams?.sidebarShowFaqs !== false;
+  // Exibir menus somente se a opção estiver marcada para não administradores
+  const allowDocuments = isAdm || settingsParams?.sidebarShowDocuments === true;
+  const allowFinance = isAdm || settingsParams?.sidebarShowFinance === true;
+  const allowImages = isAdm || settingsParams?.sidebarShowImages === true;
+  const allowFaqs = isAdm || settingsParams?.sidebarShowFaqs === true;
 
   const FIXED_DASHBOARD_ROUTES: RouteProps[] = [
     {
