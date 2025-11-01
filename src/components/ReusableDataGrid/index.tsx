@@ -671,6 +671,10 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
           },
         },
       },
+      // Aplica cor de fonte vermelha em todas as colunas para linhas vencidas
+      '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
+        color: '#e53935',
+      },
       '& .MuiDataGrid-footerContainer': {
         background: 'var(--card-bg-surface, linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%))',
         borderTop: '1px solid var(--card-border-color, rgba(224, 224, 224, 0.3))',
@@ -806,6 +810,10 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         overflow: 'hidden',
         boxShadow: '0 10px 40px var(--card-shadow-color, rgba(30, 122, 156, 0.08)), 0 2px 8px rgba(0, 0, 0, 0.05)',
         position: 'relative',
+        // Garantir cor de fonte vermelha para todas as células das linhas marcadas como vencidas
+        '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
+          color: '#e53935',
+        },
         '&::before': {
           content: '""',
           position: 'absolute',

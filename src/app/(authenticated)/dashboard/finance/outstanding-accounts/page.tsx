@@ -9,7 +9,7 @@ import OutstandingBillsFilters from "./_components/OutstandingBillsFilters";
 import { useGetOutSandingAccounts } from "./hook";
 import ReusableDataGrid from "@/components/ReusableDataGrid";
 import ModernPaginatedList from "@/components/ModernPaginatedList";
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { GridColDef, GridRenderCellParams, GridRowClassNameParams } from "@mui/x-data-grid";
 import { formatMoney } from "@/utils/money";
 import { IconButton, Box as MuiBox } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -205,6 +205,14 @@ export default function OutstandingAccountsPage() {
               rows={outstandingBills}
               columns={columns}
               loading={isLoading}
+              additionalProps={{
+                getRowClassName: (params: GridRowClassNameParams<OutstandingBill>) => {
+                  const status = params.row?.status?.toLowerCase();
+                  return status?.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)
+                    ? "overdue-row"
+                    : "";
+                },
+              }}
               pagination={{
                 enabled: false,
               }}
