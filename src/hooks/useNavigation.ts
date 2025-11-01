@@ -24,7 +24,13 @@ export default function useNavigation() {
     gestorReservasAgendamentos,
     integratedWithTimeSharing,
     gestorFinanceiro,
+    settingsParams,
   } = useUser();
+
+  const allowDocuments = isAdm || settingsParams?.sidebarShowDocuments !== false;
+  const allowFinance = isAdm || settingsParams?.sidebarShowFinance !== false;
+  const allowImages = isAdm || settingsParams?.sidebarShowImages !== false;
+  const allowFaqs = isAdm || settingsParams?.sidebarShowFaqs !== false;
 
   const FIXED_DASHBOARD_ROUTES: RouteProps[] = [
     {
@@ -33,12 +39,18 @@ export default function useNavigation() {
       path: `/dashboard`,
       segment: null,
     },
-    {
-      name: "Documentos",
-      icon: InventoryIcon,
-      path: `/dashboard/documents`,
-      segment: "documents",
-    },
+    ...(
+      allowDocuments
+        ? [
+            {
+              name: "Documentos",
+              icon: InventoryIcon,
+              path: `/dashboard/documents`,
+              segment: "documents",
+            },
+          ]
+        : []
+    ),
   ];
 
   // const ADM_MULTIOWNERSHIP_DASHBOARD_ROUTES: RouteProps[] = [
@@ -156,27 +168,34 @@ export default function useNavigation() {
   const DASHBOARD_ROUTES: RouteProps[] = [
     ...FIXED_DASHBOARD_ROUTES,
 
-    ...(isAdm ||
-    gestorFinanceiro === 1 ||
-    (!isAdm && gestorFinanceiro !== 1 && gestorReservasAgendamentos !== 1)
-      ? [
-          {
-            name: "Finanças",
-            icon: AttachMoneyIcon,
-            path: `/dashboard/finance`,
-            segment: "finance",
-          },
-        ]
-      : []),
+    ...(
+      (isAdm ||
+        gestorFinanceiro === 1 ||
+        (!isAdm && gestorFinanceiro !== 1 && gestorReservasAgendamentos !== 1)) &&
+      allowFinance
+        ? [
+            {
+              name: "Finanças",
+              icon: AttachMoneyIcon,
+              path: `/dashboard/finance`,
+              segment: "finance",
+            },
+          ]
+        : []
+    ),
 
-    ... [
-          {
-            name: "Galeria de imagens",
-            icon: PhotoLibraryOutlinedIcon,
-            path: `/dashboard/images`,
-            segment: "images",
-          },
-        ],
+    ...(
+      allowImages
+        ? [
+            {
+              name: "Galeria de imagens",
+              icon: PhotoLibraryOutlinedIcon,
+              path: `/dashboard/images`,
+              segment: "images",
+            },
+          ]
+        : []
+    ),
 
     ...((!isAdm && gestorReservasAgendamentos !== 1 && gestorFinanceiro !== 1) && 
         (integratedWithTimeSharing === undefined || integratedWithTimeSharing === false)
@@ -195,12 +214,18 @@ export default function useNavigation() {
     //   : []),
     ...(isAdm ? ADM_DASHBOARD_ROUTES : USER_DASHBOARD_ROUTES),
 
-    {
-      name: "Perguntas e Respostas",
-      icon: ImportContactsIcon,
-      path: `/dashboard/faqs`,
-      segment: "faqs",
-    },
+    ...(
+      allowFaqs
+        ? [
+            {
+              name: "Perguntas e Respostas",
+              icon: ImportContactsIcon,
+              path: `/dashboard/faqs`,
+              segment: "faqs",
+            },
+          ]
+        : []
+    ),
   ];
 
   const translateNameSegment = (name: string | null): string => {

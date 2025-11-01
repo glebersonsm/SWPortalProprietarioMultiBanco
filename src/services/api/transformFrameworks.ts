@@ -47,6 +47,31 @@ export function transformedFrameworks(framework: IncomingFramework): Framework {
     condominiumAdministratorDocument: framework?.cnpjAdministradoraCondominio,
     condominiumAdministratorAddress:
       framework?.enderecoAdministradoraCondominio,
+    // Sidebar visibility toggles (non-admin)
+    sidebarShowDocuments:
+      framework?.sidebarShowDocuments === 1
+        ? true
+        : framework?.sidebarShowDocuments === 0
+        ? false
+        : undefined,
+    sidebarShowFinance:
+      framework?.sidebarShowFinance === 1
+        ? true
+        : framework?.sidebarShowFinance === 0
+        ? false
+        : undefined,
+    sidebarShowImages:
+      framework?.sidebarShowImages === 1
+        ? true
+        : framework?.sidebarShowImages === 0
+        ? false
+        : undefined,
+    sidebarShowFaqs:
+      framework?.sidebarShowFaqs === 1
+        ? true
+        : framework?.sidebarShowFaqs === 0
+        ? false
+        : undefined,
   };
 }
 
@@ -102,5 +127,10 @@ export function untransformedFrameworks(
     cnpjAdministradoraCondominio: framework?.condominiumAdministratorDocument,
     enderecoAdministradoraCondominio:
       framework?.condominiumAdministratorAddress,
+    // Sidebar visibility toggles (non-admin)
+    sidebarShowDocuments: framework?.sidebarShowDocuments ? 1 : 0,
+    sidebarShowFinance: framework?.sidebarShowFinance ? 1 : 0,
+    sidebarShowImages: framework?.sidebarShowImages ? 1 : 0,
+    sidebarShowFaqs: framework?.sidebarShowFaqs ? 1 : 0,
   };
 }

@@ -85,6 +85,23 @@ export const editFrameworkParams = async (
     "permitirUsuarioAlterarSeuEmail",
     settingsParams.permitirUsuarioAlterarSeuEmail
   );
+  // Sidebar: visibility toggles for non-admin users (always append 0/1)
+  form.append(
+    "sidebarShowDocuments",
+    String(settingsParams.sidebarShowDocuments ?? 0)
+  );
+  form.append(
+    "sidebarShowFinance",
+    String(settingsParams.sidebarShowFinance ?? 0)
+  );
+  form.append(
+    "sidebarShowImages",
+    String(settingsParams.sidebarShowImages ?? 0)
+  );
+  form.append(
+    "sidebarShowFaqs",
+    String(settingsParams.sidebarShowFaqs ?? 0)
+  );
   appendIfValid(
     form,
     "exibirFinanceirosDasEmpresaIds",
@@ -104,6 +121,11 @@ export const editFrameworkParams = async (
       form.append(`imagem${i}`, imageValue);
     }
   }
+
+  // Debug: verify payload keys and values during development
+  // for (const [key, val] of form.entries()) {
+  //   console.log(`FormData -> ${key}:`, val);
+  // }
 
   const response = await axios.post("/Framework/saveParameters", form, {
     headers: {

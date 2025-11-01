@@ -61,6 +61,11 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
         settingsParams?.condominiumAdministratorDocument,
       condominiumAdministratorAddress:
         settingsParams?.condominiumAdministratorAddress,
+      // Sidebar visibility defaults
+      sidebarShowDocuments: settingsParams?.sidebarShowDocuments ?? false,
+      sidebarShowFinance: settingsParams?.sidebarShowFinance ?? false,
+      sidebarShowImages: settingsParams?.sidebarShowImages ?? false,
+      sidebarShowFaqs: settingsParams?.sidebarShowFaqs ?? false,
       certificationByClient: settingsParams?.groupCertificateByClient
         ? "groupCertificateByClient"
         : "issueCertificatePerClient",
@@ -226,6 +231,22 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
       </Grid>
       <Grid xs={12} md={6}>
         <CheckboxField label="Permitir usuário alterar seu email" field="allowUserChangeYourEmail" />
+      </Grid>
+      {/* Sidebar visibility (non-admin users) */}
+      <Grid xs={12}>
+        <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c", mt: 1 }}>Menus disponíveis para usuários não Administradores da Sidebar</Typography>
+      </Grid>
+      <Grid xs={12} md={6}>
+        <CheckboxField label="Mostrar menu Documentos" field="sidebarShowDocuments" />
+      </Grid>
+      <Grid xs={12} md={6}>
+        <CheckboxField label="Mostrar menu Finanças" field="sidebarShowFinance" />
+      </Grid>
+      <Grid xs={12} md={6}>
+        <CheckboxField label="Mostrar menu Galeria de imagens" field="sidebarShowImages" />
+      </Grid>
+      <Grid xs={12} md={6}>
+        <CheckboxField label="Mostrar menu Perguntas e Respostas" field="sidebarShowFaqs" />
       </Grid>
     </Grid>
   );

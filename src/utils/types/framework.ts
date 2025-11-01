@@ -43,6 +43,11 @@ export type IncomingFramework = {
   nomeAdministradoraCondominio?: string;
   cnpjAdministradoraCondominio?: string;
   enderecoAdministradoraCondominio?: string;
+  // Sidebar visibility toggles (non-admin)
+  sidebarShowDocuments?: number;
+  sidebarShowFinance?: number;
+  sidebarShowImages?: number;
+  sidebarShowFaqs?: number; 
 };
 
 export type Framework = {
@@ -90,6 +95,11 @@ export type Framework = {
   condominiumAdministratorName?: string;
   condominiumAdministratorDocument?: string;
   condominiumAdministratorAddress?: string;
+  // Sidebar visibility toggles (non-admin)
+  sidebarShowDocuments?: boolean;
+  sidebarShowFinance?: boolean;
+  sidebarShowImages?: boolean;
+  sidebarShowFaqs?: boolean;
 };
 
 export type FrameworkSent = Partial<Framework> & {
