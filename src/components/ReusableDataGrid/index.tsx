@@ -675,6 +675,10 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
       '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
         color: '#e53935',
       },
+      // Aplica cor de fonte azul em todas as colunas para linhas pagas
+      '& .MuiDataGrid-row.paid-row .MuiDataGrid-cell': {
+        color: '#2ca2cc',
+      },
       '& .MuiDataGrid-footerContainer': {
         background: 'var(--card-bg-surface, linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%))',
         borderTop: '1px solid var(--card-border-color, rgba(224, 224, 224, 0.3))',
@@ -813,6 +817,10 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         // Garantir cor de fonte vermelha para todas as células das linhas marcadas como vencidas
         '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
           color: '#e53935',
+        },
+        // Garantir cor de fonte azul para todas as células das linhas marcadas como pagas
+        '& .MuiDataGrid-row.paid-row .MuiDataGrid-cell': {
+          color: '#2ca2cc',
         },
         '&::before': {
           content: '""',

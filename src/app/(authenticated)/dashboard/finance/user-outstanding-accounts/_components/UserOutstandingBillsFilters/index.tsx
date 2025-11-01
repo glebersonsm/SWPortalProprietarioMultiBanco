@@ -3,12 +3,11 @@
 import * as React from "react";
 import {
   Button,
+  ButtonGroup,
   FormControl,
   FormLabel,
   Grid,
   Input,
-  Option,
-  Select,
 } from "@mui/joy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { initialFilters } from "../../constants";
@@ -23,21 +22,14 @@ export default function UserOutstandingBillsFilters({
   filters,
   setFilters,
 }: UserOutstandingBillsFiltersProps) {
-  function handlePaymentStatusChangeSent(
-    event:
-      | React.MouseEvent<Element, MouseEvent>
-      | React.KeyboardEvent<Element>
-      | React.FocusEvent<Element, Element>
-      | null,
-    value: string | null
-  ): void {
+  const setStatus = (value: string) => {
     setFilters({ ...filters, status: value });
-  }
+  };
 
   return (
     <>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-        <Grid xs={12} sm={3}>
+        <Grid xs={12} sm={2}>
           <FormControl>
             <FormLabel
               color={undefined}
@@ -65,7 +57,7 @@ export default function UserOutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3}>
+        <Grid xs={12} sm={2}>
           <FormControl>
             <FormLabel
               color={undefined}
@@ -93,7 +85,7 @@ export default function UserOutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3}>
+        <Grid xs={12} sm={6}>
           <FormControl>
             <FormLabel
               color={undefined}
@@ -103,26 +95,46 @@ export default function UserOutstandingBillsFilters({
                 fontWeight: 500,
               }}
             >
-              Status
+              Status da conta
             </FormLabel>
-            <Select
-              value={filters.status}
-              onChange={handlePaymentStatusChangeSent}
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "text.primary",
-              }}
-            >
-              <Option value="T">Todos</Option>
-              <Option value="P">Em aberto</Option>
-              <Option value="V">Vencidas</Option>
-              <Option value="B">Pagas</Option>
-            </Select>
+            <ButtonGroup sx={{ display: "flex", flexWrap: "nowrap", gap: 1, width: "100%", overflowX: { xs: "auto", sm: "visible" } }}>
+              <Button
+                variant={filters.status === "T" ? "solid" : "outlined"}
+                color={filters.status === "T" ? "primary" : "neutral"}
+                onClick={() => setStatus("T")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Todas as contas
+              </Button>
+              <Button
+                variant={filters.status === "P" ? "solid" : "outlined"}
+                color={filters.status === "P" ? "primary" : "neutral"}
+                onClick={() => setStatus("P")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Em aberto
+              </Button>
+              <Button
+                variant={filters.status === "V" ? "solid" : "outlined"}
+                color={filters.status === "V" ? "primary" : "neutral"}
+                onClick={() => setStatus("V")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Vencidas
+              </Button>
+              <Button
+                variant={filters.status === "B" ? "solid" : "outlined"}
+                color={filters.status === "B" ? "primary" : "neutral"}
+                onClick={() => setStatus("B")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Pagas
+              </Button>
+            </ButtonGroup>
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3} sx={{ marginTop: "auto" }}>
+        <Grid xs={12} sm={2} sx={{ marginTop: "auto" }}>
           <Button
             sx={{
               width: "100%",

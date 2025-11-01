@@ -19,7 +19,7 @@ export default function SearchAndClearFilters({
   return (
     <>
       {showUpdateButton && (
-        <Grid xs={12} md={2} sx={{ marginTop: "auto" }}>
+        <Grid xs={12} sm={gridSize} md={gridSize} sx={{ marginTop: "auto" }}>
           <Button
             sx={{
               width: "100%",
@@ -42,7 +42,7 @@ export default function SearchAndClearFilters({
         </Grid>
       )}
 
-      <Grid xs={12} md={2} sx={{ marginTop: "auto" }}>
+      <Grid xs={12} sm={gridSize} md={gridSize} sx={{ marginTop: "auto" }}>
         <Button
           sx={{
             width: "100%",

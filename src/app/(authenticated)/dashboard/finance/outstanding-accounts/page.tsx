@@ -208,9 +208,13 @@ export default function OutstandingAccountsPage() {
               additionalProps={{
                 getRowClassName: (params: GridRowClassNameParams<OutstandingBill>) => {
                   const status = params.row?.status?.toLowerCase();
-                  return status?.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)
-                    ? "overdue-row"
-                    : "";
+                  if (status?.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)) {
+                    return "overdue-row";
+                  }
+                  if (status?.includes("paga")) {
+                    return "paid-row";
+                  }
+                  return "";
                 },
               }}
               pagination={{

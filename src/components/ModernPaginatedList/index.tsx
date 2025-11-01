@@ -31,6 +31,7 @@ export default function ModernPaginatedList<T>({
   }
 }: ModernPaginatedListProps<T>) {
   const [pageInput, setPageInput] = React.useState(page.toString());
+  const initializedRef = React.useRef(false);
 
   React.useEffect(() => {
     setPageInput(page.toString());
@@ -47,6 +48,39 @@ export default function ModernPaginatedList<T>({
       localStorage.setItem(storageKeys.rowsPerPageKey, rowsPerPage.toString());
     }
   }, [rowsPerPage, useLocalStorage, storageKeys.rowsPerPageKey]);
+
+  // Inicializa page e rowsPerPage com valores persistidos (quando habilitado)
+  React.useEffect(() => {
+    if (!useLocalStorage || initializedRef.current) return;
+    try {
+      const storedRowsPerPage = Number(localStorage.getItem(storageKeys.rowsPerPageKey));
+      const storedPage = Number(localStorage.getItem(storageKeys.pageKey));
+
+      if (Number.isFinite(storedRowsPerPage) && storedRowsPerPage > 0) {
+        setRowsPerPage(storedRowsPerPage);
+      }
+
+      const last = lastPageNumber || 1;
+      if (Number.isFinite(storedPage) && storedPage >= 1) {
+        const clampedPage = Math.min(storedPage, last);
+        handleChangePage({} as any, clampedPage);
+      }
+
+      initializedRef.current = true;
+    } catch {
+      // ignora erros de acesso ao localStorage
+      initializedRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useLocalStorage, storageKeys.pageKey, storageKeys.rowsPerPageKey, lastPageNumber]);
+
+  // Garante consistência quando o total de páginas diminui (ex.: filtros alterados)
+  React.useEffect(() => {
+    const last = lastPageNumber || 1;
+    if (page > last) {
+      handleChangePage({} as any, last);
+    }
+  }, [lastPageNumber, page, handleChangePage]);
 
   const handleChangeRowsPerPage = (event: any) => {
     const newValue = Number(event.target.value);

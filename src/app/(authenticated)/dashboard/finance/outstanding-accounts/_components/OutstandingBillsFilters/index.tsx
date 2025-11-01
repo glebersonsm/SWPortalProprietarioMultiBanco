@@ -1,6 +1,6 @@
 "use client";
 
-import { FormControl, FormLabel, Grid, Input, Option, Select } from "@mui/joy";
+import { FormControl, FormLabel, Grid, Input, Option, Select, Button, ButtonGroup } from "@mui/joy";
 import { FiltersOutstandingBills } from "@/utils/types/finance";
 import { initialFilters } from "@/app/(authenticated)/dashboard/finance/outstanding-accounts/constants";
 import SearchAndClearFilters from "@/components/SearchAndClearFilters";
@@ -54,12 +54,9 @@ export default function OutstandingBillsFilters({
     handleSearch();
   };
 
-  function handlePaymentStatusChangeSent(
-    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element> | React.FocusEvent<Element, Element> | null,
-    value: string | null
-  ): void {
+  const setStatus = (value: string) => {
     setFilters({ ...filters, status: value });
-  }
+  };
 
   return (
     <>
@@ -233,40 +230,52 @@ export default function OutstandingBillsFilters({
         </Grid>
 
         <Grid xs={12} sm={3}>
-                  <FormControl>
-                    <FormLabel sx={{
-                      color: "primary.solidHoverBg",
-                      fontFamily: "Montserrat, sans-serif",
-                      fontWeight: 500,
-                    }}>Status</FormLabel>
-                    <Select value={filters.status} 
-                      onChange={handlePaymentStatusChangeSent}
-                      sx={{
-                          fontFamily: "Montserrat, sans-serif",
-                          fontWeight: 500,
-                          color: "text.primary",
-                          "&::placeholder": {
-                            color: "text.secondary",
-                            opacity: 0.6,
-                          },
-                          "&:hover": {
-                            borderColor: "primary.500",
-                          },
-                          "&.Mui-focused": {
-                            borderColor: "primary.500",
-                            boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
-                          },
-                          "&.Mui-error": {
-                            borderColor: "danger.500",
-                          },
-                        }}>
-                      <Option value="T">Todos</Option>
-                      <Option value="P">Em aberto</Option>
-                      <Option value="V">Vencidas</Option>
-                      <Option value="B">Pagas</Option>
-                    </Select>
-                  </FormControl>
-          </Grid>
+          <FormControl>
+            <FormLabel
+              sx={{
+                color: "primary.solidHoverBg",
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: 500,
+              }}
+            >
+              Status da conta
+            </FormLabel>
+            <ButtonGroup sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Button
+                variant={filters.status === "T" ? "solid" : "outlined"}
+                color={filters.status === "T" ? "primary" : "neutral"}
+                onClick={() => setStatus("T")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Todas as contas
+              </Button>
+              <Button
+                variant={filters.status === "P" ? "solid" : "outlined"}
+                color={filters.status === "P" ? "primary" : "neutral"}
+                onClick={() => setStatus("P")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Em aberto
+              </Button>
+              <Button
+                variant={filters.status === "V" ? "solid" : "outlined"}
+                color={filters.status === "V" ? "primary" : "neutral"}
+                onClick={() => setStatus("V")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Vencidas
+              </Button>
+              <Button
+                variant={filters.status === "B" ? "solid" : "outlined"}
+                color={filters.status === "B" ? "primary" : "neutral"}
+                onClick={() => setStatus("B")}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+              >
+                Pagas
+              </Button>
+            </ButtonGroup>
+          </FormControl>
+        </Grid>
 
         <SearchAndClearFilters
           handleSearch={handleSearchWithSave}
