@@ -2,13 +2,16 @@ module.exports = {
   apps: [
     {
       name: 'PortalClienteGr',
-      // **AQUI: COLOQUE O CAMINHO COMPLETO DO node.exe QUE VOCÊ COPIOU**
-      // Exemplo (adapte para o seu caminho real):
-      script: 'C:\\SWSolucoes\\SWPortalProprietarioMultiBanco\\node_modules\\next\\dist\\bin\\next', 
-      // Argumentos para o node.exe: o primeiro argumento é o arquivo a ser executado
-      args: ['start.js'], 
+      script: 'npm',
+      args: ['run', 'start'],
+      
+      // *** MUDANÇA CRÍTICA AQUI ***
+      // Defina o CWD para a pasta raiz do projeto (onde está o package.json)
+      // Ajuste o caminho se o 'ecosystem.config.js' não estiver nesta pasta.
+      // Se o 'ecosystem.config.js' estiver na raiz, use o caminho absoluto ou '.'
+      // Se o projeto for a pasta 'SWPortalProprietarioMultiBanco', use o caminho completo:
+      cwd: '.', 
 
-      cwd: './', 
       instances: 1, 
       exec_mode: 'fork', 
       autorestart: true, 
@@ -16,7 +19,7 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000, 
+        PORT: 3000, // Ajuste para a porta correta
       },
     },
   ],
