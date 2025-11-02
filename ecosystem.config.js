@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'MeuNextSite',
+      name: 'PortalClienteGrGroup',
       // Para Windows, o ideal é rodar o script diretamente.
       // O comando "npm run start" no Windows é um script .cmd.
       // Por isso, rodamos o comando next start diretamente.
