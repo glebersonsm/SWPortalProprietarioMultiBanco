@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton } from "@mui/joy";
+﻿import { Button, Grid, IconButton } from "@mui/joy";
 import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,7 +24,7 @@ export default function SearchAndClearFilters({
             sx={{
               width: "100%",
               height: "100%",
-              minWidth: "150px",
+              minWidth: "90px",
               bgcolor: "var(--color-button-primary)",
               fontFamily: "Montserrat, sans-serif",
               color: "var(--color-button-text)",
@@ -47,7 +47,7 @@ export default function SearchAndClearFilters({
           sx={{
             width: "100%",
             height: "100%",
-            minWidth: "150px",
+            minWidth: "90px",
             bgcolor: "var(--color-button-primary)",
             fontFamily: "Montserrat, sans-serif",
             color: "var(--color-button-text)",
@@ -66,3 +66,4 @@ export default function SearchAndClearFilters({
     </>
   );
 }
+

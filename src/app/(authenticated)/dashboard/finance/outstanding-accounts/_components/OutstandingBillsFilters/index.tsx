@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormControl, FormLabel, Grid, Input, Option, Select, Button, ButtonGroup } from "@mui/joy";
 import { FiltersOutstandingBills } from "@/utils/types/finance";
@@ -73,6 +73,7 @@ export default function OutstandingBillsFilters({
               Empresa
             </FormLabel>
             <Select
+              size="sm"
               value={filters.companyId}
               onChange={(event, value) =>
                 setFilters({ ...filters, companyId: value ?? -1 })
@@ -107,7 +108,7 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3}>
+        <Grid xs={12} sm={3} md={3} lg={3} xl={6}>
           <FormControl>
             <FormLabel
               sx={{
@@ -119,6 +120,7 @@ export default function OutstandingBillsFilters({
               Nome do cliente
             </FormLabel>
             <Input
+              size="sm"
               placeholder="Filtrar nome do cliente"
               value={filters.personName}
               sx={{
@@ -159,6 +161,7 @@ export default function OutstandingBillsFilters({
               Vencimento Inicial
             </FormLabel>
             <Input
+              size="sm"
               placeholder="Filtrar por data inicial de vencimento"
               value={filters.initialDueDate}
               type="date"
@@ -200,6 +203,7 @@ export default function OutstandingBillsFilters({
               Vencimento Final
             </FormLabel>
             <Input
+              size="sm"
               placeholder="Filtrar por data final de vencimento"
               value={filters.finalDueDate}
               type="date"
@@ -229,7 +233,7 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3}>
+        <Grid xs={12} sm={3} md={3} lg={6} xl={6}>
           <FormControl>
             <FormLabel
               sx={{
@@ -240,36 +244,40 @@ export default function OutstandingBillsFilters({
             >
               Status da conta
             </FormLabel>
-            <ButtonGroup sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <ButtonGroup sx={{ display: "flex", flexWrap: { xs: "wrap", lg: "nowrap" }, gap: 0.5 }}>
               <Button
+                size="sm"
                 variant={filters.status === "T" ? "solid" : "outlined"}
                 color={filters.status === "T" ? "primary" : "neutral"}
                 onClick={() => setStatus("T")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
               >
                 Todas as contas
               </Button>
               <Button
+                size="sm"
                 variant={filters.status === "P" ? "solid" : "outlined"}
                 color={filters.status === "P" ? "primary" : "neutral"}
                 onClick={() => setStatus("P")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
               >
                 Em aberto
               </Button>
               <Button
+                size="sm"
                 variant={filters.status === "V" ? "solid" : "outlined"}
                 color={filters.status === "V" ? "primary" : "neutral"}
                 onClick={() => setStatus("V")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
               >
                 Vencidas
               </Button>
               <Button
+                size="sm"
                 variant={filters.status === "B" ? "solid" : "outlined"}
                 color={filters.status === "B" ? "primary" : "neutral"}
                 onClick={() => setStatus("B")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
               >
                 Pagas
               </Button>
@@ -283,9 +291,14 @@ export default function OutstandingBillsFilters({
             setFilters(initialFilters);
             if (thereIsLocalStorage) localStorage.removeItem(FILTERS_STORAGE_KEY);
           }}
-          gridSize={3}
+          gridSize={2}
         />
       </Grid>
     </>
   );
 }
+
+
+
+
+
