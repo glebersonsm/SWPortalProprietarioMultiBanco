@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Stack, Box, Pagination, Select, MenuItem, FormControl, InputLabel, TextField, IconButton, Typography } from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight, FirstPage, LastPage } from "@mui/icons-material";
 
@@ -10,7 +10,7 @@ interface StorageKeys {
 interface ModernPaginatedListProps<T> {
   items: readonly T[];
   lastPageNumber?: number;
-  handleChangePage: (event: React.ChangeEvent<unknown>, value: number) => void;
+  handleChangePage: ((event: React.ChangeEvent<unknown>, value: number) => void) | ((value: number) => void);
   page: number;
   rowsPerPage: number;
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
@@ -19,6 +19,7 @@ interface ModernPaginatedListProps<T> {
 }
 
 export default function ModernPaginatedList<T>({
+  items,
   lastPageNumber,
   handleChangePage,
   page,
@@ -32,6 +33,26 @@ export default function ModernPaginatedList<T>({
 }: ModernPaginatedListProps<T>) {
   const [pageInput, setPageInput] = React.useState(page.toString());
   const initializedRef = React.useRef(false);
+  const callHandleChangePage = (value: number, event?: any) => {
+    const fn: any = handleChangePage as any;
+    try {
+      if (typeof fn === 'function' && fn.length >= 2) {
+        fn(event ?? ({} as any), value);
+      } else {
+        fn(value);
+      }
+    } catch {
+      try { fn(value); } catch {}
+    }
+  };
+
+  const effectiveLastPage = React.useMemo(() => {
+    const last = Math.max(1, lastPageNumber || 1);
+    if (page === 1 && Array.isArray(items) && items.length < rowsPerPage) {
+      return 1;
+    }
+    return last;
+  }, [lastPageNumber, page, rowsPerPage, items]);
 
   React.useEffect(() => {
     setPageInput(page.toString());
@@ -60,10 +81,9 @@ export default function ModernPaginatedList<T>({
         setRowsPerPage(storedRowsPerPage);
       }
 
-      const last = lastPageNumber || 1;
       if (Number.isFinite(storedPage) && storedPage >= 1) {
-        const clampedPage = Math.min(storedPage, last);
-        handleChangePage({} as any, clampedPage);
+        const clampedPage = Math.min(storedPage, effectiveLastPage);
+        callHandleChangePage(clampedPage);
       }
 
       initializedRef.current = true;
@@ -72,31 +92,35 @@ export default function ModernPaginatedList<T>({
       initializedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [useLocalStorage, storageKeys.pageKey, storageKeys.rowsPerPageKey, lastPageNumber]);
+  }, [useLocalStorage, storageKeys.pageKey, storageKeys.rowsPerPageKey, lastPageNumber, effectiveLastPage]);
 
   // Garante consistência quando o total de páginas diminui (ex.: filtros alterados)
   React.useEffect(() => {
-    const last = lastPageNumber || 1;
-    if (page > last) {
-      handleChangePage({} as any, last);
+    if (page > effectiveLastPage) {
+      callHandleChangePage(effectiveLastPage);
     }
-  }, [lastPageNumber, page, handleChangePage]);
+  }, [effectiveLastPage, page, handleChangePage]);
 
   const handleChangeRowsPerPage = (event: any) => {
     const newValue = Number(event.target.value);
     setRowsPerPage(newValue);
-    handleChangePage(event, 1);
+    callHandleChangePage(1, event);
   };
 
   const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPageInput(event.target.value);
   };
 
-  const handlePageInputSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const clampPage = (value: number) => {
+    if (!Number.isFinite(value)) return page;
+    return Math.min(Math.max(1, value), effectiveLastPage);
+  };
+
+  const handlePageInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      const newPage = parseInt(pageInput);
-      if (newPage >= 1 && newPage <= (lastPageNumber || 1)) {
-        handleChangePage(event as any, newPage);
+      const newPage = clampPage(parseInt(pageInput, 10));
+      if (newPage !== page) {
+        callHandleChangePage(newPage, event);
       } else {
         setPageInput(page.toString());
       }
@@ -104,31 +128,31 @@ export default function ModernPaginatedList<T>({
   };
 
   const handlePageInputBlur = () => {
-    const newPage = parseInt(pageInput);
-    if (newPage >= 1 && newPage <= (lastPageNumber || 1)) {
-      handleChangePage({} as any, newPage);
+    const newPage = clampPage(parseInt(pageInput, 10));
+    if (newPage !== page) {
+      callHandleChangePage(newPage);
     } else {
       setPageInput(page.toString());
     }
   };
 
   const handleFirstPage = () => {
-    handleChangePage({} as any, 1);
+    callHandleChangePage(1);
   };
 
   const handleLastPage = () => {
-    handleChangePage({} as any, lastPageNumber || 1);
+    callHandleChangePage(effectiveLastPage);
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
-      handleChangePage({} as any, page - 1);
+      callHandleChangePage(page - 1);
     }
   };
 
   const handleNextPage = () => {
-    if (page < (lastPageNumber || 1)) {
-      handleChangePage({} as any, page + 1);
+    if (page < effectiveLastPage) {
+      callHandleChangePage(page + 1);
     }
   };
   
@@ -159,20 +183,26 @@ export default function ModernPaginatedList<T>({
               size="small"
               value={pageInput}
               onChange={handlePageInputChange}
-              onKeyPress={handlePageInputSubmit}
+              onKeyDown={handlePageInputKeyDown}
               onBlur={handlePageInputBlur}
               inputProps={{
                 style: { textAlign: 'center', width: '60px' },
                 min: 1,
-                max: lastPageNumber || 1
+                max: effectiveLastPage,
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
               }}
               type="number"
+              onWheel={(e) => {
+                // Evita alteração do número ao rolar o mouse
+                (e.target as HTMLInputElement).blur();
+              }}
             />
-            <Typography variant="body2">de {lastPageNumber || 1}</Typography>
+            <Typography variant="body2">de {effectiveLastPage}</Typography>
 
           <IconButton 
             onClick={handleNextPage} 
-            disabled={page === (lastPageNumber || 1)}
+            disabled={page === effectiveLastPage}
             size="small"
             title="Próxima página"
           >
@@ -181,7 +211,7 @@ export default function ModernPaginatedList<T>({
           
           <IconButton 
             onClick={handleLastPage} 
-            disabled={page === (lastPageNumber || 1)}
+            disabled={page === effectiveLastPage}
             size="small"
             title="Última página"
           >
@@ -218,3 +248,11 @@ export default function ModernPaginatedList<T>({
     </Stack>
   );
 }
+
+
+
+
+
+
+
+
