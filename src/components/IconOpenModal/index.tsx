@@ -1,5 +1,6 @@
 import React from "react";
 import { IconButton, Tooltip, Button } from "@mui/joy";
+import Box from "@mui/joy/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -91,16 +92,30 @@ export default function IconOpenModal({
 
   return (
     <Tooltip title={tooltip}>
-      <IconButton
+      <Box
+        role="button"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") handleClick(e as any);
+        }}
         sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 0.5,
+          borderRadius: 999,
+          cursor: "pointer",
+          outline: "none",
           ...sxoverride,
           transition: "0.6s",
+          "&:hover": { opacity: 0.9 },
+          "&:focus-visible": { boxShadow: (theme) => `0 0 0 2px ${theme.vars.palette.primary[300]}` },
         }}
-        size="sm"
-        onClick={handleClick}
+        aria-label={typeof tooltip === "string" ? tooltip : undefined}
       >
         {getIcon()}
-      </IconButton>
+      </Box>
     </Tooltip>
   );
 }

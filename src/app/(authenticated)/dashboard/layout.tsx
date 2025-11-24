@@ -2,7 +2,8 @@
 
 import React, { useEffect } from "react";
 import Sidebar from "./_components/Sidebar";
-import { Box, Breadcrumbs, Typography } from "@mui/joy";
+import { Breadcrumbs, Typography } from "@mui/joy";
+import Box from "@mui/joy/Box";
 import Header from "./_components/Header";
 import Link from "@/components/Link";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";

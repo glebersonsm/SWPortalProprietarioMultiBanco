@@ -10,8 +10,7 @@ type ValidatePageProps = {
 
 export default async function ValidatePage({ params }: ValidatePageProps) {
   const data = await validateCertificate(params.protocol);
-
-  const cookie = cookies();
+  const cookie = await cookies();
   const hasAuthCookie = cookie.has("authToken");
 
   return (

@@ -1,9 +1,8 @@
 import { Button, IconButton } from "@mui/joy";
 import React from "react";
-import Modal from "@mui/joy/Modal";
-import ModalDialog from "@mui/joy/ModalDialog";
-import DialogTitle from "@mui/joy/DialogTitle";
-import DialogContent from "@mui/joy/DialogContent";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/joy/Stack";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 import AlertError, {
@@ -41,17 +40,16 @@ export default function FormModal<T extends FieldValues>({
 
   return (
     <>
-      <Modal
+      <Dialog
         open={open}
         onClose={(event, reason) => {
           if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
             closeModal(false);
           }
         }}
-        sx={{ backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" }}
-      >
-        <ModalDialog
-          sx={{
+        BackdropProps={{ sx: { backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" } }}
+        PaperProps={{
+          sx: {
             maxWidth: { xs: '95vw', sm: '600px', md: '700px' },
             width: '100%',
             borderRadius: 16,
@@ -59,9 +57,11 @@ export default function FormModal<T extends FieldValues>({
             background: 'var(--modal-bg-gradient)',
             border: '1px solid var(--modal-border-color)',
             boxShadow: '0 12px 28px var(--modal-shadow-color)',
-            color: 'var(--modal-text-color)',
-          }}
-        >
+            color: 'var(--modal-text-color)'
+          }
+        }}
+      >
+        <Stack>
           {/* Cabeçalho do Modal */}
           <DialogTitle
             sx={{
@@ -190,8 +190,8 @@ export default function FormModal<T extends FieldValues>({
               </Stack>
             </form>
           </FormProvider>
-        </ModalDialog>
-      </Modal>
+        </Stack>
+      </Dialog>
     </>
   );
 }

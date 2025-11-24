@@ -1,6 +1,5 @@
-import { ToastContainer } from "react-toastify";
-import ThemeRegistry from "./ThemeRegistry";
-import "react-toastify/dist/ReactToastify.css";
+"use client";
+import ClientRoot from "./ClientRoot";
 import { Montserrat } from 'next/font/google';
 
 const montserrat = Montserrat({
@@ -19,8 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <ThemeRegistry options={{ key: "joy" }}>{children}</ThemeRegistry>
-        <ToastContainer />
+        <ClientRoot>{children}</ClientRoot>
       </body>
     </html>
   );

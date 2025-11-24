@@ -231,6 +231,12 @@ export default function useNavigation() {
 
   const translateNameSegment = (name: string | null): string => {
     return match(name)
+      .with("documents", () => "Documentos")
+      .with("images", () => "Galeria de imagens")
+      .with("finance", () => "Finanças")
+      .with("faqs", () => "Perguntas e Respostas")
+      .with("users", () => "Usuários")
+      .with("emails", () => "E-mails")
       .with("add", () => "Adicionar")
       .with("edit", () => "Editar")
       .with("outstanding-accounts", () => "Contas à receber")

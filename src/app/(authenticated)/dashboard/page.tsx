@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 
 import "./styles.css";
-import { Box } from "@mui/joy";
+import Box from "@mui/joy/Box";
 
 export default function DashboardPage() {
   const { settingsParams } = useUser();

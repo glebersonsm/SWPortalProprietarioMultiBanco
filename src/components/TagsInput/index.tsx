@@ -1,10 +1,10 @@
-import {
-  Autocomplete,
-  Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-} from "@mui/joy";
+import Autocomplete from "@mui/joy/Autocomplete";
+import Button from "@mui/joy/Button";
+import Chip from "@mui/joy/Chip";
+import ChipDelete from "@mui/joy/ChipDelete";
+import FormControl from "@mui/joy/FormControl";
+import FormHelperText from "@mui/joy/FormHelperText";
+import FormLabel from "@mui/joy/FormLabel";
 import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { Controller, useFormContext } from "react-hook-form";
@@ -66,6 +66,17 @@ export default function TagsInput({
             options={tags}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const tagProps = getTagProps({ index });
+                const { key, onDelete, ...rest } = tagProps as any;
+                return (
+                  <Chip key={key} {...rest} variant="soft" color="primary" endDecorator={<ChipDelete onClick={onDelete} />}>
+                    {option.name}
+                  </Chip>
+                );
+              })
+            }
             noOptionsText={
               <Button
                 startDecorator={<AddIcon />}
