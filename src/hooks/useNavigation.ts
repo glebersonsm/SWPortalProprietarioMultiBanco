@@ -129,7 +129,7 @@ export default function useNavigation() {
 
   const USER_DASHBOARD_ROUTES: RouteProps[] = [
     {
-      name: "Meus dados de usuário",
+      name: "Usuários",
       icon: PersonIcon,
       path: `/dashboard/users/${userData?.id}/edit`,
       segment: "users",
