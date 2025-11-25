@@ -350,10 +350,6 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
 
                 <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c" }}>Configurações do usuário</Typography>
                 <UsuarioSection />
-                <Divider />
-
-                <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c" }}>Imagens Home</Typography>
-                <ImagensSection />
               </Stack>
             ) : (
               <Tabs defaultValue="empreendimento">
@@ -376,7 +372,6 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
                   <Tab value="financeiro">Financeiro</Tab>
                   <Tab value="pagamentos">Pagamentos e boleto</Tab>
                   <Tab value="usuario">Configurações do usuário</Tab>
-                  <Tab value="imagens">Imagens Home</Tab>
                 </TabList>
 
                 <TabPanel value="empreendimento">
@@ -393,10 +388,6 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
 
                 <TabPanel value="usuario">
                   <UsuarioSection />
-                </TabPanel>
-
-                <TabPanel value="imagens">
-                  <ImagensSection />
                 </TabPanel>
               </Tabs>
             )}

@@ -311,17 +311,7 @@ export default function ImagemForm({
             },
           }}
         >
-          <Typography
-            level="h4"
-            sx={{
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: 700,
-              color: "white",
-              textAlign: "center",
-            }}
-          >
-            {imagem ? "Editar Imagem" : "Nova Imagem"}
-          </Typography>
+          {imagem ? "Editar Imagem" : "Nova Imagem"}
         </DialogTitle>
 
         <DialogContent

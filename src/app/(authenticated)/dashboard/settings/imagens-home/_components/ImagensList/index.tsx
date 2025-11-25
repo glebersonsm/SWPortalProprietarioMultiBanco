@@ -107,18 +107,13 @@ export default function ImagensList({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: 600,
             }}
           >
-            <Typography
-              level="h4"
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 600,
-                color: "white",
-              }}
-            >
+            <span>
               Imagens do Grupo: {grupo.name}
-            </Typography>
+            </span>
             <Tooltip title="Adicionar nova imagem ao grupo" placement="top">
               <Button
                 onClick={handleAddImagem}

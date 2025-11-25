@@ -318,18 +318,13 @@ export default function RegraPaxFreeForm({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: 600,
           }}
         >
-          <Typography
-            level="h4"
-            sx={{
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: 600,
-              color: "white",
-            }}
-          >
+          <span>
             {regra ? "Editar Regra Tarifária" : "Nova Regra Tarifária"}
-          </Typography>
+          </span>
           <IconButton
             size="sm"
             variant="plain"
