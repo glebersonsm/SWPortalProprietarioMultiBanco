@@ -96,7 +96,8 @@ function ConfiguracaoItem({
           </IconButton>
         </Box>
         <Grid container spacing={2}>
-          <Grid xs={12} sm={6} md={2}>
+          {/* Primeira linha */}
+          <Grid xs={12} sm={6} md={4}>
             <InputField
               field={`configuracoes.${index}.quantidadeAdultos`}
               label="Quantidade Adulto(s) Pagante(s)"
@@ -105,7 +106,7 @@ function ConfiguracaoItem({
               disabled={disabled}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={2}>
+          <Grid xs={12} sm={6} md={4}>
             <SelectField
               field={`configuracoes.${index}.tipoOperadorIdade`}
               label="Operador de Idade"
@@ -117,7 +118,7 @@ function ConfiguracaoItem({
               ]}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={2}>
+          <Grid xs={12} sm={6} md={4}>
             <InputField
               field={`configuracoes.${index}.idadeMaximaAnos`}
               label={idadeLabel}
@@ -126,7 +127,8 @@ function ConfiguracaoItem({
               disabled={disabled}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          {/* Segunda linha */}
+          <Grid xs={12} sm={6} md={6}>
             <SelectField
               field={`configuracoes.${index}.tipoDataReferencia`}
               label="Data de Referência"
@@ -138,7 +140,7 @@ function ConfiguracaoItem({
               ]}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} sm={6} md={6}>
             <InputField
               field={`configuracoes.${index}.quantidadePessoasFree`}
               label="Quantidade pax Free"
