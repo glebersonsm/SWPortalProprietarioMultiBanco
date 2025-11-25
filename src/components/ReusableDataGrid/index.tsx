@@ -289,6 +289,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
           {showColumnsButton && showToolbar && (
              <ColumnsPanelTrigger>
                <Button 
+                 component="span"
                  variant="outlined"
                  size="medium"
                  sx={{
@@ -320,6 +321,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
           {showFiltersButton && showToolbar && (
              <FilterPanelTrigger>
                <Button 
+                 component="span"
                  variant="outlined"
                  size="medium"
                  sx={{

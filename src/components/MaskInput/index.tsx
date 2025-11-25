@@ -11,15 +11,15 @@ interface CustomProps {
   mask: string;
 }
 
-const TextMaskAdapter = React.forwardRef<HTMLElement, CustomProps>(
+const TextMaskAdapter = React.forwardRef<HTMLInputElement, CustomProps>(
   function TextMaskAdapter(props, ref) {
     const { onChange, mask, ...other } = props;
     return (
       <IMaskInput
         {...other}
-        ref={ref}
+        inputRef={ref}
         mask={mask}
-        onComplete={(value: any) => {
+        onAccept={(value: any) => {
           onChange({ target: { name: props.name, value } });
         }}
       />

@@ -11,7 +11,8 @@ import LoadingData from "@/components/LoadingData";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function EditUserPage({ params: { userId } }: { params: { userId: string }; }) {
+export default function EditUserPage({ params }: { params: Promise<{ userId: string }> }) {
+  const { userId } = React.use(params);
   const router = useRouter();
 
   const { isLoading, data, isError } = useQuery({
