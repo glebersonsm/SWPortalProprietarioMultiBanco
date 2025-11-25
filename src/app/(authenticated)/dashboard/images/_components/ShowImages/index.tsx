@@ -15,6 +15,7 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import CloseIcon from "@mui/icons-material/Close";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -37,6 +38,12 @@ export default function ShowImagesModal({
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
   const imageRef = React.useRef<HTMLDivElement>(null);
+
+  // Filtrar apenas imagens com imagemBase64
+  const imagesWithBase64 = React.useMemo(
+    () => groupImages.images.filter(img => img.imagemBase64),
+    [groupImages.images]
+  );
 
   const handleZoomIn = () => {
     setZoomLevel(prev => Math.min(prev + 0.5, 3));
@@ -81,6 +88,12 @@ export default function ShowImagesModal({
 
   const handleMouseUp = () => {
     setIsDragging(false);
+  };
+
+  const handleImageClick = (image: typeof imagesWithBase64[0]) => {
+    if (image.linkBotao) {
+      window.open(image.linkBotao, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -195,9 +208,9 @@ export default function ShowImagesModal({
               style={{ height: "100%" }}
               spaceBetween={0}
               slidesPerView={1}
-              loop={groupImages.images.length > 1}
+              loop={imagesWithBase64.length > 1}
             >
-              {groupImages.images.map((image, index) => (
+              {imagesWithBase64.map((image, index) => (
                 <SwiperSlide
                   key={index}
                   style={{
@@ -216,22 +229,55 @@ export default function ShowImagesModal({
                       gap: 2,
                     }}
                   >
-                    <Typography
-                      level="title-md"
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      justifyContent="space-between"
                       sx={{
-                        color: 'primary.main',
-                        fontWeight: 'bold',
-                        textAlign: 'center',
                         padding: '8px 16px',
-                        backgroundColor: 'rgba(255,255,255,0.9)',
+                        backgroundColor: 'rgba(255,255,255,0.95)',
                         borderRadius: '8px',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                         marginBottom: 1,
                       }}
                     >
-                      {image.name}
-                    </Typography>
+                      <Typography
+                        level="title-md"
+                        sx={{
+                          color: 'primary.main',
+                          fontWeight: 'bold',
+                          flex: 1,
+                          fontFamily: "Montserrat, sans-serif",
+                        }}
+                      >
+                        {image.name}
+                      </Typography>
+                      {image.linkBotao && (
+                        <Button
+                          variant="solid"
+                          color="primary"
+                          size="sm"
+                          startDecorator={<LaunchIcon />}
+                          onClick={() => handleImageClick(image)}
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontWeight: 600,
+                            borderRadius: "8px",
+                            boxShadow: "0 2px 8px rgba(3, 87, 129, 0.2)",
+                            "&:hover": {
+                              transform: "translateY(-1px)",
+                              boxShadow: "0 4px 12px rgba(3, 87, 129, 0.3)",
+                            },
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          {image.nomeBotao || "Acessar Link"}
+                        </Button>
+                      )}
+                    </Stack>
                     <Box
+                      onClick={() => image.linkBotao && handleImageClick(image)}
                       sx={{
                         flex: 1,
                         width: '100%',
@@ -242,32 +288,41 @@ export default function ShowImagesModal({
                         borderRadius: '8px',
                         overflow: 'hidden',
                         position: 'relative',
+                        cursor: image.linkBotao ? 'pointer' : 'default',
+                        transition: 'all 0.3s ease',
+                        '&:hover': image.linkBotao ? {
+                          backgroundColor: 'rgba(3, 87, 129, 0.05)',
+                          transform: 'scale(1.01)',
+                          boxShadow: '0 4px 16px rgba(3, 87, 129, 0.15)',
+                        } : {},
                       }}
                     >
                       <Image
-                        src={image.url}
+                        src={`data:image/jpeg;base64,${image.imagemBase64}`}
                         alt={image.name}
-                        width={800}
-                        height={600}
+                        fill
+                        unoptimized
                         style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
                           objectFit: 'contain',
                           borderRadius: '8px',
                         }}
                       />
                       <IconButton
-                        onClick={() => handleOpenZoom(index)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenZoom(index);
+                        }}
                         sx={{
                           position: 'absolute',
                           top: 8,
                           right: 8,
-                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
                           color: 'primary.main',
                           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                           '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 1)',
                             transform: 'scale(1.1)',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
                           },
                           transition: 'all 0.2s ease',
                         }}
@@ -294,9 +349,10 @@ export default function ShowImagesModal({
             maxHeight: 'none',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+            backgroundColor: 'rgba(0, 0, 0, 0.97)',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
           }}
         >
           <DialogTitle
@@ -305,18 +361,65 @@ export default function ShowImagesModal({
               justifyContent: 'space-between',
               alignItems: 'center',
               color: 'white',
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backgroundColor: 'rgba(3, 87, 129, 0.9)',
               p: 2,
+              borderRadius: '12px 12px 0 0',
             }}
           >
-            <Typography level="title-md" sx={{ color: 'white' }}>
-              {groupImages.images[selectedImageIndex]?.name}
-            </Typography>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1 }}>
+              <Typography 
+                level="title-md" 
+                sx={{ 
+                  color: 'white',
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: 700,
+                }}
+              >
+                {imagesWithBase64[selectedImageIndex]?.name}
+              </Typography>
+              {imagesWithBase64[selectedImageIndex]?.linkBotao && (
+                <Button
+                  variant="solid"
+                  color="primary"
+                  size="sm"
+                  startDecorator={<LaunchIcon />}
+                  onClick={() => {
+                    const image = imagesWithBase64[selectedImageIndex];
+                    if (image?.linkBotao) {
+                      window.open(image.linkBotao, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                  sx={{
+                    fontFamily: "Montserrat, sans-serif",
+                    fontWeight: 600,
+                    borderRadius: "8px",
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                      transform: 'translateY(-1px)',
+                    },
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {imagesWithBase64[selectedImageIndex]?.nomeBotao || "Acessar Link"}
+                </Button>
+              )}
+            </Stack>
             <Stack direction="row" spacing={1}>
               <IconButton
                 onClick={handleZoomOut}
                 disabled={zoomLevel <= 0.5}
-                sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+                sx={{ 
+                  color: 'white', 
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    transform: 'scale(1.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
               >
                 <ZoomOutIcon />
               </IconButton>
@@ -324,20 +427,47 @@ export default function ShowImagesModal({
                 onClick={handleResetZoom}
                 size="sm"
                 variant="outlined"
-                sx={{ color: 'white', borderColor: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+                sx={{ 
+                  color: 'white', 
+                  borderColor: 'rgba(255,255,255,0.5)',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: 600,
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    borderColor: 'rgba(255,255,255,0.7)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
               >
                 {Math.round(zoomLevel * 100)}%
               </Button>
               <IconButton
                 onClick={handleZoomIn}
                 disabled={zoomLevel >= 3}
-                sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+                sx={{ 
+                  color: 'white',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    transform: 'scale(1.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
               >
                 <ZoomInIcon />
               </IconButton>
               <IconButton
                 onClick={handleCloseZoom}
-                sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+                sx={{ 
+                  color: 'white',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255,0,0,0.3)',
+                    transform: 'scale(1.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
               >
                 <CloseIcon />
               </IconButton>
@@ -351,29 +481,39 @@ export default function ShowImagesModal({
               justifyContent: 'center',
               overflow: 'hidden',
               p: 0,
-              cursor: zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+              cursor: zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : (imagesWithBase64[selectedImageIndex]?.linkBotao ? 'pointer' : 'default'),
+              position: 'relative',
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onClick={() => {
+              if (zoomLevel === 1) {
+                const image = imagesWithBase64[selectedImageIndex];
+                if (image?.linkBotao) {
+                  window.open(image.linkBotao, "_blank", "noopener,noreferrer");
+                }
+              }
+            }}
           >
             <Box
               ref={imageRef}
               sx={{
+                width: '100%',
+                height: '100%',
+                position: 'relative',
                 transform: `scale(${zoomLevel}) translate(${imagePosition.x / zoomLevel}px, ${imagePosition.y / zoomLevel}px)`,
                 transition: isDragging ? 'none' : 'transform 0.2s ease',
                 transformOrigin: 'center center',
               }}
             >
               <Image
-                src={groupImages.images[selectedImageIndex]?.url || ''}
-                alt={groupImages.images[selectedImageIndex]?.name || ''}
-                width={1200}
-                height={800}
+                src={imagesWithBase64[selectedImageIndex]?.imagemBase64 ? `data:image/jpeg;base64,${imagesWithBase64[selectedImageIndex]?.imagemBase64}` : ''}
+                alt={imagesWithBase64[selectedImageIndex]?.name || ''}
+                fill
+                unoptimized
                 style={{
-                  maxWidth: '90vw',
-                  maxHeight: '80vh',
                   objectFit: 'contain',
                 }}
               />
