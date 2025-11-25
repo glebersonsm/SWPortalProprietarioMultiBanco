@@ -20,7 +20,7 @@ import { Pagination } from "@mui/material";
 import WithoutData from "@/components/WithoutData";
 import GroupImagesFilters from "./_components/GroupImagesFilters";
 import DeleteImageModal from "./_components/DeleteImage";
-import EditImages from "./_components/EditImages";
+import EditImageModal from "./_components/EditImage";
 
 export default function ImagesPage() {
   const [filters, setFilters] = React.useState(initialFilters);
@@ -139,16 +139,16 @@ export default function ImagesPage() {
             <DeleteImageModal shouldOpen={true} image={selectedImage} />
           )
         )
-        //   .with(
-        //   {
-        //     action: "edit-image",
-        //     selectedImage: P.not(undefined),
-        //     selectedGroupImages: P.not(undefined),
-        //   },
-        //   ({ selectedImage, selectedGroupImages }) => (
-        //     <EditImages shouldOpen={true} image={selectedImage} groupImages={selectedGroupImages}/>
-        //   )
-        // )
+        .with(
+          {
+            action: "edit-image",
+            selectedImage: P.not(undefined),
+            selectedGroupImages: P.not(undefined),
+          },
+          ({ selectedImage, selectedGroupImages }) => (
+            <EditImageModal shouldOpen={true} image={selectedImage} groupImages={selectedGroupImages}/>
+          )
+        )
         .otherwise(() => null)}
     </>
   );

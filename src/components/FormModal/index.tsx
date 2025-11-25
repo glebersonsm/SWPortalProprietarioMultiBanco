@@ -47,17 +47,22 @@ export default function FormModal<T extends FieldValues>({
             closeModal(false);
           }
         }}
-        BackdropProps={{ sx: { backdropFilter: "blur(3px)", backgroundColor: "rgba(14, 42, 71, 0.25)" } }}
+        BackdropProps={{ 
+          sx: { 
+            backdropFilter: "blur(3px)", 
+            backgroundColor: "rgba(14, 42, 71, 0.25)" 
+          } 
+        }}
         PaperProps={{
           sx: {
             maxWidth: { xs: '95vw', sm: '600px', md: '700px' },
             width: '100%',
-            borderRadius: 16,
+            borderRadius: 0,
             p: { xs: 3, md: 4 },
-            background: 'var(--modal-bg-gradient)',
-            border: '1px solid var(--modal-border-color)',
-            boxShadow: '0 12px 28px var(--modal-shadow-color)',
-            color: 'var(--modal-text-color)'
+            background: 'var(--modal-bg-gradient, linear-gradient(135deg, #ffffff 0%, #f8fafc 100%))',
+            border: '1px solid var(--modal-border-color, rgba(44, 162, 204, 0.1))',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+            color: 'var(--modal-text-color, #0f2f33)'
           }
         }}
       >
@@ -65,14 +70,20 @@ export default function FormModal<T extends FieldValues>({
           {/* Cabeçalho do Modal */}
           <DialogTitle
             sx={{
-              color: 'var(--modal-header-text-color)',
-              backgroundColor: 'var(--modal-header-bg)',
-              fontFamily: "Montserrat, sans-serif",
+              color: '#ffffff',
+              fontFamily: "var(--font-puffin, Montserrat), sans-serif",
               fontWeight: 700,
               fontSize: { xs: '1.25rem', md: '1.5rem' },
               textAlign: 'center',
               mb: 1,
-              pb: 0,
+              pb: 2,
+              background: "linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)",
+              borderBottom: '2px solid',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              mx: { xs: -3, md: -4 },
+              mt: { xs: -3, md: -4 },
+              px: { xs: 3, md: 4 },
+              pt: { xs: 3, md: 4 },
             }}
           >
             {title}
@@ -80,14 +91,16 @@ export default function FormModal<T extends FieldValues>({
           
           <DialogContent
             sx={{
-              color: 'var(--modal-text-color)',
-              fontSize: { xs: '0.875rem', md: '1rem' },
-              fontFamily: "Montserrat, sans-serif",
+              fontSize: { xs: '0.875rem', md: '0.95rem' },
+              color: 'var(--modal-text-color, text.secondary)',
+              fontFamily: "var(--font-puffin, Montserrat), sans-serif",
               fontWeight: 500,
               textAlign: 'center',
               mb: 3,
+              pt: 2,
               px: 0,
               pb: 0,
+              opacity: 0.85,
             }}
           >
             {contentText}
@@ -101,19 +114,29 @@ export default function FormModal<T extends FieldValues>({
                 sx={{
                   '& .MuiFormControl-root': {
                     '& .MuiFormLabel-root': {
-                      fontFamily: 'Montserrat, sans-serif',
+                      fontFamily: 'var(--font-puffin, Montserrat), sans-serif',
                       fontWeight: 600,
                       fontSize: '0.875rem',
-                      color: 'var(--form-label-color)',
+                      color: 'var(--form-label-color, #035781)',
                       mb: 1,
                     },
                     '& .MuiInput-root': {
-                      borderRadius: 12,
+                      borderRadius: 0,
                       fontSize: '0.875rem',
-                      fontFamily: 'Montserrat, sans-serif',
-                      transition: 'all 0.2s ease-in-out',
-                      backgroundColor: 'var(--form-input-bg)',
-                      border: '1px solid var(--form-input-border)',
+                      fontFamily: 'var(--font-puffin, Montserrat), sans-serif',
+                      transition: 'all 0.3s ease',
+                      backgroundColor: 'var(--form-input-bg, #ffffff)',
+                      border: '1px solid var(--form-input-border, rgba(44, 162, 204, 0.2))',
+                      "&:hover": {
+                        transform: "translateY(-1px)",
+                        boxShadow: "0 4px 12px rgba(44, 162, 204, 0.15)",
+                        borderColor: 'rgba(44, 162, 204, 0.4)',
+                      },
+                      "&.Mui-focused": {
+                        transform: "translateY(-1px)",
+                        boxShadow: "0 6px 16px rgba(44, 162, 204, 0.25)",
+                        borderColor: '#2ca2cc',
+                      },
                     },
                   },
                 }}
@@ -131,7 +154,12 @@ export default function FormModal<T extends FieldValues>({
                   spacing={2}
                   justifyContent="center"
                   alignItems="center"
-                  sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}
+                  sx={{ 
+                    mt: 4, 
+                    pt: 3, 
+                    borderTop: '2px solid',
+                    borderColor: 'divider' 
+                  }}
                 >
                   <Button
                     variant="outlined"
@@ -139,19 +167,22 @@ export default function FormModal<T extends FieldValues>({
                     sx={{
                       minWidth: { xs: '100%', sm: '140px' },
                       height: 44,
-                      borderRadius: 12,
-                      fontFamily: "Montserrat, sans-serif",
+                      borderRadius: 0,
+                      fontFamily: "var(--font-puffin, Montserrat), sans-serif",
                       fontWeight: 600,
                       fontSize: '0.875rem',
                       border: '1.5px solid',
-                      color: 'var(--color-button-exit-text)',
-                      borderColor: 'var(--color-button-exit-border)',
-                      transition: 'all 0.2s ease-in-out',
+                      color: 'var(--color-button-exit-text, #dc3545)',
+                      borderColor: 'var(--color-button-exit-border, #dc3545)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        transform: 'translateY(-1px)',
-                        backgroundColor: 'var(--color-button-exit-hover-bg)',
-                        color: 'var(--color-button-exit-hover-text)',
-                        borderColor: 'var(--color-button-exit-hover-border)',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 16px rgba(220, 53, 69, 0.3)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                        borderColor: '#c82333',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0)',
                       },
                     }}
                   >
@@ -164,23 +195,23 @@ export default function FormModal<T extends FieldValues>({
                     sx={{
                       minWidth: { xs: '100%', sm: '140px' },
                       height: 44,
-                      borderRadius: 12,
-                      fontFamily: "Montserrat, sans-serif",
+                      borderRadius: 0,
+                      fontFamily: "var(--font-puffin, Montserrat), sans-serif",
                       fontWeight: 600,
                       fontSize: '0.875rem',
-                      bgcolor: 'var(--color-button-primary)',
-                      color: 'var(--color-button-text)',
+                      background: "linear-gradient(135deg, #2ca2cc 0%, #035781 100%)",
+                      color: '#ffffff',
                       border: 'none',
-                      boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: '0 6px 16px rgba(44, 162, 204, 0.25)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        bgcolor: 'var(--color-button-primary-hover)',
+                        background: "linear-gradient(135deg, #035781 0%, #024a6b 100%)",
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 20px rgba(14, 42, 71, 0.30)',
+                        boxShadow: '0 8px 20px rgba(44, 162, 204, 0.4)',
                       },
                       '&:active': {
-                        transform: 'translateY(-1px)',
-                        boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
+                        transform: 'translateY(0)',
+                        boxShadow: '0 4px 12px rgba(44, 162, 204, 0.3)',
                       },
                     }}
                   >

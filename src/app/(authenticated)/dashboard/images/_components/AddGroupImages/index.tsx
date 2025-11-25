@@ -90,32 +90,83 @@ export default function AddGroupImagesModal({
         sx={{
           maxWidth: { xs: '95vw', sm: '500px', md: '600px' },
           width: '100%',
-          borderRadius: 2,
-          boxShadow: 3,
+          borderRadius: 0,
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+          p: { xs: 3, md: 4 },
+          background: 'var(--modal-bg-gradient, linear-gradient(135deg, #ffffff 0%, #f8fafc 100%))',
+          border: '1px solid var(--modal-border-color, rgba(44, 162, 204, 0.1))',
         }}
       >
         <DialogTitle
           sx={{
             fontSize: { xs: '1.25rem', md: '1.5rem' },
-            fontWeight: 600,
-            color: 'var(--color-title)',
-            pb: 1,
+            fontWeight: 700,
+            color: '#ffffff',
+            fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+            textAlign: 'center',
+            mb: 1,
+            pb: 2,
+            background: "linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)",
+            borderBottom: '2px solid',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            mx: { xs: -3, md: -4 },
+            mt: { xs: -3, md: -4 },
+            px: { xs: 3, md: 4 },
+            pt: { xs: 3, md: 4 },
           }}
         >
           Adicionar novo grupo de imagens
         </DialogTitle>
         <DialogContent
           sx={{
-            fontSize: '0.95rem',
-            color: 'text.secondary',
-            pb: 3,
+            fontSize: { xs: '0.875rem', md: '0.95rem' },
+            color: 'var(--modal-text-color, text.secondary)',
+            fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+            fontWeight: 500,
+            textAlign: 'center',
+            mb: 3,
+            pt: 2,
+            px: 0,
+            pb: 0,
+            opacity: 0.85,
           }}
         >
           Preencha o formulário para adicionar um novo grupo de imagens ao sistema
         </DialogContent>
         <FormProvider {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={3}>
+            <Stack 
+              spacing={3}
+              sx={{
+                "& .MuiFormControl-root": {
+                  "& .MuiFormLabel-root": {
+                    fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    color: 'var(--form-label-color, #035781)',
+                    mb: 1,
+                  },
+                  "& .MuiInput-root": {
+                    borderRadius: 0,
+                    fontSize: '0.875rem',
+                    fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+                    transition: "all 0.3s ease",
+                    backgroundColor: 'var(--form-input-bg, #ffffff)',
+                    border: '1px solid var(--form-input-border, rgba(44, 162, 204, 0.2))',
+                    "&:hover": {
+                      transform: "translateY(-1px)",
+                      boxShadow: "0 4px 12px rgba(44, 162, 204, 0.15)",
+                      borderColor: 'rgba(44, 162, 204, 0.4)',
+                    },
+                    "&.Mui-focused": {
+                      transform: "translateY(-1px)",
+                      boxShadow: "0 6px 16px rgba(44, 162, 204, 0.25)",
+                      borderColor: '#2ca2cc',
+                    },
+                  },
+                },
+              }}
+            >
               {/* Seção de informações básicas */}
               <InputField 
                 label="Nome do grupo de imagens" 
@@ -132,26 +183,36 @@ export default function AddGroupImagesModal({
                 spacing={2}
                 justifyContent={{ xs: "stretch", sm: "flex-end" }}
                 alignItems={{ xs: "stretch", sm: "center" }}
-                sx={{ mt: 4, pt: 2 }}
+                sx={{ 
+                  mt: 4, 
+                  pt: 3, 
+                  borderTop: '2px solid',
+                  borderColor: 'divider',
+                }}
               >
                 <Button
                   variant="outlined"
+                  color="danger"
                   onClick={closeModal}
                   sx={{
-                    minWidth: { xs: "100%", sm: "120px" },
+                    minWidth: { xs: "100%", sm: "140px" },
                     height: 44,
                     fontSize: "0.875rem",
                     fontWeight: 600,
-                    borderRadius: "12px",
-                    fontFamily: "Montserrat, sans-serif",
-                    color: 'var(--color-button-exit-text)',
-                    borderColor: 'var(--color-button-exit-border)',
-                    transition: "all 0.2s ease-in-out",
+                    borderRadius: 0,
+                    fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+                    border: '1.5px solid',
+                    color: 'var(--color-button-exit-text, #dc3545)',
+                    borderColor: 'var(--color-button-exit-border, #dc3545)',
+                    transition: "all 0.3s ease",
                     "&:hover": {
-                      transform: "translateY(-1px)",
-                      backgroundColor: 'var(--color-button-exit-hover-bg)',
-                      color: 'var(--color-button-exit-hover-text)',
-                      borderColor: 'var(--color-button-exit-hover-border)',
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 6px 16px rgba(220, 53, 69, 0.3)",
+                      backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                      borderColor: '#c82333',
+                    },
+                    "&:active": {
+                      transform: "translateY(0)",
                     },
                   }}
                 >
@@ -161,27 +222,24 @@ export default function AddGroupImagesModal({
                 <Button
                   type="submit"
                   loading={handleCreateGroupImages.isPending}
-                  variant="solid"
                   sx={{
-                    minWidth: { xs: "100%", sm: "120px" },
+                    minWidth: { xs: "100%", sm: "140px" },
                     height: 44,
                     fontSize: "0.875rem",
                     fontWeight: 600,
-                    borderRadius: "12px",
-                    fontFamily: "Montserrat, sans-serif",
-                    bgcolor: 'var(--color-button-primary)',
-                    color: 'var(--color-button-text)',
-                    border: 'none',
-                    boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    '&:hover': {
-                      bgcolor: 'var(--color-button-primary-hover)',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 20px rgba(14, 42, 71, 0.30)',
+                    borderRadius: 0,
+                    fontFamily: "var(--font-puffin, Montserrat), sans-serif",
+                    background: "linear-gradient(135deg, #2ca2cc 0%, #035781 100%)",
+                    color: '#ffffff',
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #035781 0%, #024a6b 100%)",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 20px rgba(44, 162, 204, 0.4)",
                     },
-                    '&:active': {
-                      transform: 'translateY(-1px)',
-                      boxShadow: '0 6px 16px rgba(14, 42, 71, 0.25)',
+                    "&:active": {
+                      transform: "translateY(0)",
+                      boxShadow: "0 4px 12px rgba(44, 162, 204, 0.3)",
                     },
                   }}
                 >

@@ -36,7 +36,7 @@ export default function EditGroupImagesModal({
       error,
       form,
       generalMessage:
-        "Não foi possível editar o grupo de documentos nesse momento, por favor tente mais tarde!",
+        "Não foi possível editar o grupo de imagens nesse momento, por favor tente mais tarde!",
     });
   };
 

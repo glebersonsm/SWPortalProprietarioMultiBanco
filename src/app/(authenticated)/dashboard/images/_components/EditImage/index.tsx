@@ -202,6 +202,7 @@ export default function EditImageModal({
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
+          borderRadius: 0,
         }}
         slotProps={{
           root: {
@@ -211,13 +212,20 @@ export default function EditImageModal({
       >
         <DialogTitle
           sx={{
-            background: "linear-gradient(135deg, #035781 0%, rgba(3, 87, 129, 0.8) 100%)",
+            background: "linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)",
             color: "white",
-            fontFamily: "Montserrat, sans-serif",
+            fontFamily: "var(--font-puffin, Montserrat), sans-serif",
             fontWeight: 700,
-            fontSize: "1.25rem",
-            py: 2,
-            px: 3,
+            fontSize: { xs: '1.25rem', md: '1.5rem' },
+            textAlign: 'center',
+            mb: 1,
+            pb: 2,
+            borderBottom: '2px solid',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            mx: { xs: -3, md: -4 },
+            mt: { xs: -3, md: -4 },
+            px: { xs: 3, md: 4 },
+            pt: { xs: 3, md: 4 },
           }}
         >
           Editar Imagem
@@ -241,7 +249,7 @@ export default function EditImageModal({
                 <TabList
                   sx={{
                     mb: 2,
-                    borderRadius: "12px",
+                    borderRadius: 0,
                     bgcolor: "background.level1",
                     p: 0.5,
                   }}
@@ -285,7 +293,7 @@ export default function EditImageModal({
                             p: 2,
                             border: "1px solid",
                             borderColor: "neutral.300",
-                            borderRadius: "12px",
+                            borderRadius: 0,
                             backgroundColor: "background.surface",
                           }}
                         >
@@ -293,7 +301,7 @@ export default function EditImageModal({
                             sx={{
                               width: 120,
                               height: 120,
-                              borderRadius: "12px",
+                              borderRadius: 0,
                               overflow: "hidden",
                               border: "1px solid",
                               borderColor: "divider",
@@ -355,8 +363,8 @@ export default function EditImageModal({
 
                       {/* Componente de upload - mostrar quando não há preview ou quando showUpload for true */}
                       {(showUpload || !preview) && (
-                        <Grid container spacing={2} slotProps={{ root: {} }}>
-                          <Grid xs={12} sm={6} slotProps={{ root: {} }}>
+                        <Grid container spacing={2}>
+                          <Grid xs={12} sm={6}>
                             <Box
                               sx={{
                                 position: "relative",
@@ -364,7 +372,7 @@ export default function EditImageModal({
                                 minHeight: "120px",
                                 border: "2px dashed",
                                 borderColor: selectedFile ? "primary.400" : "neutral.300",
-                                borderRadius: "16px",
+                                borderRadius: 0,
                                 backgroundColor: selectedFile 
                                   ? "rgba(44, 162, 204, 0.05)" 
                                   : "background.surface",
@@ -448,7 +456,7 @@ export default function EditImageModal({
                           </Grid>
                           {/* Botão Cancelar - mostrar quando mostrar upload e houver preview */}
                           {showUpload && preview && (
-                            <Grid xs={12} sm={6} slotProps={{ root: {} }}>
+                            <Grid xs={12} sm={6}>
                               <Button
                                 variant="outlined"
                                 color="danger"
@@ -462,7 +470,7 @@ export default function EditImageModal({
                                   fontFamily: "Montserrat, sans-serif",
                                   fontWeight: 600,
                                   fontSize: "0.875rem",
-                                  borderRadius: "12px",
+                                  borderRadius: 0,
                                   border: "2px solid",
                                   borderColor: "danger.400",
                                   color: "danger.600",
@@ -493,7 +501,7 @@ export default function EditImageModal({
                             p: 2,
                             border: "1px solid",
                             borderColor: "primary.300",
-                            borderRadius: "12px",
+                            borderRadius: 0,
                             backgroundColor: "rgba(44, 162, 204, 0.05)",
                           }}
                         >
@@ -567,7 +575,7 @@ export default function EditImageModal({
                             fontFamily: "Montserrat, sans-serif",
                             fontWeight: 600,
                             fontSize: "0.875rem",
-                            borderRadius: "12px",
+                            borderRadius: 0,
                           }}
                         >
                           Testar Link
@@ -579,8 +587,8 @@ export default function EditImageModal({
 
                 <TabPanel value={2}>
                   <Stack spacing={3}>
-                    <Grid container spacing={2} slotProps={{ root: {} }}>
-                      <Grid xs={12} sm={6} slotProps={{ root: {} }}>
+                    <Grid container spacing={2}>
+                      <Grid xs={12} sm={6}>
                         <InputField
                           field="dataInicioVigencia"
                           label="Data inicial"
@@ -589,7 +597,7 @@ export default function EditImageModal({
                           disabled={mutation.isPending}
                         />
                       </Grid>
-                      <Grid xs={12} sm={6} slotProps={{ root: {} }}>
+                      <Grid xs={12} sm={6}>
                         <InputField
                           field="dataFimVigencia"
                           label="Data final"

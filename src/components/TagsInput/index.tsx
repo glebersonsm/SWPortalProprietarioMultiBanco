@@ -76,6 +76,21 @@ export default function TagsInput({
               options={tags}
               getOptionLabel={(option) => option.name || ""}
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              slotProps={{
+                listbox: {
+                  sx: {
+                    zIndex: 1400,
+                    maxHeight: '300px'
+                  }
+                },
+                popper: {
+                  sx: {
+                    zIndex: 1400
+                  },
+                  placement: 'bottom-start',
+                  disablePortal: false
+                }
+              }}
               renderTags={(value, getTagProps) =>
                 value.map((option, index) => {
                   const tagProps = getTagProps({ index });

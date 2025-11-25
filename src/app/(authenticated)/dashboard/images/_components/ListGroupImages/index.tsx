@@ -3,7 +3,7 @@
 import Badge from "@mui/joy/Badge";
 import IconOpenModal from "@/components/IconOpenModal";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import useUser from "@/hooks/useUser";
+import useCanEdit from "@/hooks/useCanEdit";
 import { GroupImages } from "@/utils/types/groupImages";
 import ListImages from "../ListImages";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
@@ -23,7 +23,7 @@ export default function ListGroupImages({
 }: {
   groupImages: GroupImages;
 }) {
-  const { isAdm } = useUser();
+  const canEditImages = useCanEdit("images");
 
   return (
     <Accordion
@@ -138,35 +138,35 @@ export default function ListGroupImages({
             tooltip="Visualizar imagens"
           />
 
-          {isAdm ? (
-            <>
-              <IconOpenModal
-                params={{ groupImagesId: groupImages.id }}
-                type="add-image"
-                sxoverride={{ color: "var(--color-doc-icon)" }}
-                icon={<AddCircleOutlineIcon />}
-                tooltip="Adicionar imagem"
-              />
-              <IconOpenModal
-                params={{ groupImagesId: groupImages.id }}
-                type="edit"
-                sxoverride={{
-                  color: "var(--color-doc-icon)",
-                  transition: "0.6s",
-                }}
-                tooltip="Editar grupo de imagens"
-              />
-              <IconOpenModal
-                params={{ groupImagesId: groupImages.id }}
-                sxoverride={{
-                  color: "var(--color-doc-icon)",
-                  transition: "0.6s",
-                }}
-                type="delete"
-                tooltip="Deletar/Remover grupo de imagens"
-              />
-            </>
-          ) : null}
+          {canEditImages ? (
+                <>
+                  <IconOpenModal
+                    params={{ groupImagesId: groupImages.id }}
+                    type="add-image"
+                    sxoverride={{ color: "var(--color-doc-icon)" }}
+                    icon={<AddCircleOutlineIcon />}
+                    tooltip="Adicionar imagem"
+                  />
+                  <IconOpenModal
+                    params={{ groupImagesId: groupImages.id }}
+                    type="edit"
+                    sxoverride={{
+                      color: "var(--color-doc-icon)",
+                      transition: "0.6s",
+                    }}
+                    tooltip="Editar grupo de imagens"
+                  />
+                  <IconOpenModal
+                    params={{ groupImagesId: groupImages.id }}
+                    sxoverride={{
+                      color: "var(--color-doc-icon)",
+                      transition: "0.6s",
+                    }}
+                    type="delete"
+                    tooltip="Deletar/Remover grupo de imagens"
+                  />
+                </>
+              ) : null}
         </Stack>
       </AccordionSummary>
       <AccordionDetails
