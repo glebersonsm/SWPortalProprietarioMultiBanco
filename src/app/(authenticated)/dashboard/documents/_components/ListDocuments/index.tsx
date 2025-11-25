@@ -1,9 +1,12 @@
 import * as React from "react";
 import Image from "next/image";
-import { Box, IconButton, List, ListItem, Typography, Modal, ModalDialog, DialogTitle, DialogContent } from "@mui/joy";
+import { Box, IconButton, List, ListItem, Typography, Modal, ModalDialog, DialogTitle, DialogContent, Chip } from "@mui/joy";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
+import DescriptionIcon from "@mui/icons-material/Description";
+import LabelIcon from "@mui/icons-material/Label";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import IconOpenModal from "@/components/IconOpenModal";
 import { downloadDocument, viewDocument } from "@/services/querys/document";
 import EditIcon from "@mui/icons-material/Edit";
@@ -69,18 +72,153 @@ export default function ListDocuments({ groupDocuments }: ListDocumentsProps) {
               },
             }}
           >
-            <Typography
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                color: "var(--card-text-color, white)",
-                fontWeight: 600,
-                fontSize: "0.95rem",
-                textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
-                transition: "all 0.3s ease",
-              }}
-            >
-              {document.name}
-            </Typography>
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1 }}>
+              <Typography
+                sx={{
+                  fontFamily: "Montserrat, sans-serif",
+                  color: "var(--card-text-color, white)",
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
+                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {document.name}
+              </Typography>
+              
+              {/* Preview do documento e quantidade de tags */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: 1.5,
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  flexWrap: "wrap",
+                }}
+              >
+                {/* Preview do documento */}
+                {document.nomeArquivo && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <DescriptionIcon
+                      sx={{
+                        fontSize: 18,
+                        color: "var(--color-doc-icon, rgba(255, 255, 255, 0.7))",
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 500,
+                        fontSize: "0.8rem",
+                        color: "var(--card-text-color, rgba(255, 255, 255, 0.8))",
+                      }}
+                    >
+                      {document.nomeArquivo}
+                    </Typography>
+                    {document.tipoMime && (
+                      <Chip
+                        size="sm"
+                        variant="soft"
+                        sx={{
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "0.7rem",
+                          height: "20px",
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          color: "var(--card-text-color, rgba(255, 255, 255, 0.9))",
+                        }}
+                      >
+                        {document.tipoMime.split('/')[1]?.toUpperCase() || document.tipoMime}
+                      </Chip>
+                    )}
+                  </Box>
+                )}
+                
+                {/* Quantidade de tags */}
+                {document.requiredTags && document.requiredTags.length > 0 && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                    }}
+                  >
+                    <LabelIcon
+                      sx={{
+                        fontSize: 16,
+                        color: "var(--color-doc-icon, rgba(255, 255, 255, 0.7))",
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 600,
+                        fontSize: "0.75rem",
+                        color: "var(--card-text-color, rgba(255, 255, 255, 0.8))",
+                      }}
+                    >
+                      {document.requiredTags.length} {document.requiredTags.length === 1 ? "tag" : "tags"}
+                    </Typography>
+                  </Box>
+                )}
+                
+                {/* Datas de vigência */}
+                {(document.dataInicioVigencia || document.dataFimVigencia) && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                    }}
+                  >
+                    <CalendarTodayIcon
+                      sx={{
+                        fontSize: 16,
+                        color: "var(--color-doc-icon, rgba(255, 255, 255, 0.7))",
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontWeight: 500,
+                        fontSize: "0.75rem",
+                        color: "var(--card-text-color, rgba(255, 255, 255, 0.8))",
+                      }}
+                    >
+                      {(() => {
+                        const formatDate = (dateStr: string | undefined) => {
+                          if (!dateStr) return null;
+                          // Se a data já está no formato yyyy-MM-dd, converter diretamente
+                          const parts = dateStr.split('T')[0].split('-');
+                          if (parts.length === 3) {
+                            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                          }
+                          // Se já está formatada, retornar como está
+                          return dateStr;
+                        };
+                        
+                        const inicio = formatDate(document.dataInicioVigencia);
+                        const fim = formatDate(document.dataFimVigencia);
+                        
+                        if (inicio && fim) {
+                          return `${inicio} - ${fim}`;
+                        } else if (inicio) {
+                          return `${inicio} - Sem fim`;
+                        } else if (fim) {
+                          return `Sem início - ${fim}`;
+                        }
+                        return null;
+                      })()}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Box>
 
             <Box>
               <IconButton
@@ -96,7 +234,7 @@ export default function ListDocuments({ groupDocuments }: ListDocumentsProps) {
               <IconButton
                 size="sm"
                 sx={{ color: "var(--color-doc-icon)" }}
-                onClick={() => downloadDocument(document.id)}
+                onClick={() => downloadDocument(document.id, document.nomeArquivo)}
               >
                 <Tooltip title="Fazer download do documento">
                   <DownloadIcon />

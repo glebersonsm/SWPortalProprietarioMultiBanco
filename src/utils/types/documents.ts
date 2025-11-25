@@ -3,7 +3,7 @@ import { RequiredTags, RequiredTagsWelcome } from "./tags";
 export type DocumentProps = {
   id: number;
   nome: string;
-  path: FileList;
+  arquivo?: File;
   disponivel: number;
   grupoDocumentoId: number;
   usuarioCriacao: number;
@@ -59,8 +59,12 @@ export type Document = {
   id: number;
   name: string;
   requiredTags: RequiredTags[];
-  path: FileList;
+  arquivoBase64?: string; // base64
+  nomeArquivo?: string;
+  tipoMime?: string;
   available: boolean;
+  dataInicioVigencia?: string; // formato: yyyy-MM-dd
+  dataFimVigencia?: string; // formato: yyyy-MM-dd
   groupDocumentId: number;
   creationUser: number;
 };

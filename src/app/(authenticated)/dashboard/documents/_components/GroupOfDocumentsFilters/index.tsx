@@ -27,7 +27,7 @@ export default function GroupOfDocumentsFilters({
                 fontWeight: 500,
               }}
             >
-              Nome
+              Nome do grupo de documentos
             </FormLabel>
             <Input
               placeholder="Filtrar por nome do grupo de documentos"
@@ -60,16 +60,16 @@ export default function GroupOfDocumentsFilters({
           <Button
             sx={{
               width: "100%",
-              bgcolor: "var(--color-button-primary)",
+              backgroundColor: "var(--color-button-primary)",
               color: "var(--color-button-text)",
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 500,
               border: "none",
               "&:hover": {
-                bgcolor: "var(--color-button-primary-hover)",
+                backgroundColor: "var(--color-button-primary-hover)",
               },
             }}
-            variant="solid"
+            variant="outlined"
             endDecorator={<DeleteIcon />}
             onClick={() => setValue(initialFilters)}
           >

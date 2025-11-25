@@ -10,10 +10,13 @@ import { format } from "date-fns";
 
 type createDocumentProps = {
   document: {
+    id?: number;
     nome: string;
     tagsRequeridas: number[] | null;
     disponivel: number;
-    path: FileList;
+    dataInicioVigencia?: string;
+    dataFimVigencia?: string;
+    arquivo?: File;
   };
   groupDocumentId: number;
 };
@@ -38,24 +41,37 @@ export const createDocument = async ({
 }: createDocumentProps) => {
   const form = new FormData();
 
-  Object.keys(document).forEach((key) => {
-    if (key !== "tagsRequeridas" && key !== "path") {
-      const value = document[key as keyof typeof document];
-      if (value !== undefined) {
-        form.append(key, String(value));
-      }
-    }
-  });
-  form.append("files", document.path[0]);
+  if (document.id) {
+    form.append("id", String(document.id));
+  }
+  form.append("nome", document.nome);
   form.append("grupoDocumentoId", String(groupDocumentId));
-  document.tagsRequeridas?.forEach((value) => {
-    form.append("tagsRequeridas", String(value));
-  });
+  form.append("disponivel", String(document.disponivel));
+  form.append("removerTagsNaoEnviadas", "true");
+
+  if (document.dataInicioVigencia) {
+    form.append("dataInicioVigencia", document.dataInicioVigencia);
+  }
+
+  if (document.dataFimVigencia) {
+    form.append("dataFimVigencia", document.dataFimVigencia);
+  }
+
+  if (document.arquivo) {
+    form.append("arquivo", document.arquivo);
+  }
+
+  if (document.tagsRequeridas && document.tagsRequeridas.length > 0) {
+    document.tagsRequeridas.forEach((value) => {
+      form.append("tagsRequeridas", String(value));
+    });
+  }
 
   const response = await axios.post("/Documento", form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    timeout: 1000000,
   });
   return response.data.data;
 };
@@ -72,7 +88,7 @@ export const deleteDocument = async (documentId: number) => {
   return response.data.data;
 };
 
-export const downloadDocument = async (documentId: number) => {
+export const downloadDocument = async (documentId: number, fileName?: string) => {
   try {
     const response = await axios.get(`/Documento/download/${documentId}`, {
       responseType: "arraybuffer",
@@ -84,9 +100,9 @@ export const downloadDocument = async (documentId: number) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     const currentDate = format(new Date(), "ddMMyyyy");
-    const fileName = `document_${currentDate}${getTypeToDownload(contentType)}`;
+    const finalFileName = fileName || `document_${currentDate}${getTypeToDownload(contentType)}`;
     link.href = url;
-    link.download = fileName;
+    link.download = finalFileName;
 
     document.body.appendChild(link);
     link.click();

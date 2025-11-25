@@ -52,45 +52,70 @@ export default function TagsInput({
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <Autocomplete
-            {...field}
-            multiple
-            disabled={isError || isLoading || disabled}
-            placeholder="Insira as tags"
-            inputValue={inputValue}
-            value={field.value}
-            onChange={(e, value) => field.onChange(value)}
-            onInputChange={(e, newValue) => setInputValue(newValue)}
-            limitTags={2}
-            options={tags}
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => {
-                const tagProps = getTagProps({ index });
-                const { key, onDelete, ...rest } = tagProps as any;
-                return (
-                  <Chip key={key} {...rest} variant="soft" color="primary" endDecorator={<ChipDelete onClick={onDelete} />}>
-                    {option.name}
-                  </Chip>
-                );
-              })
-            }
-            noOptionsText={
-              <Button
-                startDecorator={<AddIcon />}
-                variant="plain"
-                onClick={handleAddButtonClick}
-                fullWidth
-                sx={{ justifyContent: "start" }}
-                disabled={handleAddTag.isPending}
-              >
-                Adicionar &quot;{inputValue}&quot;
-              </Button>
-            }
-          />
-        )}
+        render={({ field }) => {
+          const currentValue = field.value || [];
+          
+          const handleDeleteTag = (tagToDelete: any) => {
+            const newValue = currentValue.filter(
+              (tag: any) => tag.id !== tagToDelete.id
+            );
+            field.onChange(newValue);
+          };
+
+          return (
+            <Autocomplete
+              {...field}
+              multiple
+              disabled={isError || isLoading || disabled}
+              placeholder="Insira as tags"
+              inputValue={inputValue}
+              value={currentValue}
+              onChange={(e, value) => field.onChange(value || [])}
+              onInputChange={(e, newValue) => setInputValue(newValue)}
+              limitTags={2}
+              options={tags}
+              getOptionLabel={(option) => option.name || ""}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => {
+                  const tagProps = getTagProps({ index });
+                  const { key, ...rest } = tagProps as any;
+                  return (
+                    <Chip
+                      key={key}
+                      {...rest}
+                      variant="soft"
+                      color="primary"
+                      endDecorator={
+                        <ChipDelete
+                          onDelete={(e) => {
+                            e?.stopPropagation();
+                            e?.preventDefault();
+                            handleDeleteTag(option);
+                          }}
+                        />
+                      }
+                    >
+                      {option.name}
+                    </Chip>
+                  );
+                })
+              }
+              noOptionsText={
+                <Button
+                  startDecorator={<AddIcon />}
+                  variant="plain"
+                  onClick={handleAddButtonClick}
+                  fullWidth
+                  sx={{ justifyContent: "start" }}
+                  disabled={handleAddTag.isPending}
+                >
+                  Adicionar &quot;{inputValue}&quot;
+                </Button>
+              }
+            />
+          );
+        }}
       />
       {isError ? (
         <FormHelperText sx={{ color: "red", marginLeft: 0 }}>

@@ -168,6 +168,7 @@ export default function AddGroupOfDocsModal({
               >
                 <Button
                   variant="outlined"
+                  color="danger"
                   onClick={closeModal}
                   sx={{
                     minWidth: { xs: "100%", sm: "120px" },
@@ -176,14 +177,13 @@ export default function AddGroupOfDocsModal({
                     fontWeight: 600,
                     borderRadius: "12px",
                     fontFamily: "Montserrat, sans-serif",
-                    color: 'var(--color-button-exit-text)',
-                    borderColor: 'var(--color-button-exit-border)',
-                    transition: "all 0.2s ease-in-out",
+                    transition: "all 0.3s ease",
                     "&:hover": {
-                      transform: "translateY(-1px)",
-                      backgroundColor: 'var(--color-button-exit-hover-bg)',
-                      color: 'var(--color-button-exit-hover-text)',
-                      borderColor: 'var(--color-button-exit-hover-border)',
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 6px 16px rgba(220, 53, 69, 0.3)",
+                    },
+                    "&:active": {
+                      transform: "translateY(0)",
                     },
                   }}
                 >
@@ -192,7 +192,6 @@ export default function AddGroupOfDocsModal({
 
                 <Button
                   type="submit"
-                  variant="solid"
                   sx={{
                     minWidth: { xs: "100%", sm: "120px" },
                     height: 44,
@@ -200,21 +199,20 @@ export default function AddGroupOfDocsModal({
                     fontWeight: 600,
                     borderRadius: "12px",
                     fontFamily: "Montserrat, sans-serif",
-                    backgroundColor: 'var(--color-button-primary)',
-                    color: 'var(--color-button-text)',
-                    transition: "all 0.2s ease-in-out",
+                    background: "linear-gradient(135deg, #2ca2cc 0%, #035781 100%)",
+                    transition: "all 0.3s ease",
                     "&:hover": {
-                      backgroundColor: 'var(--color-button-primary-hover)',
-                      transform: "translateY(-1px)",
-                      boxShadow: "0 6px 16px rgba(14, 42, 71, 0.20)",
+                      background: "linear-gradient(135deg, #035781 0%, #024a6b 100%)",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 20px rgba(44, 162, 204, 0.4)",
                     },
                     "&:active": {
                       transform: "translateY(0)",
-                      boxShadow: "0 2px 8px rgba(14, 42, 71, 0.15)",
+                      boxShadow: "0 4px 12px rgba(44, 162, 204, 0.3)",
                     },
                   }}
                 >
-                  Criar
+                  Salvar
                 </Button>
               </Stack>
             </Stack>
