@@ -124,7 +124,7 @@ export default function AuthLayout({
         <Image
           alt="Background image"
           src={"/img/ImagemAntesLogin.jpg"}
-          quality={100}
+          quality={75}
           fill
           sizes="100vw"
           style={{

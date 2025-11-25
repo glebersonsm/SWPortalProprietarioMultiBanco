@@ -26,7 +26,6 @@ export default function DocumentsLayout({
               },
             }}
             type="add"
-            type="add"
             text="Adicionar grupo de documentos"
           />
         ) : null

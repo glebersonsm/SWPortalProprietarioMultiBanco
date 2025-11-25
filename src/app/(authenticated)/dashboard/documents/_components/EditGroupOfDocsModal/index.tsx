@@ -30,9 +30,10 @@ export default function EditGroupOfDocsModal({
   groupDocuments,
   shouldOpen,
 }: EditGroupOfDocsModalProps) {
-  const form = useForm<GroupOfDocs & { removeUnsetTags: boolean }>({
+  const form = useForm<GroupOfDocs & { removeUnsetTags: boolean; isPublic: boolean }>({
     defaultValues: {
       ...groupDocuments,
+      isPublic: false,
     },
   });
 
@@ -64,11 +65,12 @@ export default function EditGroupOfDocsModal({
     if (shouldOpen && groupDocuments) {
       form.reset({
         ...groupDocuments,
+        isPublic: false, // Default value, pode ser ajustado conforme necessário
       });
     }
   }, [shouldOpen, groupDocuments, form]);
 
-  function onSubmit(data: GroupOfDocs & { removeUnsetTags: boolean }) {
+  function onSubmit(data: GroupOfDocs & { removeUnsetTags: boolean; isPublic: boolean }) {
     handleEditGroupOfDocuments.mutate(untransformedGroupOfDocs(data), {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["getGroupsDocuments"] });

@@ -68,7 +68,7 @@ export default function DashboardPage() {
                   priority
                   src={url}
                   alt={imagem.name || `Imagem Home ${idx + 1}`}
-                  quality={100}
+                  quality={75}
                   fill
                   unoptimized
                   style={{
