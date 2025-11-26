@@ -36,6 +36,7 @@ import { setFormErrors } from "@/services/errors/formErrors";
 import { editFrameworkParams } from "@/services/querys/framework";
 import { untransformedFrameworks } from "@/services/api/transformFrameworks";
 import useUser from "@/hooks/useUser";
+import GatewayPagamentoListagemPage from "./gateway-pagamento/page";
 
 export default function FinanceirasSettingsPage() {
   const router = useRouter();
@@ -260,6 +261,7 @@ export default function FinanceirasSettingsPage() {
           <TabList sx={{ mb: 2 }}>
             <Tab>Financeiro</Tab>
             <Tab>Pagamentos e boleto</Tab>
+            <Tab>Configurações de Gateway</Tab>
             <Tab>Vínculos</Tab>
           </TabList>
 
@@ -355,8 +357,15 @@ export default function FinanceirasSettingsPage() {
             </Box>
           </TabPanel>
 
-          {/* Tab Panel: Vínculos */}
+          {/* Tab Panel: Configurações de Gateway */}
           <TabPanel value={2}>
+            <Box paddingBottom={"20px"} sx={{ flex: 1, overflow: "auto", padding: 2 }}>
+              <GatewayPagamentoListagemPage />
+            </Box>
+          </TabPanel>
+
+          {/* Tab Panel: Vínculos */}
+          <TabPanel value={3}>
             <Stack spacing={2}>
               <Box display="flex" justifyContent="flex-end" alignItems="center">
                 <JoyButton
