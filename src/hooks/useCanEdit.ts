@@ -14,18 +14,8 @@ export default function useCanEdit(segment?: string | null) {
   const pathname = usePathname();
 
   return useMemo(() => {
-    // Normaliza tipo de usuário: 0=Cliente, 1=OperadorSistema, 2=Administrador
-    const tipoUsuario: number = (() => {
-      const raw = userData?.tipoUsuario;
-      if (typeof raw === "number") return raw;
-      if (raw === "Cliente") return 0;
-      if (raw === "OperadorSistema") return 1;
-      return isAdm ? 2 : 0;
-    })();
-
-    // Só Administrador ou OperadorSistema podem editar
-    if (isAdm || tipoUsuario === 2) return true;
-    if (tipoUsuario !== 1) return false;
+    // Administradores sempre podem editar
+    if (isAdm) return true;
 
     // Se não há segmento fornecido, tenta extrair da rota atual
     let routeSegment = segment;
@@ -85,6 +75,6 @@ export default function useCanEdit(segment?: string | null) {
     });
 
     return !!route;
-  }, [isAdm, userData?.tipoUsuario, DASHBOARD_ROUTES, segment, pathname]);
+  }, [isAdm, DASHBOARD_ROUTES, segment, pathname]);
 }
 

@@ -190,39 +190,6 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
     </Stack>
   );
 
-  const FinanceiroSection = () => (
-    <Grid container spacing={{ xs: 1.5, md: 2 }}>
-      <Grid xs={12} md={6}>
-        <InputField label="Quantidade máxima de dias para exibição de contas à vencer (Aplicável apenas para clientes)" field="maxNumberOfDaysDueInvoices" type="number" />
-      </Grid>
-      <Grid xs={12} md={6}>
-        <CheckboxField label="Mostrar contas vencidas" field="displayOverdueInvoices" />
-      </Grid>
-      <Grid xs={12}>
-        <InputField label="Exibir contas das Empresas (Ids separado por vírgula (,))" field="companyIds" />
-      </Grid>
-      <Grid xs={12}>
-        <InputField label="Ids de empresas do ePortal (Ids separado por vírgula (,))" field="ExibirFinanceiroPortalEmpresaIds" />
-      </Grid>
-    </Grid>
-  );
-
-  const PagamentosSection = () => (
-    <Grid container spacing={{ xs: 1.5, md: 2 }}>
-      <Grid xs={12} md={6}>
-        <CheckboxField label="Habilitar download de boleto" field="enableBillDownload" />
-      </Grid>
-      <Grid xs={12} md={6}>
-        <CheckboxField label="Habilitar pagamento online" field="enableOnlinePayment" />
-      </Grid>
-      <Grid xs={12} md={6}>
-        <CheckboxField label="Habilitar pagamento por pix" field="enablePixPayment" />
-      </Grid>
-      <Grid xs={12} md={6}>
-        <CheckboxField label="Habilitar pagamento por cartão" field="enableCardPayment" />
-      </Grid>
-    </Grid>
-  );
 
   const UsuarioSection = () => (
     <Grid container spacing={{ xs: 1.5, md: 2 }}>
@@ -340,14 +307,6 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
                 <EmpreendimentoSection />
                 <Divider />
 
-                <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c" }}>Financeiro</Typography>
-                <FinanceiroSection />
-                <Divider />
-
-                <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c" }}>Pagamentos e boleto</Typography>
-                <PagamentosSection />
-                <Divider />
-
                 <Typography fontSize="sm" sx={{ fontWeight: 600, color: "#171a1c" }}>Configurações do usuário</Typography>
                 <UsuarioSection />
               </Stack>
@@ -369,21 +328,11 @@ export default function FormSettings({ settingsParams }: FormSettingsProps) {
                 >
                   <Tab value="empreendimento">Empreendimento</Tab>
                   {/* <Tab value="integracoes">Integrações e reserva</Tab> */}
-                  <Tab value="financeiro">Financeiro</Tab>
-                  <Tab value="pagamentos">Pagamentos e boleto</Tab>
                   <Tab value="usuario">Configurações do usuário</Tab>
                 </TabList>
 
                 <TabPanel value="empreendimento">
                   <EmpreendimentoSection />
-                </TabPanel>
-
-                <TabPanel value="financeiro">
-                  <FinanceiroSection />
-                </TabPanel>
-
-                <TabPanel value="pagamentos">
-                  <PagamentosSection />
                 </TabPanel>
 
                 <TabPanel value="usuario">

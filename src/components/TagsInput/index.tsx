@@ -82,13 +82,11 @@ export default function TagsInput({
                     zIndex: 1400,
                     maxHeight: '300px'
                   }
-                },
-                popper: {
-                  sx: {
-                    zIndex: 1400
-                  },
-                  placement: 'bottom-start',
-                  disablePortal: false
+                }
+              }}
+              sx={{
+                '& .MuiAutocomplete-popper': {
+                  zIndex: 1400
                 }
               }}
               renderTags={(value, getTagProps) =>
