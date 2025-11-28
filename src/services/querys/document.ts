@@ -29,6 +29,7 @@ export const getDocuments = async (documentId: number) => {
   const response = await axios.get("/Documento/search", {
     params: {
       Id: documentId,
+      IncluirArquivo: true, // Incluir arquivo para edição
     },
   });
   const data = response.data.data;
