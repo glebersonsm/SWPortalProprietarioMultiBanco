@@ -12,26 +12,24 @@ import {
   Switch,
   Select,
   Option,
-  Input,
 } from '@mui/joy';
 import { Save as SaveIcon, Cancel as CancelIcon } from '@mui/icons-material';
 import {
   criarVinculo,
+  buscarEmpresas,
+  buscarTorres,
+  EmpresaTseDto,
+  TorreDto,
   GatewayPagamentoVinculoDto,
 } from '@/services/api/gatewayVinculoService';
+import { listarConfiguracoes, GatewayPagamentoConfiguracaoDto } from '@/services/api/gatewayPagamentoService';
 import { toast } from 'react-toastify';
-
-// Interface temporária - será substituída quando o service de gatewayPagamento for copiado
-interface GatewayPagamentoConfiguracaoDto {
-  id?: number;
-  nomeExibicao?: string;
-  identificador?: string;
-  gatewayDescricao?: string;
-}
 
 export default function NovoVinculoPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [empresas, setEmpresas] = useState<EmpresaTseDto[]>([]);
+  const [torres, setTorres] = useState<TorreDto[]>([]);
   const [configuracoes, setConfiguracoes] = useState<GatewayPagamentoConfiguracaoDto[]>([]);
   
   const [formData, setFormData] = useState<GatewayPagamentoVinculoDto>({
@@ -42,25 +40,53 @@ export default function NovoVinculoPage() {
   });
 
   useEffect(() => {
-    // TODO: Carregar configurações quando o service de gatewayPagamento for implementado
-    // Por enquanto, deixar vazio
-    setConfiguracoes([]);
+    carregarDados();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const carregarDados = async () => {
+    try {
+      const [empresasData, configsData] = await Promise.all([
+        buscarEmpresas(),
+        listarConfiguracoes(),
+      ]);
+      setEmpresas(empresasData);
+      setConfiguracoes(configsData);
+    } catch (err: any) {
+      toast.error('Erro ao carregar dados');
+    }
+  };
+
+  const handleEmpresaChange = async (value: string | null) => {
+    const empresaId = parseInt(value || '0');
+    setFormData({ ...formData, idEmpresaTse: empresaId, idTorre: 0 });
+    
+    if (empresaId > 0) {
+      try {
+        const torresData = await buscarTorres(empresaId);
+        setTorres(torresData);
+      } catch (err: any) {
+        toast.error('Erro ao carregar torres');
+      }
+    } else {
+      setTorres([]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.idEmpresaTse || formData.idEmpresaTse <= 0) {
-      toast.error('Informe o ID da empresa');
+    if (!formData.idEmpresaTse) {
+      toast.error('Selecione uma empresa');
       return;
     }
     
-    if (!formData.idTorre || formData.idTorre <= 0) {
-      toast.error('Informe o ID da torre');
+    if (!formData.idTorre) {
+      toast.error('Selecione uma torre');
       return;
     }
     
-    if (!formData.gatewayPagamentoConfiguracaoId || formData.gatewayPagamentoConfiguracaoId <= 0) {
+    if (!formData.gatewayPagamentoConfiguracaoId) {
       toast.error('Selecione uma configuração de gateway');
       return;
     }
@@ -69,7 +95,7 @@ export default function NovoVinculoPage() {
       setLoading(true);
       await criarVinculo(formData);
       toast.success('Vínculo criado com sucesso!');
-      router.push('/dashboard/settings/financeiras');
+      router.push('/dashboard/settings/financeiras/vinculo');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao criar vínculo');
     } finally {
@@ -87,27 +113,40 @@ export default function NovoVinculoPage() {
             
             <Stack spacing={2}>
               <FormControl required>
-                <FormLabel>ID Empresa</FormLabel>
-                <Input
-                  type="number"
-                  value={formData.idEmpresaTse || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, idEmpresaTse: parseInt(e.target.value) || 0 })
-                  }
-                  placeholder="Informe o ID da empresa"
-                />
+                <FormLabel>Empresa</FormLabel>
+                <Select
+                  value={formData.idEmpresaTse.toString()}
+                  onChange={(_, value) => handleEmpresaChange(value)}
+                  placeholder="Selecione a empresa..."
+                >
+                  {empresas.map((empresa) => (
+                    <Option key={empresa.idEmpresa} value={empresa.idEmpresa.toString()}>
+                      {empresa.nomeEmpresa}
+                    </Option>
+                  ))}
+                </Select>
               </FormControl>
 
-              <FormControl required>
-                <FormLabel>ID Torre</FormLabel>
-                <Input
-                  type="number"
-                  value={formData.idTorre || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, idTorre: parseInt(e.target.value) || 0 })
+              <FormControl required disabled={!formData.idEmpresaTse}>
+                <FormLabel>Torre</FormLabel>
+                <Select
+                  value={formData.idTorre.toString()}
+                  onChange={(_, value) =>
+                    setFormData({ ...formData, idTorre: parseInt(value || '0') })
                   }
-                  placeholder="Informe o ID da torre"
-                />
+                  placeholder={torres.length === 0 ? "Nenhuma torre disponível (insira manualmente o ID)" : "Selecione a torre..."}
+                >
+                  {torres.map((torre) => (
+                    <Option key={torre.idTorre} value={torre.idTorre.toString()}>
+                      {torre.nomeTorre}
+                    </Option>
+                  ))}
+                </Select>
+                {torres.length === 0 && formData.idEmpresaTse > 0 && (
+                  <Box sx={{ mt: 1, fontSize: '0.875rem', color: 'text.secondary' }}>
+                    Nenhuma torre encontrada. Você pode inserir o ID manualmente no campo acima ou criar uma torre primeiro.
+                  </Box>
+                )}
               </FormControl>
 
               <FormControl required>
@@ -121,7 +160,6 @@ export default function NovoVinculoPage() {
                     })
                   }
                   placeholder="Selecione a configuração..."
-                  disabled={configuracoes.length === 0}
                 >
                   {configuracoes.map((config) => (
                     <Option key={config.id} value={config.id!.toString()}>
@@ -129,11 +167,6 @@ export default function NovoVinculoPage() {
                     </Option>
                   ))}
                 </Select>
-                {configuracoes.length === 0 && (
-                  <Box sx={{ mt: 1, fontSize: '0.875rem', color: 'text.secondary' }}>
-                    Nenhuma configuração disponível. Configure os gateways primeiro.
-                  </Box>
-                )}
               </FormControl>
 
               <FormControl>
@@ -155,7 +188,7 @@ export default function NovoVinculoPage() {
               variant="outlined"
               color="neutral"
               startDecorator={<CancelIcon />}
-              onClick={() => router.push('/dashboard/settings/financeiras')}
+              onClick={() => router.push('/dashboard/settings/financeiras/vinculo')}
               disabled={loading}
             >
               Cancelar

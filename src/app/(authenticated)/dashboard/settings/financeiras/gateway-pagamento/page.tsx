@@ -177,7 +177,6 @@ export default function GatewayPagamentoListagemPage() {
         </Box>
 
         <JoyButton
-          startDecorator={<AddIcon />}
           onClick={() => router.push('/dashboard/settings/financeiras/gateway-pagamento/novo')}
         >
           Nova Configuração

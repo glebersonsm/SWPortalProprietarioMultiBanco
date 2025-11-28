@@ -156,6 +156,47 @@ export default function NovaConfiguracaoPage() {
     }
   } as const;
 
+  const fileInputStyles = {
+    position: 'relative',
+    display: 'inline-block',
+    width: '100%',
+    '& input[type="file"]': {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      opacity: 0,
+      cursor: 'pointer',
+      zIndex: 1,
+    },
+    '& .file-input-button': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 1,
+      padding: '12px 24px',
+      borderRadius: '12px',
+      border: '2px dashed rgba(0, 200, 236, 0.4)',
+      background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.08) 0%, rgba(1, 90, 103, 0.12) 100%)',
+      color: 'var(--color-primary)',
+      fontWeight: 600,
+      fontSize: '0.95rem',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
+      '&:hover': {
+        borderColor: 'var(--color-primary)',
+        background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.15) 0%, rgba(1, 90, 103, 0.18) 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(0, 200, 236, 0.2)',
+      },
+      '&:active': {
+        transform: 'translateY(0)',
+      },
+      '& svg': {
+        fontSize: '24px',
+      },
+    },
+  } as const;
+
   useEffect(() => {
     // Se não for PIX, não mostrar aba de certificado
     const isPixGateway =
@@ -311,7 +352,6 @@ export default function NovaConfiguracaoPage() {
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
         <Box display="flex" alignItems="center" gap={2}>
-          <AddIcon sx={{ fontSize: 32, color: 'primary.plainColor' }} />
           <Typography level="h2">
             Nova Configuração
           </Typography>
@@ -326,13 +366,6 @@ export default function NovaConfiguracaoPage() {
             </Chip>
           )}
         </Box>
-        
-        <Switch
-          checked={formData.ativo}
-          onChange={(e) => setFormData({ ...formData, ativo: e.target.checked })}
-          color={formData.ativo ? 'success' : 'danger'}
-          endDecorator={formData.ativo ? 'Ativo' : 'Inativo'}
-        />
       </Box>
 
       {/* Alert informativo */}
@@ -407,9 +440,9 @@ export default function NovaConfiguracaoPage() {
                         <Alert variant="soft" color="primary" sx={{ mt: 1 }}>
                           Carregando gateways...
                         </Alert>
-                      ) : gateways.filter((gateway) => gateway.ativo).length === 0 ? (
+                      ) : gateways.length === 0 ? (
                         <Alert variant="soft" color="warning" sx={{ mt: 1 }}>
-                          Nenhum gateway ativo disponível
+                          Nenhum gateway disponível
                         </Alert>
                       ) : (
                         <Select
@@ -417,13 +450,11 @@ export default function NovaConfiguracaoPage() {
                           onChange={(_, value) => handleGatewayChange(value?.toString() || null)}
                           placeholder="Selecione o tipo de gateway..."
                         >
-                          {gateways
-                            .filter((gateway) => gateway.ativo)
-                            .map((gateway) => (
-                              <Option key={gateway.id} value={gateway.id}>
-                                {gateway.descricao}
-                              </Option>
-                            ))}
+                          {gateways.map((gateway) => (
+                            <Option key={gateway.id} value={gateway.id}>
+                              {gateway.descricao}
+                            </Option>
+                          ))}
                         </Select>
                       )}
                       <Typography level="body-xs" sx={{ mt: 0.5, color: 'text.secondary' }}>
@@ -857,21 +888,27 @@ export default function NovaConfiguracaoPage() {
                           <FormLabel>
                             Arquivo do Certificado (.pfx ou .p12)
                           </FormLabel>
-                          <Input
-                            type="file"
-                            slotProps={{
-                              input: {
-                                accept: '.pfx,.p12',
-                              },
-                            }}
-                            onChange={(e) => {
-                              const file = (e.target as HTMLInputElement).files?.[0];
-                              if (file) {
-                                setCertificadoFile(file);
-                              }
-                            }}
-                          />
-                          <Typography level="body-xs" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                          <Box sx={fileInputStyles}>
+                            <input
+                              type="file"
+                              accept=".pfx,.p12"
+                              aria-label="Selecionar certificado digital"
+                              title="Selecionar certificado digital (.pfx ou .p12)"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  setCertificadoFile(file);
+                                }
+                              }}
+                            />
+                            <Box className="file-input-button">
+                              <UploadIcon />
+                              <Typography>
+                                {certificadoFile ? 'Alterar Certificado' : 'Selecionar Certificado Digital'}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Typography level="body-xs" sx={{ color: 'text.secondary', mt: 1 }}>
                             O certificado será armazenado de forma segura no banco de dados
                           </Typography>
                         </FormControl>

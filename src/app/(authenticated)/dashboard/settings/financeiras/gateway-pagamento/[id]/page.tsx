@@ -155,6 +155,47 @@ export default function EditarConfiguracaoPage() {
     }
   } as const;
 
+  const fileInputStyles = {
+    position: 'relative',
+    display: 'inline-block',
+    width: '100%',
+    '& input[type="file"]': {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      opacity: 0,
+      cursor: 'pointer',
+      zIndex: 1,
+    },
+    '& .file-input-button': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 1,
+      padding: '12px 24px',
+      borderRadius: '12px',
+      border: '2px dashed rgba(0, 200, 236, 0.4)',
+      background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.08) 0%, rgba(1, 90, 103, 0.12) 100%)',
+      color: 'var(--color-primary)',
+      fontWeight: 600,
+      fontSize: '0.95rem',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
+      '&:hover': {
+        borderColor: 'var(--color-primary)',
+        background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.15) 0%, rgba(1, 90, 103, 0.18) 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(0, 200, 236, 0.2)',
+      },
+      '&:active': {
+        transform: 'translateY(0)',
+      },
+      '& svg': {
+        fontSize: '24px',
+      },
+    },
+  } as const;
+
   useEffect(() => {
     carregarDados();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -354,13 +395,6 @@ export default function EditarConfiguracaoPage() {
             {formData.gatewayDescricao}
           </Chip>
         </Box>
-        
-        <Switch
-          checked={formData.ativo}
-          onChange={(e) => setFormData({ ...formData, ativo: e.target.checked })}
-          color={formData.ativo ? 'success' : 'danger'}
-          endDecorator={formData.ativo ? 'Ativo' : 'Inativo'}
-        />
       </Box>
 
       {/* Alert quando inativo */}
@@ -493,6 +527,24 @@ export default function EditarConfiguracaoPage() {
                       <Typography level="body-xs" sx={{ mt: 0.5, color: 'text.secondary' }}>
                         Selecione a empresa vinculada
                       </Typography>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <FormControl>
+                      <FormLabel>Status</FormLabel>
+                      <Box display="flex" alignItems="center" gap={1} mt={1}>
+                        <Switch
+                          checked={formData.ativo}
+                          onChange={(e) =>
+                            setFormData({ ...formData, ativo: e.target.checked })
+                          }
+                          color={formData.ativo ? 'success' : 'danger'}
+                        />
+                        <Typography level="body-sm">
+                          {formData.ativo ? 'Configuração ativa' : 'Configuração inativa'}
+                        </Typography>
+                      </Box>
                     </FormControl>
                   </Grid>
                 </Grid>
@@ -884,26 +936,36 @@ export default function EditarConfiguracaoPage() {
                           <FormLabel>
                             Arquivo do Certificado (.pfx ou .p12)
                           </FormLabel>
-                          <Input
-                            type="file"
-                            slotProps={{
-                              input: {
-                                accept: '.pfx,.p12',
-                              },
-                            }}
-                            onChange={(e) => {
-                              const file = (e.target as HTMLInputElement).files?.[0];
-                              if (file) {
-                                setCertificadoFile(file);
-                              }
-                            }}
-                          />
+                          <Box sx={fileInputStyles}>
+                            <input
+                              type="file"
+                              accept=".pfx,.p12"
+                              aria-label="Selecionar certificado digital"
+                              title="Selecionar certificado digital (.pfx ou .p12)"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  setCertificadoFile(file);
+                                }
+                              }}
+                            />
+                            <Box className="file-input-button">
+                              <UploadIcon />
+                              <Typography>
+                                {certificadoFile 
+                                  ? 'Alterar Certificado' 
+                                  : formData.certificadoPixConfigurado 
+                                    ? 'Atualizar Certificado Digital' 
+                                    : 'Selecionar Certificado Digital'}
+                              </Typography>
+                            </Box>
+                          </Box>
                           {formData.certificadoPixConfigurado ? (
-                            <Typography level="body-xs" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                            <Typography level="body-xs" sx={{ color: 'text.secondary', mt: 1 }}>
                               Envie um novo certificado apenas se necessário (ex: certificado expirado)
                             </Typography>
                           ) : (
-                            <Typography level="body-xs" sx={{ color: 'var(--color-secondary)', mt: 0.5 }}>
+                            <Typography level="body-xs" sx={{ color: 'var(--color-secondary)', mt: 1 }}>
                               ⚠️ Certificado obrigatório para transações PIX com {isItauPix ? 'Itaú' : isSantanderPix ? 'Santander' : 'o banco selecionado'}
                             </Typography>
                           )}
