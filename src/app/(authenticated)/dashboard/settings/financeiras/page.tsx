@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Box, 
@@ -118,6 +118,16 @@ export default function FinanceirasSettingsPage() {
     );
   };
 
+  const onlineEnabled = !!form.watch('enableOnlinePayment');
+  const safeActiveTab = onlineEnabled ? activeTab : activeTab > 1 ? 1 : activeTab;
+
+  useEffect(() => {
+    if (!onlineEnabled) {
+      form.setValue('enablePixPayment', false);
+      form.setValue('enableCardPayment', false);
+    }
+  }, [onlineEnabled, form]);
+
   
 
   return (
@@ -146,14 +156,14 @@ export default function FinanceirasSettingsPage() {
 
         {/* Tabs */}
         <Tabs
-          value={activeTab}
+          value={safeActiveTab}
           onChange={(_, value) => setActiveTab(value as number)}
           sx={{ width: "100%" }}
         >
           <TabList sx={{ mb: 2 }}>
             <Tab>Financeiro</Tab>
             <Tab>Pagamentos e boleto</Tab>
-            <Tab>Configurações de Gateway</Tab>
+            {onlineEnabled && <Tab>Configurações de Gateway</Tab>}
           </TabList>
 
           {/* Tab Panel: Financeiro */}
@@ -164,10 +174,10 @@ export default function FinanceirasSettingsPage() {
                   <Stack spacing={3}>
                     <Grid container spacing={{ xs: 1.5, md: 2 }}>
                       <Grid xs={12} md={6}>
-                        <InputField label="Quantidade máxima de dias para exibição de contas à vencer (Aplicável apenas para clientes)" field="maxNumberOfDaysDueInvoices" type="number" />
+                        <CheckboxField label="Mostrar contas vencidas" field="displayOverdueInvoices" />
                       </Grid>
                       <Grid xs={12} md={6}>
-                        <CheckboxField label="Mostrar contas vencidas" field="displayOverdueInvoices" />
+                        <InputField label="Quantidade máxima de dias para exibição de contas à vencer (Aplicável apenas para clientes)" field="maxNumberOfDaysDueInvoices" type="number" />
                       </Grid>
                       <Grid xs={12}>
                         <InputField label="Exibir contas das Empresas (Ids separado por vírgula (,))" field="companyIds" />
@@ -216,10 +226,10 @@ export default function FinanceirasSettingsPage() {
                         <CheckboxField label="Habilitar pagamento online" field="enableOnlinePayment" />
                       </Grid>
                       <Grid xs={12} md={6}>
-                        <CheckboxField label="Habilitar pagamento por pix" field="enablePixPayment" />
+                        <CheckboxField label="Habilitar pagamento por pix" field="enablePixPayment" disabled={!onlineEnabled} />
                       </Grid>
                       <Grid xs={12} md={6}>
-                        <CheckboxField label="Habilitar pagamento por cartão" field="enableCardPayment" />
+                        <CheckboxField label="Habilitar pagamento por cartão" field="enableCardPayment" disabled={!onlineEnabled} />
                       </Grid>
                     </Grid>
                     <JoyButton
@@ -248,12 +258,13 @@ export default function FinanceirasSettingsPage() {
             </Box>
           </TabPanel>
 
-          {/* Tab Panel: Configurações de Gateway */}
-          <TabPanel value={2}>
-            <Box paddingBottom={"20px"} sx={{ flex: 1, overflow: "auto", padding: 2 }}>
-              <GatewayPagamentoListagemPage />
-            </Box>
-          </TabPanel>
+          {onlineEnabled && (
+            <TabPanel value={2}>
+              <Box paddingBottom={"20px"} sx={{ flex: 1, overflow: "auto", padding: 2 }}>
+                <GatewayPagamentoListagemPage />
+              </Box>
+            </TabPanel>
+          )}
 
           
         </Tabs>
