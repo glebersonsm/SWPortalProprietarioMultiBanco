@@ -41,6 +41,7 @@ export default function FinanceirasSettingsPage() {
   });
   const { settingsParams, isAdm } = useUser();
   const queryClient = useQueryClient();
+  const [formHydrated, setFormHydrated] = useState(false);
 
   // Form para abas Financeiro e Pagamentos
   const form = useForm({
@@ -79,6 +80,36 @@ export default function FinanceirasSettingsPage() {
       integratedWith: "integratedWithMultiOwnership",
     },
   });
+
+  useEffect(() => {
+    if (!settingsParams) return;
+    form.reset({
+      groupCertificateByClient: settingsParams.groupCertificateByClient ?? false,
+      issueCertificatePerClient: settingsParams.issueCertificatePerClient ?? false,
+      enableBillDownload: settingsParams.enableBillDownload ?? false,
+      enableOnlinePayment: settingsParams.enableOnlinePayment ?? false,
+      enablePixPayment: settingsParams.enablePixPayment ?? false,
+      enableCardPayment: settingsParams.enableCardPayment ?? false,
+      companyIds: settingsParams.companyIds ?? "",
+      ExibirFinanceiroPortalEmpresaIds: settingsParams.ExibirFinanceiroPortalEmpresaIds ?? "",
+      displayOverdueInvoices: settingsParams.displayOverdueInvoices ?? false,
+      maxNumberOfDaysDueInvoices: settingsParams.maxNumberOfDaysDueInvoices,
+      allowUserChangeYourEmail: settingsParams.allowUserChangeYourEmail ?? false,
+      allowUserChangeYourDoc: settingsParams.allowUserChangeYourDoc ?? false,
+      integratedWithMultiOwnership: settingsParams.integratedWithMultiOwnership ?? false,
+      serverAddress: settingsParams.serverAddress,
+      websiteToBook: settingsParams.websiteToBook,
+      condominiumName: settingsParams.condominiumName,
+      condominiumDocument: settingsParams.condominiumDocument,
+      condominiumAddress: settingsParams.condominiumAddress,
+      condominiumAdministratorName: settingsParams.condominiumAdministratorName,
+      condominiumAdministratorDocument: settingsParams.condominiumAdministratorDocument,
+      condominiumAdministratorAddress: settingsParams.condominiumAdministratorAddress,
+      certificationByClient: settingsParams.groupCertificateByClient ? "groupCertificateByClient" : "issueCertificatePerClient",
+      integratedWith: "integratedWithMultiOwnership",
+    });
+    setFormHydrated(true);
+  }, [settingsParams, form]);
 
   // Queries
   
@@ -122,11 +153,12 @@ export default function FinanceirasSettingsPage() {
   const safeActiveTab = onlineEnabled ? activeTab : activeTab > 1 ? 1 : activeTab;
 
   useEffect(() => {
+    if (!formHydrated) return;
     if (!onlineEnabled) {
       form.setValue('enablePixPayment', false);
       form.setValue('enableCardPayment', false);
     }
-  }, [onlineEnabled, form]);
+  }, [onlineEnabled, form, formHydrated]);
 
   
 
@@ -173,16 +205,16 @@ export default function FinanceirasSettingsPage() {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                   <Stack spacing={3}>
                     <Grid container spacing={{ xs: 1.5, md: 2 }}>
-                      <Grid xs={12} md={6}>
+                      <Grid xs={12} md={12}>
                         <CheckboxField label="Mostrar contas vencidas" field="displayOverdueInvoices" />
                       </Grid>
-                      <Grid xs={12} md={6}>
+                      <Grid xs={12} md={12}>
                         <InputField label="Quantidade máxima de dias para exibição de contas à vencer (Aplicável apenas para clientes)" field="maxNumberOfDaysDueInvoices" type="number" />
                       </Grid>
-                      <Grid xs={12}>
+                      <Grid xs={12} md={12}>
                         <InputField label="Exibir contas das Empresas (Ids separado por vírgula (,))" field="companyIds" />
                       </Grid>
-                      <Grid xs={12}>
+                      <Grid xs={12} md={12}>
                         <InputField label="Ids de empresas do ePortal (Ids separado por vírgula (,))" field="ExibirFinanceiroPortalEmpresaIds" />
                       </Grid>
                     </Grid>
