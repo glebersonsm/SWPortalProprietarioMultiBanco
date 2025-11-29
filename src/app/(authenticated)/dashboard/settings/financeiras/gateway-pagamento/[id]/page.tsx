@@ -295,7 +295,7 @@ export default function EditarConfiguracaoPage() {
     } catch (err: any) {
       console.error('Erro ao carregar dados:', err);
       toast.error('Erro ao carregar dados da configuração');
-      router.push('/dashboard/settings/financeiras/gateway-pagamento');
+ router.push('/dashboard/settings/financeiras?tab=2');
     } finally {
       setLoadingData(false);
     }
@@ -378,7 +378,7 @@ export default function EditarConfiguracaoPage() {
         toast.success('Configuração atualizada com sucesso!');
       }
       
-      router.push('/dashboard/settings/financeiras/gateway-pagamento');
+ router.push('/dashboard/settings/financeiras?tab=2');
     } catch (err: any) {
       console.error('Erro ao atualizar:', err);
       toast.error(err.response?.data?.message || 'Erro ao atualizar configuração');
@@ -1085,7 +1085,7 @@ export default function EditarConfiguracaoPage() {
               variant="outlined"
               color="neutral"
               startDecorator={<CancelIcon />}
-              onClick={() => router.push('/dashboard/settings/financeiras')}
+            onClick={() => router.push('/dashboard/settings/financeiras?tab=2')}
               disabled={loading}
               size="lg"
             >

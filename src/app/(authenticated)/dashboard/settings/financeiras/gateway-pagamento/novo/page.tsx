@@ -306,7 +306,7 @@ export default function NovaConfiguracaoPage() {
         toast.success('Configuração criada com sucesso!');
       }
       
-      router.push('/dashboard/settings/financeiras/gateway-pagamento');
+ router.push('/dashboard/settings/financeiras?tab=2');
     } catch (err: any) {
       console.error('Erro ao salvar:', err);
       toast.error(err.response?.data?.message || 'Erro ao criar configuração');
@@ -971,7 +971,7 @@ export default function NovaConfiguracaoPage() {
               variant="outlined"
               color="neutral"
               startDecorator={<CancelIcon />}
-              onClick={() => router.push('/dashboard/settings/financeiras')}
+ onClick={() => router.push('/dashboard/settings/financeiras?tab=2')}
               disabled={loading}
               size="lg"
             >

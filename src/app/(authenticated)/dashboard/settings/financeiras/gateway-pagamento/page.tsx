@@ -219,7 +219,7 @@ export default function GatewayPagamentoListagemPage() {
         rows={configuracoesFiltradas}
         columns={columns}
         loading={isLoading}
-        height={400}
+        height={300}
       />
     </Stack>
   );

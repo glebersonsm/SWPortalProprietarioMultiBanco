@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Box, 
   Stack, 
@@ -16,15 +16,8 @@ import {
   Grid,
 } from '@mui/joy';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  listarVinculos,
-  excluirVinculo,
-  GatewayPagamentoVinculoDto,
-} from '@/services/api/gatewayVinculoService';
-import ReusableDataGrid from '@/components/ReusableDataGrid';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { Chip } from '@mui/material';
 import { toast } from 'react-toastify';
 import CheckboxField from "@/components/CheckboxField";
 import InputField from "@/components/InputField";
@@ -40,7 +33,12 @@ import GatewayPagamentoListagemPage from "./gateway-pagamento/page";
 
 export default function FinanceirasSettingsPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState(0);
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => {
+    const t = searchParams.get('tab');
+    const n = t ? Number(t) : 0;
+    return Number.isFinite(n) && n >= 0 && n <= 2 ? n : 0;
+  });
   const { settingsParams, isAdm } = useUser();
   const queryClient = useQueryClient();
 
@@ -83,10 +81,7 @@ export default function FinanceirasSettingsPage() {
   });
 
   // Queries
-  const { data: vinculos, isLoading: isLoadingVinculos, refetch: refetchVinculos } = useQuery({
-    queryKey: ['gateway-vinculos'],
-    queryFn: listarVinculos,
-  });
+  
 
   // Handlers para Form Financeiro
   const onErrorHandler = (error: AxiosError<{ errors?: string[] }>) => {
@@ -123,110 +118,7 @@ export default function FinanceirasSettingsPage() {
     );
   };
 
-  // Handlers para Vínculos
-  const handleExcluirVinculo = async (id: number) => {
-    if (!confirm('Deseja realmente excluir este vínculo?')) return;
-
-    try {
-      await excluirVinculo(id);
-      toast.success('Vínculo excluído com sucesso!');
-      refetchVinculos();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao excluir vínculo');
-    }
-  };
-
-  const columnsVinculos: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      width: 70,
-      type: 'number',
-    },
-    {
-      field: 'nomeEmpresa',
-      headerName: 'Empresa',
-      width: 130,
-    },
-    {
-      field: 'nomeTorre',
-      headerName: 'Torre',
-      width: 130,
-    },
-    {
-      field: 'gatewayNome',
-      headerName: 'Gateway',
-      width: 130,
-      renderCell: (params: GridRenderCellParams) => {
-        const isGetNet = params.value?.toLowerCase().includes('getnet');
-        const isRede = params.value?.toLowerCase().includes('rede');
-        const isPix = params.value?.toLowerCase().includes('pix');
-        
-        return (
-          <Chip 
-            label={params.value} 
-            size="small" 
-            color={isGetNet ? 'error' : isRede ? 'warning' : isPix ? 'success' : 'primary'}
-          />
-        );
-      },
-    },
-    {
-      field: 'configuracaoNome',
-      headerName: 'Configuração',
-      flex: 1,
-      minWidth: 250,
-    },
-    {
-      field: 'ativo',
-      headerName: 'Status',
-      width: 100,
-      renderCell: (params: GridRenderCellParams) => (
-        <Chip
-          label={params.value ? 'Ativo' : 'Inativo'}
-          color={params.value ? 'success' : 'default'}
-          size="small"
-        />
-      ),
-    },
-    {
-      field: 'dataCriacao',
-      headerName: 'Data Criação',
-      width: 130,
-      renderCell: (params: GridRenderCellParams) =>
-        params.value ? new Date(params.value).toLocaleDateString('pt-BR') : '-',
-    },
-    {
-      field: 'actions',
-      headerName: 'Ações',
-      width: 100,
-      sortable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params: GridRenderCellParams) => (
-        <Box display="flex" gap={1}>
-          <JoyIconButton
-            size="sm"
-            color="primary"
-            onClick={() =>
-              router.push(`/dashboard/settings/financeiras/vinculo/${params.row.id}`)
-            }
-            title="Editar"
-          >
-            <EditIcon fontSize="small" />
-          </JoyIconButton>
-          <JoyIconButton
-            size="sm"
-            color="danger"
-            onClick={() => handleExcluirVinculo(params.row.id)}
-            title="Excluir"
-          >
-            <DeleteIcon fontSize="small" />
-          </JoyIconButton>
-        </Box>
-      ),
-    },
-  ];
+  
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -262,7 +154,6 @@ export default function FinanceirasSettingsPage() {
             <Tab>Financeiro</Tab>
             <Tab>Pagamentos e boleto</Tab>
             <Tab>Configurações de Gateway</Tab>
-            <Tab>Vínculos</Tab>
           </TabList>
 
           {/* Tab Panel: Financeiro */}
@@ -364,27 +255,7 @@ export default function FinanceirasSettingsPage() {
             </Box>
           </TabPanel>
 
-          {/* Tab Panel: Vínculos */}
-          <TabPanel value={3}>
-            <Stack spacing={2}>
-              <Box display="flex" justifyContent="flex-end" alignItems="center">
-                <JoyButton
-                  startDecorator={<AddIcon />}
-                  onClick={() => router.push('/dashboard/settings/financeiras/vinculo/novo')}
-                >
-                  Novo Vínculo
-                </JoyButton>
-              </Box>
-
-              <Divider />
-
-              <ReusableDataGrid
-                rows={vinculos || []}
-                columns={columnsVinculos}
-                loading={isLoadingVinculos}
-              />
-            </Stack>
-          </TabPanel>
+          
         </Tabs>
       </Stack>
     </Box>
