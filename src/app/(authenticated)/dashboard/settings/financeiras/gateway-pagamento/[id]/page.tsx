@@ -1085,7 +1085,7 @@ export default function EditarConfiguracaoPage() {
               variant="outlined"
               color="neutral"
               startDecorator={<CancelIcon />}
-              onClick={() => router.push('/dashboard/settings/financeiras/gateway-pagamento')}
+              onClick={() => router.push('/dashboard/settings/financeiras')}
               disabled={loading}
               size="lg"
             >
