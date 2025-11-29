@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Stack, Divider, Button as JoyButton, IconButton as JoyIconButton } from '@mui/joy';
 import { useQuery } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import {
   excluir,
   GatewayPagamentoConfiguracaoDto,
 } from '@/services/api/gatewayPagamentoService';
+import { getEmpresasVinculadas } from '@/services/querys/framework';
 import ReusableDataGrid from '@/components/ReusableDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
@@ -25,7 +26,12 @@ export default function GatewayPagamentoListagemPage() {
     queryFn: listarConfiguracoes,
   });
 
-  const handleExcluir = async (id: number) => {
+  const { data: empresas, isLoading: isLoadingEmpresas } = useQuery({
+    queryKey: ['GetEmpresasVinculadas'],
+    queryFn: () => getEmpresasVinculadas(),
+  });
+
+  const handleExcluir = useCallback(async (id: number) => {
     if (!confirm('Deseja realmente excluir esta configuração?')) return;
 
     try {
@@ -35,7 +41,7 @@ export default function GatewayPagamentoListagemPage() {
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao excluir configuração');
     }
-  };
+  }, [refetch]);
 
   const configuracoesFiltradas = (configuracoes || []).filter((config) => {
     const filtroGatewayOk =
@@ -47,7 +53,7 @@ export default function GatewayPagamentoListagemPage() {
     return filtroGatewayOk && filtroStatusOk;
   });
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = useMemo(() => [
     {
       field: 'id',
       headerName: 'ID',
@@ -87,9 +93,33 @@ export default function GatewayPagamentoListagemPage() {
     {
       field: 'identificador',
       headerName: 'Empresa',
-      width: 150,
+      width: 250,
       renderCell: (params: GridRenderCellParams) => {
-        return params.value || '-';
+        if (!params.value) return '-';
+        
+        if (isLoadingEmpresas) {
+          return 'Carregando...';
+        }
+        
+        const empresaId = Number(params.value);
+        if (isNaN(empresaId) || empresaId === 0) {
+          return params.value || '-';
+        }
+        
+        if (!empresas || empresas.length === 0) {
+          return params.value || '-';
+        }
+        
+        const empresa = empresas.find((item) => {
+          const itemId = Number(item.id);
+          return itemId === empresaId;
+        });
+        
+        if (!empresa || !empresa.nome) {
+          return params.value || '-';
+        }
+
+        return `${params.value} - ${empresa.nome}`;
       },
     },
     {
@@ -141,7 +171,7 @@ export default function GatewayPagamentoListagemPage() {
         </Box>
       ),
     },
-  ];
+  ], [empresas, router, handleExcluir, isLoadingEmpresas]);
 
   return (
     <Stack spacing={2}>
@@ -189,6 +219,7 @@ export default function GatewayPagamentoListagemPage() {
         rows={configuracoesFiltradas}
         columns={columns}
         loading={isLoading}
+        height={400}
       />
     </Stack>
   );

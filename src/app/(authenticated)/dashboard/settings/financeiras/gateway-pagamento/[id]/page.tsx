@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Box,
@@ -94,6 +94,7 @@ export default function EditarConfiguracaoPage() {
 
   const [gatewaySelected, setGatewaySelected] = useState<string>('');
   const [empresaSelecionada, setEmpresaSelecionada] = useState<number | null>(null);
+  const empresaSincronizadaRef = useRef(false);
   const [showPV, setShowPV] = useState(false);
   const [showToken, setShowToken] = useState(false);
   const [showClientId, setShowClientId] = useState(false);
@@ -201,14 +202,67 @@ export default function EditarConfiguracaoPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // Sincronizar empresa selecionada quando dados e empresas estiverem disponíveis
+  // Isso permite que o usuário altere a empresa manualmente sem interferência após a sincronização inicial
   useEffect(() => {
-    // Sincronizar empresa selecionada quando formData.identificador mudar
-    if (formData.identificador && !isNaN(Number(formData.identificador)) && Number(formData.identificador) > 0) {
-      setEmpresaSelecionada(Number(formData.identificador));
-    } else {
-      setEmpresaSelecionada(null);
+    // Se já sincronizamos e o usuário mudou manualmente, não interferir
+    if (empresaSincronizadaRef.current) {
+      return;
     }
-  }, [formData.identificador]);
+
+    // Verificar se temos empresas carregadas
+    if (!empresas || empresas.length === 0) {
+      return; // Aguardar empresas serem carregadas
+    }
+
+    // Verificar se temos o identificador nos dados do formulário
+    const identificador = formData.identificador;
+    if (!identificador || identificador === '' || identificador === '0') {
+      setEmpresaSelecionada(null);
+      empresaSincronizadaRef.current = true;
+      return;
+    }
+
+    const empresaId = Number(identificador);
+    if (!isNaN(empresaId) && empresaId > 0) {
+    const empresaEncontrada = empresas.find(emp => Number(emp.id) === empresaId);
+      if (empresaEncontrada) {
+      setEmpresaSelecionada(Number(empresaEncontrada.id));
+        empresaSincronizadaRef.current = true;
+        return;
+      }
+      setEmpresaSelecionada(empresaId);
+      empresaSincronizadaRef.current = true;
+      return;
+    }
+
+    const norm = (s: any) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    const identNorm = norm(identificador);
+    const empresaPorNome = empresas.find(emp => {
+      const nomeNorm = norm(emp.nome);
+      return nomeNorm === identNorm || identNorm.includes(nomeNorm) || nomeNorm.includes(identNorm);
+    });
+    if (empresaPorNome) {
+      setEmpresaSelecionada(empresaPorNome.id);
+      empresaSincronizadaRef.current = true;
+      return;
+    }
+
+    const digits = String(identificador).match(/\d+/)?.[0];
+    const altId = digits ? Number(digits) : NaN;
+    if (!isNaN(altId) && altId > 0) {
+      const empresaAlt = empresas.find(emp => Number(emp.id) === altId);
+      if (empresaAlt) {
+        setEmpresaSelecionada(empresaAlt.id);
+        empresaSincronizadaRef.current = true;
+        return;
+      }
+    }
+
+    setEmpresaSelecionada(null);
+    empresaSincronizadaRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [empresas, formData.identificador]);
 
   useEffect(() => {
     // Se não for PIX, não mostrar aba de certificado
@@ -234,6 +288,10 @@ export default function EditarConfiguracaoPage() {
       setFormData(configData);
       setGateways(gatewaysData);
       setGatewaySelected(configData.gatewaySysId || '');
+      
+      // Resetar a flag de sincronização quando novos dados são carregados
+      // Isso permite que o useEffect sincronize a empresa quando empresas estiverem disponíveis
+      empresaSincronizadaRef.current = false;
     } catch (err: any) {
       console.error('Erro ao carregar dados:', err);
       toast.error('Erro ao carregar dados da configuração');
@@ -494,8 +552,12 @@ export default function EditarConfiguracaoPage() {
                         value={empresaSelecionada}
                         onChange={(event, newValue) => {
                           const empresaId = newValue as number | null;
+                          // Atualizar o estado local
                           setEmpresaSelecionada(empresaId);
+                          // Atualizar o formData
                           setFormData({ ...formData, identificador: empresaId ? empresaId.toString() : '' });
+                          // Marcar como sincronizado para evitar interferência do useEffect
+                          empresaSincronizadaRef.current = true;
                         }}
                         placeholder="Selecione a empresa..."
                         sx={{
@@ -519,8 +581,8 @@ export default function EditarConfiguracaoPage() {
                         }}
                       >
                         {empresas?.map((empresa) => (
-                          <Option value={empresa.id} key={empresa.id}>
-                            {empresa.nome}
+                          <Option value={Number(empresa.id)} key={empresa.id}>
+                            {Number(empresa.id)} - {empresa.nome}
                           </Option>
                         ))}
                       </Select>

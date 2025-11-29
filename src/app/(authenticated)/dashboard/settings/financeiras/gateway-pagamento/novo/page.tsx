@@ -496,7 +496,7 @@ export default function NovaConfiguracaoPage() {
                       >
                         {empresas?.map((empresa) => (
                           <Option value={empresa.id} key={empresa.id}>
-                            {empresa.nome}
+                            {empresa.id} - {empresa.nome}
                           </Option>
                         ))}
                       </Select>
@@ -971,7 +971,7 @@ export default function NovaConfiguracaoPage() {
               variant="outlined"
               color="neutral"
               startDecorator={<CancelIcon />}
-              onClick={() => router.push('/dashboard/configuracoes/gateway-pagamento')}
+              onClick={() => router.push('/dashboard/settings/financeiras/gateway-pagamento')}
               disabled={loading}
               size="lg"
             >
