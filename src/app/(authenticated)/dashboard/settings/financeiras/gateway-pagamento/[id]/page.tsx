@@ -582,7 +582,7 @@ export default function EditarConfiguracaoPage() {
                       >
                         {empresas?.map((empresa) => (
                           <Option value={Number(empresa.id)} key={empresa.id}>
-                            {Number(empresa.id)} - {empresa.nome}
+                            {String(empresa.id)} - {empresa.nome}
                           </Option>
                         ))}
                       </Select>

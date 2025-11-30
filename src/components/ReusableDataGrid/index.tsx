@@ -535,6 +535,8 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
     }
   };
 
+  const { rowSelectionModel: _omitRowSelectionModel, ...safeAdditionalProps } = (additionalProps || {}) as any;
+
   // Configurações do DataGrid
   const dataGridProps = {
     rows: pagination.enabled ? paginatedRows : rows,
@@ -802,7 +804,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         },
       },
     },
-    ...additionalProps
+    ...safeAdditionalProps
   };
 
   return (
@@ -852,7 +854,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
               border: 'none',
             },
           }}
-          {...additionalProps}
+          {...safeAdditionalProps}
         />
       </Box>
       

@@ -40,7 +40,8 @@ export function SelectableTableToolbar({
     onOpenModal?.(payload);
   };
 
-  if (selectedBills.length === 0) return null;
+  // Não mostra a toolbar se não houver itens selecionados ou se o pagamento online não estiver habilitado
+  if (selectedBills.length === 0 || !settingsParams?.enableOnlinePayment) return null;
 
   return (
     <Toolbar

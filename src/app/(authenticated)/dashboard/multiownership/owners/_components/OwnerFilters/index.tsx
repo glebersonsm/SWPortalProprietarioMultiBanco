@@ -81,7 +81,7 @@ export default function MultiownershipOwnerFilters({
             <Select
               value={filters.companyId}
               onChange={(event, value) =>
-                setFilters({ ...filters, companyId: value ?? -1 })
+                setFilters({ ...filters, companyId: Number(value ?? -1) })
               }
               sx={{
                 fontFamily: "Montserrat, sans-serif",
@@ -105,8 +105,8 @@ export default function MultiownershipOwnerFilters({
             >
               <Option value={-1}>Todas</Option>
               {data?.map((item) => (
-                <Option value={item.id} key={item.id}>
-                  {item.nome}
+                <Option value={Number(item.id)} key={item.id}>
+                  {String(item.id)} - {item.nome}
                 </Option>
               ))}
             </Select>

@@ -18,20 +18,27 @@ export function SelectableTableHead({
   rowCount,
   outstandingBills,
 }: SelectableTableHeadProps) {
+  // Função auxiliar para verificar se uma conta pode ser selecionada
+  const canSelectBill = (bill: typeof outstandingBills[0]): boolean => {
+    const statusLower = bill.status.toLowerCase();
+    const isOpen = statusLower.includes("em aberto");
+    const isOverdue = statusLower.includes("vencida");
+    const isBlocked = bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+    
+    return (isOpen || isOverdue) && !isBlocked;
+  };
+
+  // Filtra apenas as contas selecionáveis
+  const selectableBills = outstandingBills.filter(canSelectBill);
+  
   const uniqueCompanies = new Set(
-    outstandingBills.map((bill) => bill.companyId)
-  );
-  const existsAccountBlocked = outstandingBills.reduce(
-    (count, item) => count + (item.paymentBlockedByCrcStatus.toLocaleLowerCase().includes("s") ? 1 : 0),
-    0
+    selectableBills.map((bill) => bill.companyId)
   );
 
-  const existsPaidAccount = outstandingBills.reduce(
-    (count, item) => count + (item.status.toLocaleLowerCase().includes("paga") ? 1 : 0),
-    0
-  );
-
-  const canEnableCheckAll = uniqueCompanies.size === 1 && existsAccountBlocked === 0 && existsPaidAccount === 0;
+  const canEnableCheckAll = uniqueCompanies.size === 1 && selectableBills.length > 0;
+  
+  // Conta apenas as contas selecionáveis para o checkbox
+  const selectableRowCount = selectableBills.length;
 
   return (
     <TableHead>
@@ -39,8 +46,8 @@ export function SelectableTableHead({
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
+            indeterminate={numSelected > 0 && numSelected < selectableRowCount}
+            checked={selectableRowCount > 0 && numSelected === selectableRowCount}
             onChange={onSelectAllClick}
             disabled={!canEnableCheckAll}
             inputProps={{

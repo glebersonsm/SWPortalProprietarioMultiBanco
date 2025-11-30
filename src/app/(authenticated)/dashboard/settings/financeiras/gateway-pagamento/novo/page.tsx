@@ -495,8 +495,8 @@ export default function NovaConfiguracaoPage() {
                         }}
                       >
                         {empresas?.map((empresa) => (
-                          <Option value={empresa.id} key={empresa.id}>
-                            {empresa.id} - {empresa.nome}
+                          <Option value={Number(empresa.id)} key={empresa.id}>
+                            {String(empresa.id)} - {empresa.nome}
                           </Option>
                         ))}
                       </Select>

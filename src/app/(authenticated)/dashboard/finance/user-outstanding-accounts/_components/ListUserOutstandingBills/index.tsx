@@ -28,9 +28,26 @@ export default function ListUserOutstandingBills({
 }) {
   const { settingsParams } = useUser();
 
+  // Função auxiliar para verificar se uma conta pode ser selecionada
+  const canSelectBill = (bill: UserOutstandingBill): boolean => {
+    const statusLower = bill.status.toLowerCase();
+    const isOpen = statusLower.includes("em aberto");
+    const isOverdue = statusLower.includes("vencida");
+    const isBlocked = bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+    
+    return (isOpen || isOverdue) && !isBlocked;
+  };
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelected(outstandingBills);
+      // Seleciona apenas contas que podem ser selecionadas (Em aberto ou Vencidas)
+      const selectableBills = outstandingBills.filter(canSelectBill);
+      
+      // Verifica se todas são da mesma empresa
+      const uniqueCompanies = new Set(selectableBills.map(bill => bill.companyId));
+      if (uniqueCompanies.size === 1) {
+        setSelected(selectableBills);
+      }
       return;
     }
     setSelected([]);
@@ -43,29 +60,30 @@ export default function ListUserOutstandingBills({
     const selectedIndex = selected.indexOf(outstandingBill);
     let newSelected: readonly UserOutstandingBill[] = [];
 
-    if (outstandingBill.status.toLocaleLowerCase().includes("em aberto") && 
-                !outstandingBill.paymentBlockedByCrcStatus.toLocaleLowerCase().includes("s"))
-    {
-      if (!outstandingBill.status.toLowerCase().includes("em aberto")) {
-          alert("Você só pode selecionar contas com status 'Em aberto'.");
-          return;
-        }
-
-        if (outstandingBill.paymentBlockedByCrcStatus.toLowerCase().includes("s")) {
-          alert("Pagamento não permitido.");
-          return;
-        }      
-
-      if (selected.length > 0) {
-        const selectedCompanyId = selected[0].companyId;
-
-        if (outstandingBill.companyId !== selectedCompanyId) {
-          alert("Você só pode selecionar contas da mesma empresa.");
-          return;
-        }
+    // Verifica se a conta pode ser selecionada
+    if (!canSelectBill(outstandingBill)) {
+      const statusLower = outstandingBill.status.toLowerCase();
+      if (!statusLower.includes("em aberto") && !statusLower.includes("vencida")) {
+        alert("Você só pode selecionar contas com status 'Em aberto' ou 'Vencidas'.");
+        return;
       }
-  }
-  else return;
+      
+      if (outstandingBill.paymentBlockedByCrcStatus.toLowerCase().includes("s")) {
+        alert("Pagamento não permitido.");
+        return;
+      }
+      return;
+    }
+
+    // Verifica se todas as contas selecionadas são da mesma empresa
+    if (selected.length > 0) {
+      const selectedCompanyId = selected[0].companyId;
+
+      if (outstandingBill.companyId !== selectedCompanyId) {
+        alert("Você só pode selecionar contas da mesma empresa.");
+        return;
+      }
+    }
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, outstandingBill);
@@ -224,8 +242,7 @@ export default function ListUserOutstandingBills({
                 selected={isItemSelected}
                 sx={{ cursor: "pointer" }}
               >
-                {outstandingBill.status.toLocaleLowerCase().includes("em aberto") && 
-                !outstandingBill.paymentBlockedByCrcStatus.toLocaleLowerCase().includes("s") ? (
+                {canSelectBill(outstandingBill) ? (
                   <TableCell
                     padding="checkbox"
                     sx={{

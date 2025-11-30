@@ -8,22 +8,27 @@ import { useQuery } from "@tanstack/react-query";
 import WithoutData from "@/components/WithoutData";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { getUserOutstandingBills } from "@/services/querys/finance-users";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { P, match } from "ts-pattern";
 import PayPerPixModal from "./_components/PayPerPixModal";
 import PayByCreditCard from "./_components/PayByCreditCardModal";
 import UserOutstandingBillsFilters from "./_components/UserOutstandingBillsFilters";
 import DownloadCertificatesModal from "./_components/DownloadCertificatesModal";
 import { UserOutstandingBill } from "@/utils/types/finance-users";
+import { alpha } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { Button } from "@mui/joy";
+import useUser from "@/hooks/useUser";
 
 import ReusableDataGrid from "@/components/ReusableDataGrid";
 import ModernPaginatedList from "@/components/ModernPaginatedList";
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { GridColDef, GridRenderCellParams, GridRowClassNameParams } from "@mui/x-data-grid";
 import { formatMoney } from "@/utils/money";
 import { IconButton, Box as MuiBox } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import { downloadBill } from "@/services/querys/finance-users";
-import useUser from "@/hooks/useUser";
+import { isDateBeforeToday } from "@/utils/dates";
 
 const PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_page";
 const ROWS_PER_PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_rows_per_page";
@@ -32,27 +37,31 @@ const thereIsLocalStorage = typeof window !== "undefined" && window.localStorage
 
 export default function OutstandingAccountsPage() {
   const [filters, setFilters] = useState(initialFilters);
-  const [page, setPage] = useState(() => {
-          if (thereIsLocalStorage)
-            return Number(localStorage.getItem(PAGE_STORAGE_KEY)) || 1;
-          else return 1;
-        });
-  const [rowsPerPage, setRowsPerPage] = useState(() => {
-      if (thereIsLocalStorage)
-        return Number(localStorage.getItem(ROWS_PER_PAGE_STORAGE_KEY)) || 10;
-      else
-      return 10;
-    });
+  const [page, setPage] = useState<number>(1);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   
   useEffect(() => {
-      if (thereIsLocalStorage)
-      localStorage.setItem(PAGE_STORAGE_KEY, page.toString());
+      if (thereIsLocalStorage) {
+        try { localStorage.setItem(PAGE_STORAGE_KEY, page.toString()); } catch {}
+      }
     }, [page]);
   
   useEffect(() => {
-    if (thereIsLocalStorage)
-    localStorage.setItem(ROWS_PER_PAGE_STORAGE_KEY, rowsPerPage.toString());
+    if (thereIsLocalStorage) {
+      try { localStorage.setItem(ROWS_PER_PAGE_STORAGE_KEY, rowsPerPage.toString()); } catch {}
+    }
   }, [rowsPerPage]);
+
+  useEffect(() => {
+    if (thereIsLocalStorage) {
+      try {
+        const p = Number(localStorage.getItem(PAGE_STORAGE_KEY));
+        if (p) setPage(p);
+        const rpp = Number(localStorage.getItem(ROWS_PER_PAGE_STORAGE_KEY));
+        if (rpp) setRowsPerPage(rpp);
+      } catch {}
+    }
+  }, []);
 
   const [selectedAccounts, setSelectedAccounts] = React.useState<
     readonly UserOutstandingBill[]
@@ -147,9 +156,9 @@ export default function OutstandingAccountsPage() {
         return (
           <MuiBox sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
             {bill.typeableBillLine &&
-            settingsParams?.enableBillDownload && 
-            bill.status.toLowerCase().includes("aberto") && 
-            !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s") ? (
+            settingsParams?.enableBillDownload &&
+            String(bill.status || "").toLowerCase().includes("aberto") &&
+            !String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s") ? (
               <IconButton
                 size="small"
                 onClick={(e) => {
@@ -191,19 +200,44 @@ export default function OutstandingAccountsPage() {
     setPage(value);
   }
 
-  // Função de seleção desativada temporariamente devido a erros
+  // Função auxiliar para verificar se uma conta pode ser selecionada
+  const canSelectBill = React.useCallback((bill: UserOutstandingBill): boolean => {
+    const statusLower = String(bill.status || "").toLowerCase();
+    const isOpen = statusLower.includes("em aberto");
+    const isOverdue = statusLower.includes("vencida");
+    const isBlocked = String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
+    return (isOpen || isOverdue) && !isBlocked;
+  }, []);
+
+  // Função de seleção para contas em aberto ou vencidas
    const handleSelectionModelChange = React.useCallback((newSelection: any) => {
-     const selectionIds = Array.isArray(newSelection) ? newSelection : [];
-     const selectedBills = outstandingBills.filter((bill) => 
-       selectionIds.includes(bill.id) &&
-       bill.status.toLowerCase().includes("aberto") &&
-       !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s")
+     const selectionIds = Array.isArray(newSelection) ? newSelection : (newSelection?.ids ?? []);
+     const normalizedIds = selectionIds.map((id: any) => Number(id));
+     const selectedBills = outstandingBills.filter((bill) =>
+       normalizedIds.includes(bill.id) &&
+       canSelectBill(bill)
      );
+
      const companyIds = Array.from(new Set(selectedBills.map(bill => bill.companyId)));
      if (companyIds.length <= 1) {
        setSelectedAccounts(selectedBills);
+     } else if (selectedBills.length > 0) {
+       alert("Você só pode selecionar contas da mesma empresa.");
+       const lastSelectedBill = selectedBills[selectedBills.length - 1];
+       setSelectedAccounts([lastSelectedBill]);
      }
-   }, [outstandingBills]);
+   }, [outstandingBills, canSelectBill]);
+
+  const router = useRouter();
+
+  // Função para calcular o total das contas selecionadas
+  const totalSelected = selectedAccounts.reduce((acc, bill) => acc + bill.currentValue, 0);
+
+  // Função para abrir modal de pagamento via query params
+  const handleOpenPaymentModal = (action: "payPerPix" | "payByCreditCard") => {
+    const billsIds = selectedAccounts.map(bill => bill.id).join(",");
+    router.push(`?action=${action}&bills=${billsIds}`);
+  };
 
   return (
     <>
@@ -215,6 +249,87 @@ export default function OutstandingAccountsPage() {
           <WithoutData />
         ) : (
           <Stack spacing={2}>
+            {/* Toolbar de pagamento quando há contas selecionadas e pagamento online está habilitado */}
+            {selectedAccounts.length > 0 && settingsParams?.enableOnlinePayment && (
+              <Toolbar
+                sx={{
+                  pl: { sm: 2 },
+                  pr: { xs: 1, sm: 1 },
+                  pt: "5px",
+                  pb: "5px",
+                  justifyContent: "space-between",
+                  bgcolor: (theme) =>
+                    alpha(
+                      theme.palette.primary.main,
+                      theme.palette.action.activatedOpacity
+                    ),
+                }}
+              >
+                <Typography
+                  color="inherit"
+                  variant="body1"
+                  fontWeight={600}
+                  component="div"
+                >
+                  TOTAL = {formatMoney(totalSelected)}
+                </Typography>
+
+                <Stack gap={2} flexDirection="row">
+                  {settingsParams?.enableCardPayment && (
+                    <Button
+                      onClick={() => handleOpenPaymentModal("payByCreditCard")}
+                      sx={{
+                        backgroundColor: "var(--color-button-primary)",
+                        color: "var(--color-button-text)",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        padding: "8px 16px",
+                        border: "none",
+                        boxShadow: "none",
+                        textTransform: "none",
+                        fontFamily: "Montserrat, sans-serif",
+                        "&:hover": {
+                          backgroundColor: "var(--color-button-primary-hover)",
+                        },
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "0 0 0 2px var(--color-highlight-border)",
+                        },
+                      }}
+                    >
+                      Pagar com cartão
+                    </Button>
+                  )}
+
+                  {settingsParams?.enablePixPayment && (
+                    <Button
+                      onClick={() => handleOpenPaymentModal("payPerPix")}
+                      sx={{
+                        backgroundColor: "var(--color-button-primary)",
+                        color: "var(--color-button-text)",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        padding: "8px 16px",
+                        border: "none",
+                        boxShadow: "none",
+                        textTransform: "none",
+                        fontFamily: "Montserrat, sans-serif",
+                        "&:hover": {
+                          backgroundColor: "var(--color-button-primary-hover)",
+                        },
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "0 0 0 2px var(--color-highlight-border)",
+                        },
+                      }}
+                    >
+                      Pagar por pix
+                    </Button>
+                  )}
+                </Stack>
+              </Toolbar>
+            )}
+
             {/* Exibição dos totais */}
             <MuiBox sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
               <MuiBox sx={{ display: 'flex', gap: 4 }}>
@@ -231,16 +346,23 @@ export default function OutstandingAccountsPage() {
               rows={outstandingBills}
               columns={columns}
               loading={isLoading}
-              // checkboxSelection desativado temporariamente
-              checkboxSelection={false}
+              checkboxSelection={true}
               onSelectionModelChange={handleSelectionModelChange}
                additionalProps={{
                  isRowSelectable: (params: any) => {
                    const bill = params.row as UserOutstandingBill;
-                   return bill.status.toLowerCase().includes("aberto") &&
-                          !bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+                   return canSelectBill(bill);
+                 },
+                 getRowClassName: (params: GridRowClassNameParams<UserOutstandingBill>) => {
+                   const status = params.row?.status?.toLowerCase();
+                   if (status?.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)) {
+                     return "overdue-row";
+                   }
+                   if (status?.includes("paga")) {
+                     return "paid-row";
+                   }
+                   return "";
                  }
-                 // rowSelectionModel removido quando checkboxSelection=false
                }}
               pagination={{
                 enabled: false,
