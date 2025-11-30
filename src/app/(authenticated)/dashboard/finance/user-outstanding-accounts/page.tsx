@@ -130,6 +130,12 @@ export default function OutstandingAccountsPage() {
   const totalOriginal = outstandingBills.reduce((acc, item) => acc + item.value, 0);
   const totalAtualizado = outstandingBills.reduce((acc, item) => acc + item.currentValue, 0);
 
+  const selectedAccounts = useMemo(() => {
+    return outstandingBills.filter((item) => selectedRowIds.includes(item.id));
+  }, [outstandingBills, selectedRowIds]);
+
+  const totalSelecionado = selectedAccounts.reduce((acc, item) => acc + item.currentValue, 0);
+
 
 
 
@@ -259,6 +265,9 @@ export default function OutstandingAccountsPage() {
                       </Typography>
                       <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
                         Total Atualizado: {formatMoney(totalAtualizado)}
+                      </Typography>
+                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
+                        Total Selecionado: {formatMoney(totalSelecionado)}
                       </Typography>
                     </Stack>
                   </Stack>

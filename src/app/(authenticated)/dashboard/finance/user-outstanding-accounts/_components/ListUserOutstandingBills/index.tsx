@@ -76,7 +76,7 @@ export default function ListUserOutstandingBills({
       const isBlocked = String(outstandingBill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
       
       if (isBlocked) {
-        alert("Pagamento não permitido.");
+        alert("Seleção não permitida.");
         return;
       }
       
