@@ -4,6 +4,7 @@ import TableHead from "@mui/material/TableHead";
 import Checkbox from "@mui/material/Checkbox";
 import { headCells } from "./fields";
 import { UserOutstandingBill } from "@/utils/types/finance-users";
+import useUser from "@/hooks/useUser";
 
 type SelectableTableHeadProps = {
   numSelected: number;
@@ -18,14 +19,27 @@ export function SelectableTableHead({
   rowCount,
   outstandingBills,
 }: SelectableTableHeadProps) {
+  const { isAdm } = useUser();
+
   // Função auxiliar para verificar se uma conta pode ser selecionada
+  // Clientes: apenas contas "Em aberto"
+  // Admins: contas "Em aberto" ou "Vencidas"
   const canSelectBill = (bill: typeof outstandingBills[0]): boolean => {
-    const statusLower = bill.status.toLowerCase();
+    const statusLower = String(bill.status || "").toLowerCase();
     const isOpen = statusLower.includes("em aberto");
     const isOverdue = statusLower.includes("vencida");
-    const isBlocked = bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+    const isBlocked = String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
     
-    return (isOpen || isOverdue) && !isBlocked;
+    // Se bloqueada, não pode selecionar
+    if (isBlocked) return false;
+    
+    // Cliente: apenas "Em aberto"
+    if (!isAdm) {
+      return isOpen;
+    }
+    
+    // Admin: "Em aberto" ou "Vencidas"
+    return isOpen || isOverdue;
   };
 
   // Filtra apenas as contas selecionáveis

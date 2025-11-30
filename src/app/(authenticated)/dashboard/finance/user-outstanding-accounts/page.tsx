@@ -7,44 +7,46 @@ import useDebounce from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import WithoutData from "@/components/WithoutData";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { getUserOutstandingBills } from "@/services/querys/finance-users";
-import { useSearchParams, useRouter } from "next/navigation";
-import { P, match } from "ts-pattern";
-import PayPerPixModal from "./_components/PayPerPixModal";
-import PayByCreditCard from "./_components/PayByCreditCardModal";
+import { getUserOutstandingBills, downloadBill } from "@/services/querys/finance-users"; // downloadBill importado corretamente
+import { useSearchParams } from "next/navigation";
 import UserOutstandingBillsFilters from "./_components/UserOutstandingBillsFilters";
 import DownloadCertificatesModal from "./_components/DownloadCertificatesModal";
 import { UserOutstandingBill } from "@/utils/types/finance-users";
-import { alpha } from "@mui/material/styles";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import { Button } from "@mui/joy";
 import useUser from "@/hooks/useUser";
 
 import ReusableDataGrid from "@/components/ReusableDataGrid";
 import ModernPaginatedList from "@/components/ModernPaginatedList";
-import { GridColDef, GridRenderCellParams, GridRowClassNameParams } from "@mui/x-data-grid";
+// Use GridRowId para tipar o array de IDs
+import { GridColDef, GridRenderCellParams, GridRowClassNameParams, GridRowId } from "@mui/x-data-grid";
 import { formatMoney } from "@/utils/money";
-import { IconButton, Box as MuiBox } from "@mui/material";
+import { IconButton, Box as MuiBox, Typography } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import { downloadBill } from "@/services/querys/finance-users";
 import { isDateBeforeToday } from "@/utils/dates";
 
 const PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_page";
 const ROWS_PER_PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_rows_per_page";
 
+// Simplificando a verificação de localStorage
 const thereIsLocalStorage = typeof window !== "undefined" && window.localStorage;
 
 export default function OutstandingAccountsPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  
   const [filters, setFilters] = useState(initialFilters);
   const [page, setPage] = useState<number>(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   
+  // Onde o DataGrid armazena os IDs selecionados
+  const [selectedRowIds, setSelectedRowIds] = React.useState<GridRowId[]>([]);
+  
+  // --- Lógica de Local Storage (Mantida) ---
   useEffect(() => {
-      if (thereIsLocalStorage) {
-        try { localStorage.setItem(PAGE_STORAGE_KEY, page.toString()); } catch {}
-      }
-    }, [page]);
+    if (thereIsLocalStorage) {
+      try { localStorage.setItem(PAGE_STORAGE_KEY, page.toString()); } catch {}
+    }
+  }, [page]);
   
   useEffect(() => {
     if (thereIsLocalStorage) {
@@ -62,15 +64,12 @@ export default function OutstandingAccountsPage() {
       } catch {}
     }
   }, []);
-
-  const [selectedAccounts, setSelectedAccounts] = React.useState<
-    readonly UserOutstandingBill[]
-  >([]);
+  // ----------------------------------------
 
   const debounceFilters = useDebounce(filters);
   const searchParams = useSearchParams();
 
-  const { settingsParams } = useUser();
+  const { settingsParams, isAdm } = useUser();
 
   const { isLoading, data } = useQuery({
     queryKey: ["getUserOutstandingBills", debounceFilters, page, rowsPerPage],
@@ -78,13 +77,74 @@ export default function OutstandingAccountsPage() {
   });
 
   const { outstandingBills = [], lastPageNumber } = data ?? {};
+  
+
+  // Função para checar se a conta está "Em Aberto" (pode ser selecionada e paga)
+  const isOpenStatus = (status: any) => String(status || "").toLowerCase().includes("em aberto");
+
+  // Função que retorna se uma linha pode ser selecionada
+  const canSelectBill = React.useCallback((bill: UserOutstandingBill): boolean => {
+    return isOpenStatus(bill.status);
+  }, []);
+
+  // --- LÓGICA DE SELEÇÃO CORRIGIDA ---
+  const handleSelectionModelChange = React.useCallback((newSelection: any) => {
+      const normalizeSelectionIds = (input: any): GridRowId[] => {
+        if (Array.isArray(input)) return input;
+        if (input instanceof Set) return Array.from(input);
+        if (input && typeof input === "object") {
+          if (Array.isArray((input as any).model)) return (input as any).model;
+          if (Array.isArray((input as any).selectionModel)) return (input as any).selectionModel;
+          if (Array.isArray((input as any).ids)) return (input as any).ids;
+        }
+        return input != null ? [input] : [];
+      };
+
+      const normalized = normalizeSelectionIds(newSelection)
+        .filter((id) => id != null && id !== undefined && id !== "")
+        .map((id) => Number(id))
+        .filter((id) => !isNaN(id) && id > 0);
+
+      const newSelectedBills = outstandingBills.filter((bill) =>
+        normalized.includes(bill.id) && canSelectBill(bill)
+      );
+
+      const companyIds = Array.from(new Set(newSelectedBills.map((bill) => bill.companyId)));
+      
+      if (companyIds.length <= 1) {
+          setSelectedRowIds(normalized);
+      } else {
+          alert("Você só pode selecionar contas da mesma empresa.");
+          const conflictingId = normalized.filter((id) => !selectedRowIds.includes(id))[0];
+          if (conflictingId) {
+            setSelectedRowIds(selectedRowIds);
+          } else {
+            setSelectedRowIds(normalized);
+          }
+      }
+  }, [outstandingBills, canSelectBill, selectedRowIds]);
+  // ----------------------------------------
+
 
   // Cálculo dos totais para exibição
   const totalOriginal = outstandingBills.reduce((acc, item) => acc + item.value, 0);
   const totalAtualizado = outstandingBills.reduce((acc, item) => acc + item.currentValue, 0);
 
-  // Definição das colunas para a ReusableDataGrid
+
+
+
+  function handleChangePage(event: ChangeEvent<unknown>, value: number): void {
+    setPage(value);
+  }
+
+
+  const action = React.useMemo(() => {
+    return searchParams.get("action");
+  }, [searchParams]);
+
+  // Definição das colunas (mantidas)
   const columns: GridColDef[] = [
+    // ... (restante das colunas mantido)
     {
       field: 'id',
       headerName: 'ID',
@@ -157,13 +217,13 @@ export default function OutstandingAccountsPage() {
           <MuiBox sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
             {bill.typeableBillLine &&
             settingsParams?.enableBillDownload &&
-            String(bill.status || "").toLowerCase().includes("aberto") &&
-            !String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s") ? (
+            String(bill.status || "").toLowerCase().includes("em aberto") ? (
               <IconButton
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  downloadBill(bill.typeableBillLine, bill.id);
+                  // Função downloadBill é importada
+                  downloadBill(bill.typeableBillLine, bill.id); 
                 }}
                 title="Baixar boleto simplificado"
               >
@@ -176,170 +236,35 @@ export default function OutstandingAccountsPage() {
     },
   ];
 
-  const { action, bills } = React.useMemo(() => {
-  const action = searchParams.get("action");
-  const bills = searchParams.get("bills");
-  
-
-  return {
-      action,
-      bills,
-    };
-  }, [searchParams]);
-
-  const selectedBills = useMemo(() => {
-    const arrayBillsIds = bills?.split(",").map((id) => parseInt(id));
-    return outstandingBills.filter((bill) => arrayBillsIds?.includes(bill.id));
-  }, [bills, outstandingBills]);
-
-  const clearSelectedAccounts = () => {
-    setSelectedAccounts([]);
-  };
-
-  function handleChangePage(event: ChangeEvent<unknown>, value: number): void {
-    setPage(value);
-  }
-
-  // Função auxiliar para verificar se uma conta pode ser selecionada
-  const canSelectBill = React.useCallback((bill: UserOutstandingBill): boolean => {
-    const statusLower = String(bill.status || "").toLowerCase();
-    const isOpen = statusLower.includes("em aberto");
-    const isOverdue = statusLower.includes("vencida");
-    const isBlocked = String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
-    return (isOpen || isOverdue) && !isBlocked;
-  }, []);
-
-  // Função de seleção para contas em aberto ou vencidas
-   const handleSelectionModelChange = React.useCallback((newSelection: any) => {
-     const selectionIds = Array.isArray(newSelection) ? newSelection : (newSelection?.ids ?? []);
-     const normalizedIds = selectionIds.map((id: any) => Number(id));
-     const selectedBills = outstandingBills.filter((bill) =>
-       normalizedIds.includes(bill.id) &&
-       canSelectBill(bill)
-     );
-
-     const companyIds = Array.from(new Set(selectedBills.map(bill => bill.companyId)));
-     if (companyIds.length <= 1) {
-       setSelectedAccounts(selectedBills);
-     } else if (selectedBills.length > 0) {
-       alert("Você só pode selecionar contas da mesma empresa.");
-       const lastSelectedBill = selectedBills[selectedBills.length - 1];
-       setSelectedAccounts([lastSelectedBill]);
-     }
-   }, [outstandingBills, canSelectBill]);
-
-  const router = useRouter();
-
-  // Função para calcular o total das contas selecionadas
-  const totalSelected = selectedAccounts.reduce((acc, bill) => acc + bill.currentValue, 0);
-
-  // Função para abrir modal de pagamento via query params
-  const handleOpenPaymentModal = (action: "payPerPix" | "payByCreditCard") => {
-    const billsIds = selectedAccounts.map(bill => bill.id).join(",");
-    router.push(`?action=${action}&bills=${billsIds}`);
-  };
 
   return (
     <>
-      <Stack spacing={3} divider={<Divider />}>
+      {!mounted ? <LoadingData /> : (
+        <>
+        <Stack spacing={3} divider={<Divider />}>
         <UserOutstandingBillsFilters filters={filters} setFilters={setFilters} />
         {isLoading ? (
           <LoadingData />
         ) : outstandingBills.length === 0 ? (
           <WithoutData />
         ) : (
-          <Stack spacing={2}>
-            {/* Toolbar de pagamento quando há contas selecionadas e pagamento online está habilitado */}
-            {selectedAccounts.length > 0 && settingsParams?.enableOnlinePayment && (
-              <Toolbar
-                sx={{
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                  pt: "5px",
-                  pb: "5px",
-                  justifyContent: "space-between",
-                  bgcolor: (theme) =>
-                    alpha(
-                      theme.palette.primary.main,
-                      theme.palette.action.activatedOpacity
-                    ),
-                }}
-              >
-                <Typography
-                  color="inherit"
-                  variant="body1"
-                  fontWeight={600}
-                  component="div"
-                >
-                  TOTAL = {formatMoney(totalSelected)}
-                </Typography>
-
-                <Stack gap={2} flexDirection="row">
-                  {settingsParams?.enableCardPayment && (
-                    <Button
-                      onClick={() => handleOpenPaymentModal("payByCreditCard")}
-                      sx={{
-                        backgroundColor: "var(--color-button-primary)",
-                        color: "var(--color-button-text)",
-                        fontWeight: 600,
-                        borderRadius: "8px",
-                        padding: "8px 16px",
-                        border: "none",
-                        boxShadow: "none",
-                        textTransform: "none",
-                        fontFamily: "Montserrat, sans-serif",
-                        "&:hover": {
-                          backgroundColor: "var(--color-button-primary-hover)",
-                        },
-                        "&:focus": {
-                          outline: "none",
-                          boxShadow: "0 0 0 2px var(--color-highlight-border)",
-                        },
-                      }}
-                    >
-                      Pagar com cartão
-                    </Button>
-                  )}
-
-                  {settingsParams?.enablePixPayment && (
-                    <Button
-                      onClick={() => handleOpenPaymentModal("payPerPix")}
-                      sx={{
-                        backgroundColor: "var(--color-button-primary)",
-                        color: "var(--color-button-text)",
-                        fontWeight: 600,
-                        borderRadius: "8px",
-                        padding: "8px 16px",
-                        border: "none",
-                        boxShadow: "none",
-                        textTransform: "none",
-                        fontFamily: "Montserrat, sans-serif",
-                        "&:hover": {
-                          backgroundColor: "var(--color-button-primary-hover)",
-                        },
-                        "&:focus": {
-                          outline: "none",
-                          boxShadow: "0 0 0 2px var(--color-highlight-border)",
-                        },
-                      }}
-                    >
-                      Pagar por pix
-                    </Button>
-                  )}
-                </Stack>
-              </Toolbar>
-            )}
-
-            {/* Exibição dos totais */}
+            <Stack spacing={2}>
             <MuiBox sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
-              <MuiBox sx={{ display: 'flex', gap: 4 }}>
-                <MuiBox>
-                  <strong>Total Original: {formatMoney(totalOriginal)}</strong>
-                </MuiBox>
-                <MuiBox>
-                  <strong>Total Atualizado: {formatMoney(totalAtualizado)}</strong>
-                </MuiBox>
-              </MuiBox>
+              <Stack spacing={2}>
+                <Stack direction="row" alignItems="flex-start" justifyContent="space-between" sx={{ gap: 2, flexWrap: 'wrap' }}>
+                  <Stack spacing={1} sx={{ flex: 1, minWidth: 240 }}>
+                    <Stack direction="row" spacing={4} sx={{ flexWrap: 'wrap' }}>
+                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
+                        Total Original: {formatMoney(totalOriginal)}
+                      </Typography>
+                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
+                        Total Atualizado: {formatMoney(totalAtualizado)}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                  
+                </Stack>
+              </Stack>
             </MuiBox>
 
             <ReusableDataGrid
@@ -348,14 +273,15 @@ export default function OutstandingAccountsPage() {
               loading={isLoading}
               checkboxSelection={true}
               onSelectionModelChange={handleSelectionModelChange}
-               additionalProps={{
-                 isRowSelectable: (params: any) => {
-                   const bill = params.row as UserOutstandingBill;
-                   return canSelectBill(bill);
-                 },
-                 getRowClassName: (params: GridRowClassNameParams<UserOutstandingBill>) => {
-                   const status = params.row?.status?.toLowerCase();
-                   if (status?.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)) {
+              additionalProps={{
+                 // Garante que só contas "em aberto" podem ser selecionadas
+                isRowSelectable: (params: any) => { 
+                  const bill = params.row as UserOutstandingBill;
+                  return canSelectBill(bill);
+                },
+                getRowClassName: (params: GridRowClassNameParams<UserOutstandingBill>) => {
+                  const status = params.row?.status?.toLowerCase();
+                   if (status && status.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)) {
                      return "overdue-row";
                    }
                    if (status?.includes("paga")) {
@@ -377,7 +303,7 @@ export default function OutstandingAccountsPage() {
               }}
               export={{
                 enabled: true,
-                filename: "contas-em-aberto",
+                filename: "Parcelas",
               }}
               print={{
                 enabled: true,
@@ -405,32 +331,11 @@ export default function OutstandingAccountsPage() {
           </Stack>
         )}
       </Stack>
-      {match({ action, selectedBills })
-        .with(
-          { action: "payPerPix", selectedBills: P.not(undefined) },
-          ({ selectedBills }) => (
-            <PayPerPixModal
-              shouldOpen={true}
-              selectedBills={selectedBills}
-              clearSelectedAccounts={clearSelectedAccounts}
-            />
-          )
-        )
-        .with(
-          { action: "payByCreditCard", selectedBills: P.not(undefined) },
-          ({ selectedBills }) => (
-            <PayByCreditCard
-              shouldOpen={true}
-              selectedBills={selectedBills}
-              clearSelectedAccounts={clearSelectedAccounts}
-            />
-          )
-        )
-        .with({ action: "download-certificates" }, () => (
-          <DownloadCertificatesModal shouldOpen={true} />
-        ))
-        .otherwise(() => null)}
+      {action === "download-certificates" ? (
+        <DownloadCertificatesModal shouldOpen={true} />
+      ) : null}
+        </>
+      )}
     </>
   );
 }
-

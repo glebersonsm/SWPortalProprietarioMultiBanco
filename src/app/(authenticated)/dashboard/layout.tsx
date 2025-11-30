@@ -40,11 +40,13 @@ const DashboardContent: React.FC<{
   const { getCurrentRoute } = useNavigation();
   const currentRoute = getCurrentRoute(segment);
   const isHomePage = currentRoute?.name === "Home";
+  const [mounted, setMounted] = React.useState(false);
   
   // Inicializa o hook de navegação com loading
   useNavigationLoading();
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
       const padrao = localStorage.getItem("padraoDeCor");
       if (padrao?.toLowerCase() === "black") {
@@ -105,7 +107,7 @@ const DashboardContent: React.FC<{
           marginLeft: { md: "var(--Sidebar-width)" },
         }}
       >
-        {currentRoute && !isHomePage && (
+        {mounted && currentRoute && !isHomePage && (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs
               size="sm"

@@ -5,7 +5,6 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { SelectableTableHead } from "./SelectableTableHead";
-import { SelectableTableToolbar } from "./SelectableTableToolbar";
 import { UserOutstandingBill } from "@/utils/types/finance-users";
 import { formatMoney } from "@/utils/money";
 import { IconButton, Paper, TableHead } from "@mui/material";
@@ -26,16 +25,27 @@ export default function ListUserOutstandingBills({
     React.SetStateAction<readonly UserOutstandingBill[]>
   >;
 }) {
-  const { settingsParams } = useUser();
+  const { settingsParams, isAdm } = useUser();
 
   // Função auxiliar para verificar se uma conta pode ser selecionada
+  // Clientes: apenas contas "Em aberto"
+  // Admins: contas "Em aberto" ou "Vencidas"
   const canSelectBill = (bill: UserOutstandingBill): boolean => {
-    const statusLower = bill.status.toLowerCase();
+    const statusLower = String(bill.status || "").toLowerCase();
     const isOpen = statusLower.includes("em aberto");
     const isOverdue = statusLower.includes("vencida");
-    const isBlocked = bill.paymentBlockedByCrcStatus.toLowerCase().includes("s");
+    const isBlocked = String(bill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
     
-    return (isOpen || isOverdue) && !isBlocked;
+    // Se bloqueada, não pode selecionar
+    if (isBlocked) return false;
+    
+    // Cliente: apenas "Em aberto"
+    if (!isAdm) {
+      return isOpen;
+    }
+    
+    // Admin: "Em aberto" ou "Vencidas"
+    return isOpen || isOverdue;
   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,16 +72,27 @@ export default function ListUserOutstandingBills({
 
     // Verifica se a conta pode ser selecionada
     if (!canSelectBill(outstandingBill)) {
-      const statusLower = outstandingBill.status.toLowerCase();
-      if (!statusLower.includes("em aberto") && !statusLower.includes("vencida")) {
-        alert("Você só pode selecionar contas com status 'Em aberto' ou 'Vencidas'.");
-        return;
-      }
+      const statusLower = String(outstandingBill.status || "").toLowerCase();
+      const isBlocked = String(outstandingBill.paymentBlockedByCrcStatus || "").toLowerCase().includes("s");
       
-      if (outstandingBill.paymentBlockedByCrcStatus.toLowerCase().includes("s")) {
+      if (isBlocked) {
         alert("Pagamento não permitido.");
         return;
       }
+      
+      // Mensagem diferente para cliente e admin
+      if (!isAdm) {
+        if (!statusLower.includes("em aberto")) {
+          alert("Você só pode selecionar contas com status 'Em aberto'.");
+          return;
+        }
+      } else {
+        if (!statusLower.includes("em aberto") && !statusLower.includes("vencida")) {
+          alert("Você só pode selecionar contas com status 'Em aberto' ou 'Vencidas'.");
+          return;
+        }
+      }
+      
       return;
     }
 
@@ -123,7 +144,6 @@ export default function ListUserOutstandingBills({
         backgroundColor: "background.surface",
       }}
     >
-      <SelectableTableToolbar selectedBills={selected} />
       <Table
       
         sx={{

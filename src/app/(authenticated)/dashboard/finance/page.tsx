@@ -11,10 +11,13 @@ import GradingIcon from "@mui/icons-material/Grading";
 import { match } from "ts-pattern";
 import ValidateCertificateModal from "./_components/ValidateCertificateModal";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import LoadingData from "@/components/LoadingData";
 
 export default function FinancePage() {
   const { isAdm, gestorFinanceiro } = useUser();
   const searchParams = useSearchParams();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { setMounted(true); }, []);
 
   const { action } = React.useMemo(() => {
     const action = searchParams.get("action");
@@ -25,7 +28,7 @@ export default function FinancePage() {
   }, [searchParams]);
 
   return (
-    <>
+    !mounted ? <LoadingData /> : <>
       <Stack gap={4} flexDirection="row">
         {isAdm || gestorFinanceiro === 1 ? (<ItemCollection
           label = "Contas à receber"
