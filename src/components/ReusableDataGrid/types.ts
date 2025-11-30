@@ -1,4 +1,4 @@
-import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import { GridColDef, GridRowsProp, GridRowId } from '@mui/x-data-grid';
 
 export interface PaginationConfig {
   enabled: boolean;
@@ -93,6 +93,7 @@ export interface ReusableDataGridProps {
   // Configurações de seleção
   checkboxSelection?: boolean;
   disableRowSelectionOnClick?: boolean;
+  rowSelectionModel?: GridRowId[];
   
   // Callbacks
   onRowClick?: (params: any) => void;

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   DataGrid,
   GridColDef,
+  GridRowId,
   ColumnsPanelTrigger,
   FilterPanelTrigger,
   QuickFilter,
@@ -255,7 +256,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
     <Box
           sx={{
             padding: '8px 16px',
-            background: 'var(--card-bg-gradient, linear-gradient(135deg, #1e7a9c 0%, #155a73 100%))',
+            background: 'var(--card-bg-gradient, linear-gradient(180deg, var(--color-primary, #015a67) 0%, var(--color-secondary, #00c8ec) 100%))',
             borderBottom: '1px solid var(--card-border-color, rgba(30, 122, 156, 0.3))',
             display: 'flex',
             flexDirection: 'column',
@@ -287,68 +288,64 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
         {/* Controles da esquerda */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           {showColumnsButton && showToolbar && (
-             <ColumnsPanelTrigger>
-               <Button 
-                 component="span"
-                 variant="outlined"
-                 size="medium"
-                 sx={{
+             <Box
+               component="span"
+               sx={{
+                 display: 'inline-flex',
+                 '& .MuiButton-root': {
                    color: 'var(--color-text-light, #ffffff)',
-                   borderColor: 'var(--card-border-color, rgba(30, 122, 156, 0.3))',
-                   backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.12))',
-                   fontFamily: 'Montserrat, sans-serif',
+                   borderColor: 'rgba(255, 255, 255, 0.35)',
+                   backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                   fontFamily: 'var(--font-puffin), sans-serif',
                    fontWeight: 600,
                    fontSize: '0.875rem',
                    textTransform: 'none',
                    minWidth: 'auto',
                    padding: '8px 16px',
                    borderRadius: '10px',
-                   boxShadow: '0 2px 8px var(--card-shadow-color, rgba(30, 122, 156, 0.08))',
+                   boxShadow: '0 2px 8px rgba(1, 90, 103, 0.15)',
                    transition: 'all 0.2s ease-in-out',
                    '&:hover': {
-                     backgroundColor: 'var(--card-bg-gradient-hover, rgba(30, 122, 156, 0.15))',
-                     borderColor: 'var(--color-primary, #1e7a9c)',
+                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                     borderColor: 'rgba(255, 255, 255, 0.5)',
                      transform: 'translateY(-1px)',
-                     boxShadow: '0 4px 16px var(--card-shadow-color-hover, rgba(30, 122, 156, 0.15))',
+                     boxShadow: '0 4px 16px rgba(1, 90, 103, 0.25)',
                    },
-                 }}
-                 aria-label="Gerenciar colunas"
-               >
-                 Colunas
-               </Button>
-             </ColumnsPanelTrigger>
+                 },
+               }}
+             >
+               <ColumnsPanelTrigger>Colunas</ColumnsPanelTrigger>
+             </Box>
            )}
           {showFiltersButton && showToolbar && (
-             <FilterPanelTrigger>
-               <Button 
-                 component="span"
-                 variant="outlined"
-                 size="medium"
-                 sx={{
+             <Box
+               component="span"
+               sx={{
+                 display: 'inline-flex',
+                 '& .MuiButton-root': {
                    color: 'var(--color-text-light, #ffffff)',
-                   borderColor: 'var(--card-border-color, rgba(30, 122, 156, 0.3))',
-                   backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.12))',
-                   fontFamily: 'Montserrat, sans-serif',
+                   borderColor: 'rgba(255, 255, 255, 0.35)',
+                   backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                   fontFamily: 'var(--font-puffin), sans-serif',
                    fontWeight: 600,
                    fontSize: '0.875rem',
                    textTransform: 'none',
                    minWidth: 'auto',
                    padding: '8px 16px',
                    borderRadius: '10px',
-                   boxShadow: '0 2px 8px var(--card-shadow-color, rgba(30, 122, 156, 0.08))',
+                   boxShadow: '0 2px 8px rgba(1, 90, 103, 0.15)',
                    transition: 'all 0.2s ease-in-out',
                    '&:hover': {
-                     backgroundColor: 'var(--card-bg-gradient-hover, rgba(30, 122, 156, 0.15))',
-                     borderColor: 'var(--color-primary, #1e7a9c)',
+                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                     borderColor: 'rgba(255, 255, 255, 0.5)',
                      transform: 'translateY(-1px)',
-                     boxShadow: '0 4px 16px var(--card-shadow-color-hover, rgba(30, 122, 156, 0.15))',
+                     boxShadow: '0 4px 16px rgba(1, 90, 103, 0.25)',
                    },
-                 }}
-                 aria-label="Gerenciar filtros"
-               >
-                 Filtros
-               </Button>
-             </FilterPanelTrigger>
+                 },
+               }}
+             >
+               <FilterPanelTrigger>Filtros</FilterPanelTrigger>
+             </Box>
            )}
         </Box>
         
@@ -364,7 +361,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
                 borderRadius: '12px',
                 fontSize: '0.875rem',
                 height: '40px',
-                fontFamily: 'Montserrat, sans-serif',
+                fontFamily: 'var(--font-puffin), sans-serif',
                 boxShadow: '0 2px 8px var(--card-shadow-color, rgba(30, 122, 156, 0.08))',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
@@ -405,7 +402,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
                 color: 'var(--color-text-light, #ffffff)',
                 borderColor: 'var(--card-border-color, rgba(30, 122, 156, 0.3))',
                 backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.12))',
-                fontFamily: 'Montserrat, sans-serif',
+                fontFamily: 'var(--font-puffin), sans-serif',
                 fontWeight: 600,
                 fontSize: '0.875rem',
                 textTransform: 'none',
@@ -440,7 +437,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
                    color: 'var(--color-text-light, #ffffff)',
                    borderColor: 'var(--card-border-color, rgba(30, 122, 156, 0.3))',
                    backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.12))',
-                   fontFamily: 'Montserrat, sans-serif',
+                   fontFamily: 'var(--font-puffin), sans-serif',
                    fontWeight: 600,
                    fontSize: '0.875rem',
                    textTransform: 'none',
@@ -482,6 +479,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
   density = 'standard',
   checkboxSelection = false,
   disableRowSelectionOnClick = false,
+  rowSelectionModel,
   onRowClick,
   onSelectionModelChange,
   additionalProps = {}
@@ -535,10 +533,8 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
     }
   };
 
-  const { rowSelectionModel: _omitRowSelectionModel, ...safeAdditionalProps } = (additionalProps || {}) as any;
-
   // Configurações do DataGrid
-  const dataGridProps = {
+  const dataGridProps: any = {
     rows: pagination.enabled ? paginatedRows : rows,
     columns,
     loading,
@@ -589,7 +585,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         border: 'none',
         backgroundColor: 'var(--card-bg-paper, #ffffff)',
         color: 'var(--card-text-color, #1a1a1a)',
-        fontFamily: 'Montserrat, sans-serif',
+        fontFamily: 'var(--font-puffin), sans-serif',
         borderRadius: '12px',
         overflow: 'hidden',
         boxShadow: '0 4px 20px var(--card-shadow-color, rgba(0, 0, 0, 0.08))',
@@ -610,7 +606,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         },
       },
       '& .MuiDataGrid-columnHeaders': {
-        background: 'var(--card-bg-gradient, linear-gradient(135deg, #1e7a9c 0%, #155a73 100%))',
+        background: 'var(--card-bg-gradient, linear-gradient(180deg, var(--color-primary, #015a67) 0%, var(--color-secondary, #00c8ec) 100%))',
         borderBottom: 'none',
         color: 'var(--color-text-light, #ffffff)',
         fontWeight: 700,
@@ -675,14 +671,6 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
           },
         },
       },
-      // Aplica cor de fonte vermelha em todas as colunas para linhas vencidas
-      '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
-        color: '#e53935',
-      },
-      // Aplica cor de fonte azul em todas as colunas para linhas pagas
-      '& .MuiDataGrid-row.paid-row .MuiDataGrid-cell': {
-        color: '#2ca2cc',
-      },
       '& .MuiDataGrid-footerContainer': {
         background: 'var(--card-bg-surface, linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%))',
         borderTop: '1px solid var(--card-border-color, rgba(224, 224, 224, 0.3))',
@@ -702,7 +690,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         },
       },
       '& .MuiDataGrid-toolbarContainer': {
-        background: 'var(--card-bg-gradient, linear-gradient(135deg, #1e7a9c 0%, #155a73 100%))',
+        background: 'var(--card-bg-gradient, linear-gradient(180deg, var(--color-primary, #015a67) 0%, var(--color-secondary, #00c8ec) 100%))',
         borderBottom: '1px solid var(--card-border-color, rgba(224, 224, 224, 0.3))',
         color: 'var(--card-text-color, #ffffff)',
         padding: '0',
@@ -713,7 +701,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
             backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.1))',
-            borderColor: 'var(--color-secondary, #155a73)',
+            borderColor: 'var(--color-secondary, #00c8ec)',
             transform: 'translateY(-1px)',
             boxShadow: '0 2px 8px var(--card-shadow-color-hover, rgba(30, 122, 156, 0.15))',
           },
@@ -761,12 +749,69 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         border: '1px solid var(--card-border-color, rgba(224, 224, 224, 0.3))',
       },
       '& .MuiDataGrid-panelHeader': {
-        background: 'var(--card-bg-gradient, linear-gradient(135deg, #1e7a9c 0%, #155a73 100%))',
+        background: 'var(--card-bg-gradient, linear-gradient(180deg, var(--color-primary, #015a67) 0%, var(--color-secondary, #00c8ec) 100%))',
         color: 'var(--color-text-light, #ffffff)',
         fontWeight: 600,
+        fontFamily: 'var(--font-puffin), sans-serif',
+        fontSize: '0.875rem',
+        padding: '12px 16px',
+        '& .MuiTypography-root': {
+          color: 'var(--color-text-light, #ffffff) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontWeight: '600 !important',
+          fontSize: '0.875rem !important',
+        },
       },
       '& .MuiDataGrid-panelContent': {
         backgroundColor: 'var(--card-bg-paper, #ffffff)',
+        color: 'var(--card-text-color, #2c3e50)',
+        fontFamily: 'var(--font-puffin), sans-serif',
+        '& .MuiTypography-root': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontSize: '0.875rem !important',
+        },
+        '& .MuiFormControlLabel-root': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+          '& .MuiTypography-root': {
+            color: 'var(--card-text-color, #2c3e50) !important',
+            fontFamily: 'var(--font-puffin), sans-serif !important',
+            fontSize: '0.875rem !important',
+            fontWeight: 500,
+          },
+        },
+        '& .MuiFormLabel-root': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontSize: '0.875rem !important',
+          fontWeight: 600,
+        },
+        '& .MuiInputBase-root': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontSize: '0.875rem !important',
+          '& input': {
+            color: 'var(--card-text-color, #2c3e50) !important',
+          },
+        },
+        '& .MuiSelect-select': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+        },
+        '& .MuiMenuItem-root': {
+          color: 'var(--card-text-color, #2c3e50) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontSize: '0.875rem !important',
+          '&:hover': {
+            backgroundColor: 'var(--card-bg-hover, rgba(30, 122, 156, 0.1)) !important',
+          },
+        },
+        '& .MuiButton-root': {
+          color: 'var(--color-primary, #1e7a9c) !important',
+          fontFamily: 'var(--font-puffin), sans-serif !important',
+          fontSize: '0.875rem !important',
+          fontWeight: 600,
+          textTransform: 'none',
+        },
       },
       // Estilos específicos para diferentes densidades
       '&.MuiDataGrid-root--densityCompact': {
@@ -804,7 +849,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         },
       },
     },
-    ...safeAdditionalProps
+    ...additionalProps
   };
 
   return (
@@ -818,14 +863,6 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         overflow: 'hidden',
         boxShadow: '0 10px 40px var(--card-shadow-color, rgba(30, 122, 156, 0.08)), 0 2px 8px rgba(0, 0, 0, 0.05)',
         position: 'relative',
-        // Garantir cor de fonte vermelha para todas as células das linhas marcadas como vencidas
-        '& .MuiDataGrid-row.overdue-row .MuiDataGrid-cell': {
-          color: '#e53935',
-        },
-        // Garantir cor de fonte azul para todas as células das linhas marcadas como pagas
-        '& .MuiDataGrid-row.paid-row .MuiDataGrid-cell': {
-          color: '#2ca2cc',
-        },
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -854,7 +891,7 @@ export const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
               border: 'none',
             },
           }}
-          {...safeAdditionalProps}
+          {...additionalProps}
         />
       </Box>
       

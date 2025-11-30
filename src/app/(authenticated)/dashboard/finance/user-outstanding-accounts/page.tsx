@@ -89,40 +89,57 @@ export default function OutstandingAccountsPage() {
 
   // --- LÓGICA DE SELEÇÃO CORRIGIDA ---
   const handleSelectionModelChange = React.useCallback((newSelection: any) => {
-      const normalizeSelectionIds = (input: any): GridRowId[] => {
-        if (Array.isArray(input)) return input;
-        if (input instanceof Set) return Array.from(input);
-        if (input && typeof input === "object") {
-          if (Array.isArray((input as any).model)) return (input as any).model;
-          if (Array.isArray((input as any).selectionModel)) return (input as any).selectionModel;
-          if (Array.isArray((input as any).ids)) return (input as any).ids;
-        }
-        return input != null ? [input] : [];
-      };
-
-      const normalized = normalizeSelectionIds(newSelection)
-        .filter((id) => id != null && id !== undefined && id !== "")
-        .map((id) => Number(id))
-        .filter((id) => !isNaN(id) && id > 0);
-
-      const newSelectedBills = outstandingBills.filter((bill) =>
-        normalized.includes(bill.id) && canSelectBill(bill)
-      );
-
-      const companyIds = Array.from(new Set(newSelectedBills.map((bill) => bill.companyId)));
-      
-      if (companyIds.length <= 1) {
-          setSelectedRowIds(normalized);
-      } else {
-          alert("Você só pode selecionar contas da mesma empresa.");
-          const conflictingId = normalized.filter((id) => !selectedRowIds.includes(id))[0];
-          if (conflictingId) {
-            setSelectedRowIds(selectedRowIds);
-          } else {
-            setSelectedRowIds(normalized);
+      try {
+        // Normalizar a seleção que vem do DataGrid
+        let normalized: GridRowId[] = [];
+        
+        if (Array.isArray(newSelection)) {
+          normalized = newSelection;
+        } else if (newSelection instanceof Set) {
+          normalized = Array.from(newSelection);
+        } else if (newSelection && typeof newSelection === "object") {
+          // Tentar extrair o array de IDs de diferentes formatos possíveis
+          if (Array.isArray(newSelection.model)) {
+            normalized = newSelection.model;
+          } else if (Array.isArray(newSelection.selectionModel)) {
+            normalized = newSelection.selectionModel;
+          } else if (Array.isArray(newSelection.ids)) {
+            normalized = newSelection.ids;
+          } else if (newSelection.id != null) {
+            normalized = [newSelection.id];
           }
+        } else if (newSelection != null) {
+          normalized = [newSelection];
+        }
+
+        // Filtrar e converter para números
+        const validIds = normalized
+          .filter((id) => id != null && id !== undefined && id !== "")
+          .map((id) => Number(id))
+          .filter((id) => !isNaN(id) && id > 0);
+
+        // Filtrar apenas contas que podem ser selecionadas
+        const selectableBills = outstandingBills.filter((bill) => 
+          validIds.includes(Number(bill.id)) && canSelectBill(bill)
+        );
+
+        // Verificar se todas as contas selecionadas são da mesma empresa
+        const companyIds = Array.from(new Set(selectableBills.map((bill) => bill.companyId)));
+        
+        if (companyIds.length <= 1) {
+          // Atualizar estado com os IDs normalizados (apenas contas selecionáveis)
+          const selectableIds = selectableBills.map(bill => Number(bill.id));
+          setSelectedRowIds(selectableIds);
+        } else {
+          // Se tentou selecionar contas de empresas diferentes, mostrar alerta e manter seleção anterior
+          alert("Você só pode selecionar contas da mesma empresa.");
+          // Não atualizar o estado, mantendo a seleção anterior
+        }
+      } catch (error) {
+        console.error("Erro ao processar seleção:", error);
+        // Em caso de erro, manter a seleção anterior
       }
-  }, [outstandingBills, canSelectBill, selectedRowIds]);
+  }, [outstandingBills, canSelectBill]);
   // ----------------------------------------
 
 
@@ -131,10 +148,25 @@ export default function OutstandingAccountsPage() {
   const totalAtualizado = outstandingBills.reduce((acc, item) => acc + item.currentValue, 0);
 
   const selectedAccounts = useMemo(() => {
-    return outstandingBills.filter((item) => selectedRowIds.includes(item.id));
-  }, [outstandingBills, selectedRowIds]);
+    // Converter ambos os IDs para número para garantir comparação correta
+    const selectedIdsAsNumbers = selectedRowIds
+      .map(id => Number(id))
+      .filter(id => !isNaN(id) && id > 0);
+    
+    return outstandingBills.filter((item) => {
+      const itemId = Number(item.id);
+      return selectedIdsAsNumbers.includes(itemId) && canSelectBill(item);
+    });
+  }, [outstandingBills, selectedRowIds, canSelectBill]);
 
-  const totalSelecionado = selectedAccounts.reduce((acc, item) => acc + item.currentValue, 0);
+  const totalSelecionado = useMemo(() => {
+    if (selectedAccounts.length === 0) return 0;
+    
+    return selectedAccounts.reduce((acc, item) => {
+      const value = Number(item.currentValue ?? item.value ?? 0) || 0;
+      return acc + value;
+    }, 0);
+  }, [selectedAccounts]);
 
 
 
