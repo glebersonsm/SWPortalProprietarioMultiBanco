@@ -22,7 +22,6 @@ export default function CheckboxField({
     <Controller
       name={field}
       control={control}
-      defaultValue={false}
       render={({ field: { onChange, onBlur, value } }) => (
         <Checkbox
           onBlur={onBlur}

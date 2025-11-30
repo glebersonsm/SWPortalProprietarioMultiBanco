@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Box, 
@@ -21,6 +21,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { toast } from 'react-toastify';
 import CheckboxField from "@/components/CheckboxField";
 import InputField from "@/components/InputField";
+import LoadingData from "@/components/LoadingData";
 import { Framework, FrameworkSent } from "@/utils/types/framework";
 import { FormProvider, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -111,6 +112,43 @@ export default function FinanceirasSettingsPage() {
     setFormHydrated(true);
   }, [settingsParams, form]);
 
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const payload = {
+        enableBillDownload: !!values.enableBillDownload,
+        enableOnlinePayment: !!values.enableOnlinePayment,
+        enablePixPayment: !!values.enablePixPayment,
+        enableCardPayment: !!values.enableCardPayment,
+      };
+      if (typeof window !== 'undefined') {
+        try {
+          sessionStorage.setItem('financeirasFormDraft', JSON.stringify(payload));
+        } catch {}
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  useEffect(() => {
+    if (!settingsParams || !formHydrated) return;
+    if (typeof window === 'undefined') return;
+    let draft = null as any;
+    try {
+      const raw = sessionStorage.getItem('financeirasFormDraft');
+      draft = raw ? JSON.parse(raw) : null;
+    } catch {}
+    if (draft) {
+      const current = form.getValues();
+      form.reset({
+        ...current,
+        enableBillDownload: draft.enableBillDownload ?? current.enableBillDownload,
+        enableOnlinePayment: draft.enableOnlinePayment ?? current.enableOnlinePayment,
+        enablePixPayment: draft.enablePixPayment ?? current.enablePixPayment,
+        enableCardPayment: draft.enableCardPayment ?? current.enableCardPayment,
+      });
+    }
+  }, [settingsParams, formHydrated, form]);
+
   // Queries
   
 
@@ -144,21 +182,41 @@ export default function FinanceirasSettingsPage() {
         onSuccess: async () => {
           queryClient.invalidateQueries({ queryKey: ["getAuthUser"] });
           toast.success(`Configurações editadas com sucesso!`);
+          try {
+            if (typeof window !== 'undefined') sessionStorage.removeItem('financeirasFormDraft');
+          } catch {}
         },
       }
     );
   };
 
-  const onlineEnabled = !!form.watch('enableOnlinePayment');
+  const onlineEnabled = formHydrated
+    ? !!form.watch('enableOnlinePayment')
+    : !!settingsParams?.enableOnlinePayment;
+  const isReady = !!settingsParams && formHydrated;
   const safeActiveTab = onlineEnabled ? activeTab : activeTab > 1 ? 1 : activeTab;
 
+  const prevOnlineRef = useRef<boolean | null>(null);
   useEffect(() => {
     if (!formHydrated) return;
-    if (!onlineEnabled) {
-      form.setValue('enablePixPayment', false);
-      form.setValue('enableCardPayment', false);
+    const currentOnline = !!form.getValues('enableOnlinePayment');
+    if (prevOnlineRef.current === null) {
+      prevOnlineRef.current = currentOnline;
+      return;
     }
-  }, [onlineEnabled, form, formHydrated]);
+    if (prevOnlineRef.current && !currentOnline) {
+      let draft: any = null;
+      try {
+        const raw = typeof window !== 'undefined' ? sessionStorage.getItem('financeirasFormDraft') : null;
+        draft = raw ? JSON.parse(raw) : null;
+      } catch {}
+      const shouldClearPix = draft && typeof draft.enablePixPayment !== 'undefined' ? draft.enablePixPayment === false : true;
+      const shouldClearCard = draft && typeof draft.enableCardPayment !== 'undefined' ? draft.enableCardPayment === false : true;
+      if (shouldClearPix) form.setValue('enablePixPayment', false);
+      if (shouldClearCard) form.setValue('enableCardPayment', false);
+    }
+    prevOnlineRef.current = currentOnline;
+  }, [formHydrated, form, onlineEnabled]);
 
   
 
@@ -186,7 +244,9 @@ export default function FinanceirasSettingsPage() {
           </Typography>
         </Box>
 
-        {/* Tabs */}
+        {!isReady ? (
+          <LoadingData />
+        ) : (
         <Tabs
           value={safeActiveTab}
           onChange={(_, value) => setActiveTab(value as number)}
@@ -300,6 +360,7 @@ export default function FinanceirasSettingsPage() {
 
           
         </Tabs>
+        )}
       </Stack>
     </Box>
   );
