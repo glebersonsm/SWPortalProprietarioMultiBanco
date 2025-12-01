@@ -79,10 +79,11 @@ export type PayWithSavedCardRequestBody = {
 export type SavedCard = {
   id: number;
   ultimosDigitos: string;
-  mesValidade: string;
-  anoValidade: string;
+  mesValidade: number;
+  anoValidade: number;
   nomeNoCartao: string;
   bandeira: string;
+  numero?: string; // Número ofuscado para exibição
 };
 
 // Alias para compatibilidade (pode ser removido depois)
@@ -91,11 +92,15 @@ export type SavedCardTse = SavedCard;
 export type SaveCardRequest = {
   numeroCartao: string;
   codigoSeguranca: string;
-  mesValidade: string;
-  anoValidade: string;
+  mesValidade: number;
+  anoValidade: number;
   nomeNoCartao: string;
-  idbandeirasaceitas?: number;
-  salvarParaProximaTransacao: boolean;
+  cpfTitular?: string;
+  idBandeira?: number;
+  bandeira?: string;
+  idEmpresa?: number;
+  idTorre?: number | null;
+  idContrato?: number | null;
 };
 
 export type BandeiraAceita = {

@@ -70,7 +70,7 @@ export default function PayByCreditCard({
   const [selectedSavedCardId, setSelectedSavedCardId] = useState<number | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Estados para novo cartÃ£o
+  // Estados para novo cartão
   const [newCardData, setNewCardData] = useState({
     cardNumber: '',
     cardHolder: '',
@@ -97,33 +97,33 @@ export default function PayByCreditCard({
   } = useQuery({
     queryKey: ["getSavedCards", shouldOpen, empresaId, torreId, contratoId],
     queryFn: async () => {
-      let allCards: SavedCardTse[] = [];
-      try {
-        allCards = await getSavedCards();
-      } catch (allCardsError: any) {
-        allCards = [];
-      }
-
-      if (!allCards || allCards.length === 0) {
+      // Se não houver empresaId, não é possível buscar cartões (obrigatório no backend)
+      if (!empresaId) {
         return [];
       }
 
-      if (empresaId) {
-        const filterParams: any = { idEmpresa: empresaId };
-        if (torreId) filterParams.idTorre = torreId;
-        if (contratoId) filterParams.idContrato = contratoId;
-
-        try {
-          const filtered = await getSavedCards(filterParams);
-          if (filtered && filtered.length > 0) {
-            return filtered;
-          }
-        } catch {}
+      // Montar parâmetros de filtro
+      const filterParams: { idEmpresa: number; idTorre?: number | null; idContrato?: number | null; } = { 
+        idEmpresa: empresaId 
+      };
+      
+      if (torreId) {
+        filterParams.idTorre = torreId;
+      }
+      
+      if (contratoId) {
+        filterParams.idContrato = contratoId;
       }
 
-      return allCards;
+      try {
+        const cards = await getSavedCards(filterParams);
+        return cards || [];
+      } catch (error: any) {
+        console.error("Erro ao buscar cartões salvos:", error);
+        return [];
+      }
     },
-    enabled: shouldOpen, // Sempre executa quando o modal abrir
+    enabled: shouldOpen && !!empresaId, // Só executa se o modal estiver aberto e houver empresaId
     staleTime: 30_000, // Reduzido para 30 segundos
     retry: 2, // Tenta 2 vezes em caso de erro
     refetchOnWindowFocus: false, // Evita refetch desnecessÃ¡rio
@@ -194,15 +194,15 @@ export default function PayByCreditCard({
     };
   }, [isProcessing]);
 
-  // FunÃ§Ã£o para aplicar mÃ¡scara no nÃºmero do cartÃ£o
+  // Função para aplicar máscara no número do cartão
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que nÃ£o Ã© dÃ­gito
-    value = value.substring(0, 16); // Limita a 16 dÃ­gitos
-    const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaÃ§o a cada 4 dÃ­gitos
+    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    value = value.substring(0, 16); // Limita a 16 dígitos
+    const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaço a cada 4 dígitos
     setNewCardData({ ...newCardData, cardNumber: formatted });
   };
 
-  // FunÃ§Ã£o para aplicar mÃ¡scara e validaÃ§Ã£o na validade (MM/AA)
+  // Função para aplicar máscara e validação na validade (MM/AA)
   const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let digits = e.target.value.replace(/\D/g, '').slice(0, 4);
     let mm = digits.slice(0, 2);
@@ -219,7 +219,7 @@ export default function PayByCreditCard({
     setNewCardData({ ...newCardData, expiryDate: formatted });
   };
 
-  // FunÃ§Ã£o para aplicar mÃ¡scara no CVV (3 ou 4 dÃ­gitos)
+  // Função para aplicar máscara no CVV (3 ou 4 dígitos)
   const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
     setNewCardData({ ...newCardData, cvv: digits });
@@ -251,12 +251,12 @@ export default function PayByCreditCard({
 
   const onSubmitSavedCard = () => {
     if (!selectedCard) {
-      toast.error("Selecione um cartÃ£o");
+      toast.error("Selecione um cartão");
       return;
     }
     
-    // TODO: Implementar pagamento com cartÃ£o tokenizado
-    toast.info("ðŸ’³ IntegraÃ§Ã£o de pagamento com cartÃ£o tokenizado em desenvolvimento");
+    // TODO: Implementar pagamento com cartão tokenizado
+    toast.info("💳 Integração de pagamento com cartão tokenizado em desenvolvimento");
     // handlePayByCreditCard.mutate(
     //   {
     //     ids: selectedBillsIds(),
@@ -278,7 +278,7 @@ export default function PayByCreditCard({
     //     },
     //     onError: () => {
     //       toast.error(
-    //         "NÃ£o foi possÃ­vel fazer o pagamento nesse momento, por favor tente novamente mais tarde!"
+    //         "Não foi possível fazer o pagamento nesse momento, por favor tente novamente mais tarde!"
     //       );
     //       handleClose();
     //     },
@@ -288,7 +288,7 @@ export default function PayByCreditCard({
 
   const onSubmitSavedCardTse = async () => {
     if (!selectedSavedCardTse) {
-      toast.error("Selecione um cartÃ£o salvo");
+      toast.error("Selecione um cartão salvo");
       return;
     }
     
@@ -299,7 +299,7 @@ export default function PayByCreditCard({
 
     const empresaId = selectedBills[0].companyId;  // Corrigido: companyId ao invÃ©s de idEmpresa
     const torreId = selectedBills[0].idTorre;      // Torre vem direto do selectedBills
-    const contratoId = selectedBills[0].idContrato || torreId; // Fallback para torre se nÃ£o tiver contrato
+    const contratoId = selectedBills[0].idContrato || torreId; // Fallback para torre se não tiver contrato
 
     
 
@@ -333,19 +333,19 @@ export default function PayByCreditCard({
           queryKey: ["getUserOutstandingBills"],
         });
         
-        toast.success("âœ… Pagamento aprovado com sucesso");
+        toast.success("✅ Pagamento aprovado com sucesso");
         clearSelectedAccounts();
         handleClose();
       } else {
         // Exibir mensagem de retorno da operadora
-        const mensagemOperadora = resultado?.mensagemAutorizacao || "Pagamento nÃ£o aprovado";
+        const mensagemOperadora = resultado?.mensagemAutorizacao || "Pagamento não aprovado";
         toast.error(`âŒ ${mensagemOperadora}`);
       }
     } catch (error: any) {
       // Erro de sistema
       const mensagemErro = error?.response?.data?.mensagemAutorizacao 
         || error?.response?.data?.message
-        || "NÃ£o foi possÃ­vel processar seu pagamento";
+        || "Não foi possível processar seu pagamento";
       
       toast.error(`âŒ ${mensagemErro}`);
     } finally {
@@ -357,7 +357,7 @@ export default function PayByCreditCard({
   const onSubmitNewCard = async () => {
     // ValidaÃ§Ãµes
     if (!newCardData.cardNumber || !newCardData.cardHolder || !newCardData.expiryDate || !newCardData.cvv || !newCardData.idBandeira) {
-      toast.error("Preencha todos os campos do cartÃ£o");
+      toast.error("Preencha todos os campos do cartão");
       return;
     }
 
@@ -370,7 +370,7 @@ export default function PayByCreditCard({
     const torreId = selectedBills[0].idTorre;
     const contratoId = selectedBills[0].idContrato || torreId;
 
-    // Separar mÃªs e ano da data de validade
+    // Separar mês e ano da data de validade
     const [mes, ano] = newCardData.expiryDate.split('/');
 
     setIsProcessing(true);
@@ -411,19 +411,19 @@ export default function PayByCreditCard({
           refetchSavedCards(); // Atualizar lista de cartÃµes salvos
         }
         
-        toast.success("âœ… Pagamento aprovado com sucesso");
+        toast.success("✅ Pagamento aprovado com sucesso");
         clearSelectedAccounts();
         handleClose();
       } else {
         // Exibir mensagem de retorno da operadora
-        const mensagemOperadora = resultado?.mensagemAutorizacao || "Pagamento nÃ£o aprovado";
+        const mensagemOperadora = resultado?.mensagemAutorizacao || "Pagamento não aprovado";
         toast.error(`âŒ ${mensagemOperadora}`);
       }
     } catch (error: any) {
       // Erro de sistema
       const mensagemErro = error?.response?.data?.mensagemAutorizacao 
         || error?.response?.data?.message
-        || "NÃ£o foi possÃ­vel processar seu pagamento";
+        || "Não foi possível processar seu pagamento";
       
       toast.error(`âŒ ${mensagemErro}`);
     } finally {
@@ -439,11 +439,15 @@ export default function PayByCreditCard({
       scroll="paper"
       PaperProps={{
         sx: {
-          width: { xs: 'calc(100vw - 20px)', sm: 'calc(100vw - 40px)', md: '700px' },
-          maxWidth: { xs: 'calc(100vw - 20px)', sm: 'calc(100vw - 40px)', md: '700px' },
+          width: { xs: 'calc(100vw - 20px)', sm: 'calc(100vw - 40px)', md: '750px' },
+          maxWidth: { xs: 'calc(100vw - 20px)', sm: 'calc(100vw - 40px)', md: '750px' },
           overflowX: 'hidden',
           maxHeight: '90vh',
-          mt: { xs: 4, sm: 6 }
+          mt: { xs: 4, sm: 6 },
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
+          backdropFilter: 'blur(10px)',
         }
       }}
       onClose={(event, reason) => {
@@ -476,26 +480,32 @@ export default function PayByCreditCard({
           margin: 0
         }}>
           <DialogTitle sx={{ 
-            color: 'var(--color-primary)', 
+            background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
             fontWeight: 700,
-            fontSize: { xs: '1.2rem', sm: '1.5rem' },
+            fontSize: { xs: '1.3rem', sm: '1.6rem' },
             fontFamily: 'var(--font-puffin), sans-serif',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: 1,
-            pb: 2,
-            px: { xs: 2, sm: 3 },
-            pt: { xs: 2, sm: 3 },
+            pb: 2.5,
+            px: { xs: 2.5, sm: 3.5 },
+            pt: { xs: 2.5, sm: 3.5 },
             flexShrink: 0,
             width: '100%',
             maxWidth: '100%',
             boxSizing: 'border-box',
             wordBreak: 'break-word',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            borderBottom: '2px solid',
+            borderImage: 'linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%) 1',
+            mb: 1
           }}>
-            Pagamento por CartÃ£o de CrÃ©dito
+            Pagamento por Cartão de Crédito
             {isProcessing && (
               <Typography level="body-sm" sx={{ 
                 color: 'var(--color-secondary)',
@@ -549,29 +559,46 @@ export default function PayByCreditCard({
                 left: 0,
                 right: 0,
                 bottom: 0,
-                bgcolor: 'rgba(255, 255, 255, 0.9)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)',
+                backdropFilter: 'blur(8px)',
                 zIndex: 9999,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 2,
-                borderRadius: '12px'
+                gap: 2.5,
+                borderRadius: '16px',
+                animation: 'fadeIn 0.3s ease-in'
               }}>
-                <CircularProgress size="lg" sx={{ '--CircularProgress-size': '60px' }} />
+                <CircularProgress 
+                  size="lg" 
+                  sx={{ 
+                    '--CircularProgress-size': '64px',
+                    color: 'primary.plainColor',
+                    '& .MuiCircularProgress-circle': {
+                      strokeLinecap: 'round'
+                    }
+                  }} 
+                />
                 <Typography level="title-lg" sx={{ 
-                  color: 'var(--color-primary)',
+                  background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
                   fontFamily: 'var(--font-puffin), sans-serif',
-                  fontWeight: 700
+                  fontWeight: 700,
+                  fontSize: { xs: '1.1rem', sm: '1.25rem' }
                 }}>
-                  Processando...
+                  Processando pagamento...
                 </Typography>
                 <Typography level="body-sm" sx={{ 
-                  color: 'var(--color-secondary)',
+                  color: 'text.tertiary',
                   fontFamily: 'var(--font-puffin), sans-serif',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  maxWidth: '280px',
+                  lineHeight: 1.6
                 }}>
-                  Aguarde, nÃ£o feche esta janela
+                  Aguarde, não feche esta janela enquanto processamos seu pagamento
                 </Typography>
               </Box>
             )}
@@ -591,26 +618,48 @@ export default function PayByCreditCard({
               {/* Resumo das Contas Selecionadas */}
               <Box sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                 <Typography level="title-md" sx={{ 
-                  mb: 1.5,
-                  color: 'var(--color-secondary)',
-                  fontWeight: 600,
+                  mb: 2,
+                  background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontWeight: 700,
                   fontFamily: 'var(--font-puffin), sans-serif',
-                  fontSize: { xs: '1rem', sm: '1.125rem' }
+                  fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                  letterSpacing: '-0.02em'
                 }}>
                   Contas Selecionadas
                 </Typography>
-                <Divider sx={{ mb: 2, borderColor: 'var(--color-primary)' }} />
+                <Divider sx={{ 
+                  mb: 3, 
+                  borderColor: 'var(--color-primary)',
+                  borderWidth: '2px',
+                  opacity: 0.3,
+                  background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)'
+                }} />
                 {selectedBills.length > 0 && (
-                  <Stack spacing={1} sx={{ 
-                    p: { xs: 1.5, sm: 2 }, 
-                    bgcolor: 'rgba(0, 200, 236, 0.12)', 
-                    borderRadius: '12px',
-                    border: '1px solid rgba(1, 90, 103, 0.24)',
+                  <Stack spacing={1.5} sx={{ 
+                    p: { xs: 2, sm: 2.5 }, 
+                    background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.15) 0%, rgba(0, 200, 236, 0.08) 100%)',
+                    borderRadius: '16px',
+                    border: '1.5px solid rgba(0, 200, 236, 0.3)',
                     width: '100%',
                     maxWidth: '100%',
                     boxSizing: 'border-box',
                     overflow: 'hidden',
                     wordBreak: 'break-word',
+                    boxShadow: '0 4px 16px rgba(0, 200, 236, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                    position: 'relative',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: 'linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                      borderRadius: '16px 16px 0 0'
+                    },
                     '&.MuiStack-root': {
                       width: '100% !important',
                       maxWidth: '100% !important',
@@ -626,69 +675,128 @@ export default function PayByCreditCard({
                   }}>
                     <Typography level="body-sm" sx={{ 
                       fontFamily: 'var(--font-puffin), sans-serif',
-                      fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-                      wordBreak: 'break-word'
+                      fontSize: { xs: '0.9rem', sm: '1rem' },
+                      wordBreak: 'break-word',
+                      fontWeight: 500,
+                      color: 'text.primary',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1
                     }}>
-                      <strong style={{ color: 'var(--color-primary)' }}>Empresa:</strong> {selectedBills[0].companyName}
+                      <Box component="span" sx={{ 
+                        minWidth: 'fit-content',
+                        fontWeight: 700,
+                        color: 'text.secondary'
+                      }}>
+                        Empresa:
+                      </Box>
+                      <Box component="span" sx={{ color: 'text.primary', fontWeight: 500 }}>
+                        {selectedBills[0].companyName}
+                      </Box>
                     </Typography>
                     <Typography level="body-sm" sx={{ 
                       fontFamily: 'var(--font-puffin), sans-serif',
-                      fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-                      wordBreak: 'break-word'
+                      fontSize: { xs: '0.9rem', sm: '1rem' },
+                      wordBreak: 'break-word',
+                      fontWeight: 500,
+                      color: 'text.primary',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1
                     }}>
-                      <strong style={{ color: 'var(--color-primary)' }}>Contrato:</strong> {selectedBills[0].contrato}
+                      <Box component="span" sx={{ 
+                        minWidth: 'fit-content',
+                        fontWeight: 700,
+                        color: 'text.secondary'
+                      }}>
+                        Contrato:
+                      </Box>
+                      <Box component="span" sx={{ color: 'text.primary', fontWeight: 500 }}>
+                        {selectedBills[0].contrato}
+                      </Box>
                     </Typography>
                   </Stack>
                 )}
                 <Box sx={{ 
-                  mt: 2, 
+                  mt: 3, 
                   width: '100%',
                   maxWidth: '100%',
                   boxSizing: 'border-box',
-                  maxHeight: { xs: 200, sm: 220 },
+                  maxHeight: { xs: 220, sm: 260 },
                   overflowY: 'auto',
                   overflowX: 'hidden',
-                  pr: 0.5
+                  pr: 0.5,
+                  '&::-webkit-scrollbar': {
+                    width: '8px'
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'rgba(0, 0, 0, 0.05)',
+                    borderRadius: '10px'
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: 'linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                    borderRadius: '10px',
+                    '&:hover': {
+                      background: 'linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%)'
+                    }
+                  }
                 }}>
                   {selectedBills.map((bill, index) => (
                     <Box 
                       key={bill.id} 
                       sx={{ 
-                        p: { xs: 1.5, sm: 2 }, 
-                        mb: 1.5, 
-                        bgcolor: 'rgba(245, 150, 0, 0.15)', 
-                        borderRadius: '12px',
-                        border: '1px solid rgba(245, 150, 0, 0.3)',
+                        p: { xs: 2, sm: 2.5 }, 
+                        mb: 2, 
+                        background: 'linear-gradient(135deg, rgba(245, 150, 0, 0.12) 0%, rgba(245, 150, 0, 0.06) 100%)',
+                        borderRadius: '16px',
+                        border: '1.5px solid rgba(245, 150, 0, 0.25)',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'flex-start',
-                        gap: 2,
-                        transition: 'all 0.2s',
+                        gap: 2.5,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         flexWrap: { xs: 'wrap', sm: 'nowrap' },
                         width: '100%',
                         maxWidth: '100%',
                         boxSizing: 'border-box',
                         overflow: 'hidden',
+                        boxShadow: '0 2px 8px rgba(245, 150, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '4px',
+                          height: '100%',
+                          background: 'linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
+                          borderRadius: '16px 0 0 16px',
+                          opacity: 0.6
+                        },
                         '&:hover': {
-                          bgcolor: 'rgba(245, 150, 0, 0.22)'
+                          background: 'linear-gradient(135deg, rgba(245, 150, 0, 0.18) 0%, rgba(245, 150, 0, 0.1) 100%)',
+                          borderColor: 'rgba(245, 150, 0, 0.4)',
+                          boxShadow: '0 4px 16px rgba(245, 150, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                          transform: 'translateY(-2px)'
                         }
                       }}
                     >
-                      <Stack spacing={0.5} sx={{ 
+                      <Stack spacing={1} sx={{ 
                         flex: 1, 
                         minWidth: 0, 
-                        maxWidth: { xs: '100%', sm: 'calc(100% - 120px)' }, 
+                        maxWidth: { xs: '100%', sm: 'calc(100% - 140px)' },
+                        pl: 1.5,
                         overflow: 'hidden',
                         wordBreak: 'break-word',
                         '&.MuiStack-root': {
                           width: '100% !important',
-                          maxWidth: { xs: '100% !important', sm: 'calc(100% - 120px) !important' },
+                          maxWidth: { xs: '100% !important', sm: 'calc(100% - 140px) !important' },
                           boxSizing: 'border-box !important',
                           overflow: 'hidden !important'
                         },
                         '&.joy-nmo3nj-JoyStack-root': {
                           width: '100% !important',
-                          maxWidth: { xs: '100% !important', sm: 'calc(100% - 120px) !important' },
+                          maxWidth: { xs: '100% !important', sm: 'calc(100% - 140px) !important' },
                           boxSizing: 'border-box !important',
                           overflow: 'hidden !important'
                         },
@@ -700,57 +808,93 @@ export default function PayByCreditCard({
                       }}>
                         <Typography level="body-sm" sx={{ 
                           fontFamily: 'var(--font-puffin), sans-serif',
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                          color: 'text.tertiary',
+                          fontWeight: 500
                         }}>
-                          <strong>ID:</strong> {bill.id}
+                          <Box component="span" sx={{ 
+                            fontWeight: 700,
+                            color: 'text.secondary',
+                            mr: 0.5
+                          }}>
+                            ID:
+                          </Box>
+                          {bill.id}
                         </Typography>
                         <Typography level="body-sm" sx={{ 
                           fontFamily: 'var(--font-puffin), sans-serif',
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          wordBreak: 'break-word'
+                          fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+                          wordBreak: 'break-word',
+                          fontWeight: 600,
+                          color: 'text.primary',
+                          lineHeight: 1.4
                         }}>
                           {bill.accountTypeName}
                         </Typography>
                         <Typography level="body-sm" sx={{ 
                           fontFamily: 'var(--font-puffin), sans-serif', 
-                          color: 'var(--color-text-tertiary)',
-                          fontSize: { xs: '0.7rem', sm: '0.8125rem' }
+                          color: 'text.tertiary',
+                          fontSize: { xs: '0.75rem', sm: '0.8125rem' },
+                          fontWeight: 500
                         }}>
-                          Vencimento: {bill.dueDate}
+                          <Box component="span" sx={{ color: 'text.tertiary', opacity: 0.8 }}>Vencimento:</Box> {bill.dueDate}
                         </Typography>
                       </Stack>
                       <Typography level="body-md" fontWeight="bold" sx={{ 
-                        color: 'var(--color-primary)',
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
                         fontFamily: 'var(--font-puffin), sans-serif',
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                        fontSize: { xs: '1rem', sm: '1.125rem' },
                         flexShrink: 0,
                         whiteSpace: 'nowrap',
                         ml: { xs: 0, sm: 1 },
-                        maxWidth: { xs: '100%', sm: '120px' },
+                        maxWidth: { xs: '100%', sm: '140px' },
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        textOverflow: 'ellipsis',
+                        fontWeight: 700,
+                        letterSpacing: '-0.01em'
                       }}>
                         {formatMoney(bill.currentValue)}
                       </Typography>
                     </Box>
                   ))}
                 </Box>
-                <Divider sx={{ my: 2, borderColor: 'var(--color-primary)' }} />
+                <Divider sx={{ 
+                  my: 3, 
+                  borderColor: 'var(--color-primary)',
+                  borderWidth: '2px',
+                  opacity: 0.3,
+                  background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)'
+                }} />
                 <Box sx={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center',
                   flexWrap: { xs: 'wrap', sm: 'nowrap' },
-                  gap: 2,
-                  p: { xs: 2, sm: 2.5 }, 
-                  background: 'linear-gradient(135deg, rgba(1, 90, 103, 0.14) 0%, rgba(245, 150, 0, 0.18) 100%)',
-                  borderRadius: '12px',
-                  border: '2px solid var(--color-primary)',
-                  boxShadow: '0 4px 12px rgba(1, 90, 103, 0.2)',
+                  gap: 2.5,
+                  p: { xs: 2.5, sm: 3 }, 
+                  background: 'linear-gradient(135deg, rgba(1, 90, 103, 0.12) 0%, rgba(245, 150, 0, 0.15) 100%)',
+                  borderRadius: '18px',
+                  border: '2px solid',
+                  borderImage: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%) 1',
+                  boxShadow: '0 8px 24px rgba(1, 90, 103, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.2)',
                   width: '100%',
                   maxWidth: '100%',
                   boxSizing: 'border-box',
                   overflow: 'hidden',
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: 'linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                    borderRadius: '18px 18px 0 0'
+                  },
                   '& *': {
                     maxWidth: '100%',
                     overflow: 'hidden',
@@ -758,25 +902,34 @@ export default function PayByCreditCard({
                   }
                 }}>
                   <Typography level="title-lg" fontWeight="bold" sx={{ 
-                    color: 'var(--color-primary)',
+                    background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
                     fontFamily: 'var(--font-puffin), sans-serif',
-                    fontSize: { xs: '1rem', sm: '1.125rem' },
+                    fontSize: { xs: '1.1rem', sm: '1.25rem' },
                     flexShrink: 0,
                     maxWidth: { xs: '100%', sm: '50%' },
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: { xs: 'normal', sm: 'nowrap' }
+                    whiteSpace: { xs: 'normal', sm: 'nowrap' },
+                    letterSpacing: '-0.02em'
                   }}>
                     Total a Pagar:
                   </Typography>
                   <Typography level="title-lg" fontWeight="bold" sx={{ 
-                    color: 'var(--color-secondary)',
+                    background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
                     fontFamily: 'var(--font-puffin), sans-serif',
-                    fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                    fontSize: { xs: '1.3rem', sm: '1.6rem' },
                     flexShrink: 0,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    fontWeight: 800,
+                    letterSpacing: '-0.03em'
                   }}>
                     {formatMoney(totalValue())}
                   </Typography>
@@ -804,42 +957,68 @@ export default function PayByCreditCard({
                 }}
               >
                 <TabList sx={{ 
-                  borderRadius: '12px',
-                  bgcolor: 'rgba(0, 200, 236, 0.12)',
-                  p: 0.5,
+                  borderRadius: '14px',
+                  bgcolor: 'rgba(0, 200, 236, 0.08)',
+                  p: 0.75,
                   width: '100%',
                   maxWidth: '100%',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  border: '1px solid rgba(0, 200, 236, 0.15)',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.04)'
                 }}>
                   <Tab sx={{ 
                     fontFamily: 'var(--font-puffin), sans-serif',
                     fontWeight: 600,
-                    borderRadius: '10px',
-                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    borderRadius: '12px',
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
                     flex: 1,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    py: 1.25,
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 200, 236, 0.15)',
+                      transform: 'translateY(-1px)'
+                    },
                     '&.Mui-selected': {
-                      bgcolor: 'var(--color-primary)',
-                      color: 'white'
+                      background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                      color: 'white',
+                      boxShadow: '0 4px 12px rgba(1, 90, 103, 0.3)',
+                      transform: 'translateY(-2px)',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 16px rgba(1, 90, 103, 0.4)'
+                      }
                     }
                   }}>
-                    CartÃ£o Salvo
+                    Cartão Salvo
                   </Tab>
                   <Tab sx={{ 
                     fontFamily: 'var(--font-puffin), sans-serif',
                     fontWeight: 600,
-                    borderRadius: '10px',
-                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    borderRadius: '12px',
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
                     flex: 1,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    py: 1.25,
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 200, 236, 0.15)',
+                      transform: 'translateY(-1px)'
+                    },
                     '&.Mui-selected': {
-                      bgcolor: 'var(--color-primary)',
-                      color: 'white'
+                      background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                      color: 'white',
+                      boxShadow: '0 4px 12px rgba(1, 90, 103, 0.3)',
+                      transform: 'translateY(-2px)',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 16px rgba(1, 90, 103, 0.4)'
+                      }
                     }
                   }}>
-                    Novo CartÃ£o
+                    Novo Cartão
                   </Tab>
                 </TabList>
 
-                {/* Aba 1: CartÃ£o Salvo */}
+                {/* Aba 1: Cartão Salvo */}
                 <TabPanel value={0} sx={{ 
                   p: { xs: 1, sm: 1.5 }, 
                   width: '100%',
@@ -860,17 +1039,41 @@ export default function PayByCreditCard({
 
                     <FormControl sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                       <FormLabel sx={{ 
-                        color: 'var(--color-secondary)',
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
                         fontFamily: 'var(--font-puffin), sans-serif',
-                        fontWeight: 600
+                        fontWeight: 700,
+                        fontSize: { xs: '0.95rem', sm: '1rem' },
+                        mb: 1.5
                       }}>
-                        Selecione um cartÃ£o salvo
+                        Selecione um cartão salvo
                       </FormLabel>
                       {isLoadingSavedCardsTse ? (
-                        <Box sx={{ p: 2, textAlign: 'center' }}>
-                          <CircularProgress size="sm" />
-                          <Typography level="body-sm" sx={{ mt: 1 }}>
-                            Carregando cartÃµes...
+                        <Box sx={{ 
+                          p: 3, 
+                          textAlign: 'center',
+                          background: 'linear-gradient(135deg, rgba(0, 200, 236, 0.08) 0%, rgba(0, 200, 236, 0.04) 100%)',
+                          borderRadius: '16px',
+                          border: '1.5px solid rgba(0, 200, 236, 0.2)'
+                        }}>
+                          <CircularProgress 
+                            size="md" 
+                            sx={{ 
+                              color: 'primary.plainColor',
+                              '& .MuiCircularProgress-circle': {
+                                strokeLinecap: 'round'
+                              }
+                            }} 
+                          />
+                          <Typography level="body-sm" sx={{ 
+                            mt: 2,
+                            fontFamily: 'var(--font-puffin), sans-serif',
+                            fontWeight: 600,
+                            color: 'text.secondary'
+                          }}>
+                            Carregando cartões...
                           </Typography>
                         </Box>
                       ) : (
@@ -880,7 +1083,7 @@ export default function PayByCreditCard({
                             const cardId = newValue as number | null;
                             setSelectedSavedCardId(cardId);
                             
-                            // Buscar o objeto completo do cartÃ£o
+                            // Buscar o objeto completo do cartão
                             if (cardId !== null) {
                               const card = savedCardsTse.find(c => c.id === cardId);
                               setSelectedSavedCardTse(card || null);
@@ -888,31 +1091,47 @@ export default function PayByCreditCard({
                               setSelectedSavedCardTse(null);
                             }
                           }}
-                          placeholder="Selecione um cartÃ£o"
+                          placeholder="Selecione um cartão"
                           sx={{ 
                             width: '100%', 
                             maxWidth: '100%', 
                             boxSizing: 'border-box',
+                            borderRadius: '12px',
+                            transition: 'all 0.3s ease',
+                            '&:focus-within': {
+                              boxShadow: '0 0 0 3px rgba(0, 200, 236, 0.15)',
+                              borderColor: 'var(--color-primary)'
+                            },
                             '& .MuiSelect-select': {
                               width: '100%',
                               maxWidth: '100%',
                               boxSizing: 'border-box',
                               overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              textOverflow: 'ellipsis',
+                              py: 1.25,
+                              fontSize: { xs: '0.95rem', sm: '1rem' }
                             }
                           }}
                           slotProps={{
-                            listbox: { sx: { zIndex: 1500, maxHeight: 260 } }
+                            listbox: { 
+                              sx: { 
+                                zIndex: 1500, 
+                                maxHeight: 260,
+                                borderRadius: '12px',
+                                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                                border: '1px solid rgba(0, 200, 236, 0.2)'
+                              } 
+                            }
                           }}
                         >
                           {errorSavedCardsTse && (
                             <Option value={null} disabled>
-                              Erro ao carregar cartÃµes
+                              Erro ao carregar cartões
                             </Option>
                           )}
                           {!errorSavedCardsTse && savedCardsTse.length === 0 && (
                             <Option value={null} disabled>
-                              Nenhum cartÃ£o salvo
+                              Nenhum cartão salvo
                             </Option>
                           )}
                           {savedCardsTse.map((card) => {
@@ -929,26 +1148,83 @@ export default function PayByCreditCard({
 
                     {(savedCardsTse.length === 0 && !isLoadingSavedCardsTse && !errorSavedCardsTse) && (
                       <Box sx={{ 
-                        p: 2, 
-                        bgcolor: 'rgba(245, 150, 0, 0.15)', 
-                        borderRadius: '12px',
-                        border: '1px solid rgba(245, 150, 0, 0.3)'
+                        p: 2.5, 
+                        background: 'linear-gradient(135deg, rgba(245, 150, 0, 0.12) 0%, rgba(245, 150, 0, 0.06) 100%)',
+                        borderRadius: '16px',
+                        border: '1.5px solid rgba(245, 150, 0, 0.25)',
+                        boxShadow: '0 2px 8px rgba(245, 150, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '4px',
+                          height: '100%',
+                          background: 'linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
+                          borderRadius: '16px 0 0 16px',
+                          opacity: 0.6
+                        }
                       }}>
                         <Typography level="body-sm" sx={{ 
-                          color: 'var(--color-text-tertiary)',
-                          fontFamily: 'var(--font-puffin), sans-serif'
+                          color: 'text.primary',
+                          fontFamily: 'var(--font-puffin), sans-serif',
+                          fontWeight: 500,
+                          lineHeight: 1.6,
+                          pl: 1
                         }}>
-                          VocÃª ainda nÃ£o possui cartÃµes salvos. Use a aba &quot;Novo CartÃ£o&quot; e marque a opÃ§Ã£o &quot;Salvar este cartÃ£o&quot;.
+                          Você ainda não possui cartões salvos. Use a aba &quot;Novo Cartão&quot; e marque a opção &quot;Salvar este cartão&quot;.
                         </Typography>
                       </Box>
                     )}
 
                     {errorSavedCardsTse && (
-                      <Box sx={{ p: 2, bgcolor: 'rgba(255,0,0,0.06)', borderRadius: '12px', border: '1px solid rgba(255,0,0,0.2)' }}>
-                        <Typography level="body-sm" sx={{ color: 'danger.plainColor', fontFamily: 'var(--font-puffin), sans-serif' }}>
-                          NÃ£o foi possÃ­vel carregar seus cartÃµes salvos.
+                      <Box sx={{ 
+                        p: 2.5, 
+                        background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.08) 0%, rgba(255, 0, 0, 0.04) 100%)',
+                        borderRadius: '16px', 
+                        border: '1.5px solid rgba(255, 0, 0, 0.25)',
+                        boxShadow: '0 2px 8px rgba(255, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '4px',
+                          height: '100%',
+                          background: 'linear-gradient(180deg, #ff4444 0%, #cc0000 100%)',
+                          borderRadius: '16px 0 0 16px',
+                          opacity: 0.6
+                        }
+                      }}>
+                        <Typography level="body-sm" sx={{ 
+                          color: 'danger.plainColor', 
+                          fontFamily: 'var(--font-puffin), sans-serif',
+                          fontWeight: 600,
+                          mb: 1.5,
+                          pl: 1
+                        }}>
+                          Não foi possível carregar seus cartões salvos.
                         </Typography>
-                        <Button variant="outlined" size="sm" sx={{ mt: 1 }} onClick={() => refetchSavedCards()}>
+                        <Button 
+                          variant="outlined" 
+                          size="sm" 
+                          sx={{ 
+                            mt: 1,
+                            ml: 1,
+                            borderRadius: '10px',
+                            borderColor: 'danger.plainColor',
+                            color: 'danger.plainColor',
+                            fontWeight: 600,
+                            '&:hover': {
+                              bgcolor: 'rgba(255, 0, 0, 0.1)',
+                              borderColor: 'danger.plainColor',
+                              transform: 'translateY(-1px)'
+                            }
+                          }} 
+                          onClick={() => refetchSavedCards()}
+                        >
                           Tentar novamente
                         </Button>
                       </Box>
@@ -961,18 +1237,30 @@ export default function PayByCreditCard({
                         fullWidth
                         loading={handlePayByCreditCard.isPending || isProcessing}
                         sx={{
-                          bgcolor: 'var(--color-primary)',
+                          background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
                           color: 'white',
                           fontFamily: 'var(--font-puffin), sans-serif',
                           fontWeight: 700,
                           fontSize: '1rem',
-                          py: 1.5,
-                          borderRadius: '12px',
+                          py: 1.75,
+                          borderRadius: '14px',
                           width: '100%',
                           maxWidth: '100%',
                           boxSizing: 'border-box',
+                          boxShadow: '0 4px 12px rgba(1, 90, 103, 0.3)',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
-                            bgcolor: 'var(--color-secondary)',
+                            background: 'linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
+                            boxShadow: '0 6px 20px rgba(1, 90, 103, 0.4)',
+                            transform: 'translateY(-2px)'
+                          },
+                          '&:active': {
+                            transform: 'translateY(0)',
+                            boxShadow: '0 2px 8px rgba(1, 90, 103, 0.3)'
+                          },
+                          '&:disabled': {
+                            opacity: 0.6,
+                            cursor: 'not-allowed'
                           }
                         }}
                       >
@@ -997,7 +1285,7 @@ export default function PayByCreditCard({
                           boxSizing: 'border-box'
                         }}
                       >
-                        Selecione um cartÃ£o
+                        Selecione um cartão
                       </Button>
                     )}
 
@@ -1007,8 +1295,8 @@ export default function PayByCreditCard({
                       fullWidth
                       variant="outlined"
                       sx={{
-                        borderColor: 'var(--color-text-tertiary)',
-                        color: 'var(--color-text-tertiary)',
+                        borderColor: 'text.tertiary',
+                        color: 'text.tertiary',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600,
                         fontSize: '1rem',
@@ -1019,7 +1307,7 @@ export default function PayByCreditCard({
                         boxSizing: 'border-box',
                         '&:hover': {
                           borderColor: 'var(--color-primary)',
-                          color: 'var(--color-primary)',
+                          color: 'primary.plainColor',
                           bgcolor: 'rgba(0, 200, 236, 0.12)',
                         }
                       }}
@@ -1029,7 +1317,7 @@ export default function PayByCreditCard({
                   </Stack>
                 </TabPanel>
 
-                {/* Aba 2: Novo CartÃ£o */}
+                {/* Aba 2: Novo Cartão */}
                 <TabPanel value={1} sx={{ 
                   p: { xs: 2, sm: 3 }, 
                   width: '100%',
@@ -1043,11 +1331,11 @@ export default function PayByCreditCard({
                   }}>
                     <FormControl required sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                       <FormLabel sx={{ 
-                        color: 'var(--color-secondary)',
+                        color: 'text.secondary',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600
                       }}>
-                        NÃºmero do CartÃ£o
+                        Número do Cartão
                       </FormLabel>
                       <Input
                         placeholder="0000 0000 0000 0000"
@@ -1059,20 +1347,34 @@ export default function PayByCreditCard({
                             style: { width: '100%', maxWidth: '100%', boxSizing: 'border-box' }
                           }
                         }}
-                        sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                        sx={{ 
+                          width: '100%', 
+                          maxWidth: '100%', 
+                          boxSizing: 'border-box',
+                          borderRadius: '12px',
+                          transition: 'all 0.3s ease',
+                          '&:focus-within': {
+                            boxShadow: '0 0 0 3px rgba(0, 200, 236, 0.15)',
+                            borderColor: 'var(--color-primary)'
+                          },
+                          '& .MuiInput-input': {
+                            fontSize: { xs: '0.95rem', sm: '1rem' },
+                            py: 1.25
+                          }
+                        }}
                       />
                     </FormControl>
 
                     <FormControl required sx={{ width: '100%', boxSizing: 'border-box' }}>
                       <FormLabel sx={{ 
-                        color: 'var(--color-secondary)',
+                        color: 'text.secondary',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600
                       }}>
-                        Nome no CartÃ£o
+                        Nome no Cartão
                       </FormLabel>
                       <Input
-                        placeholder="Como estÃ¡ no cartÃ£o"
+                        placeholder="Como está no cartão"
                         value={newCardData.cardHolder}
                         onChange={(e) => setNewCardData({ ...newCardData, cardHolder: e.target.value.toUpperCase() })}
                         slotProps={{
@@ -1086,11 +1388,11 @@ export default function PayByCreditCard({
 
                     <FormControl required sx={{ width: '100%', boxSizing: 'border-box' }}>
                       <FormLabel sx={{ 
-                        color: 'var(--color-secondary)',
+                        color: 'text.secondary',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600
                       }}>
-                        Bandeira do CartÃ£o
+                        Bandeira do Cartão
                       </FormLabel>
                       <Select
                         placeholder="Selecione a bandeira"
@@ -1101,16 +1403,32 @@ export default function PayByCreditCard({
                           width: '100%',
                           maxWidth: '100%',
                           boxSizing: 'border-box',
+                          borderRadius: '12px',
+                          transition: 'all 0.3s ease',
+                          '&:focus-within': {
+                            boxShadow: '0 0 0 3px rgba(0, 200, 236, 0.15)',
+                            borderColor: 'var(--color-primary)'
+                          },
                           '& .MuiSelect-select': {
                             width: '100%',
                             maxWidth: '100%',
                             boxSizing: 'border-box',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
+                            py: 1.25,
+                            fontSize: { xs: '0.95rem', sm: '1rem' }
                           }
                         }}
                         slotProps={{
-                          listbox: { sx: { zIndex: 1500, maxHeight: 260 } }
+                          listbox: { 
+                            sx: { 
+                              zIndex: 1500, 
+                              maxHeight: 260,
+                              borderRadius: '12px',
+                              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                              border: '1px solid rgba(0, 200, 236, 0.2)'
+                            } 
+                          }
                         }}
                       >
                         {bandeirasAceitas.map((bandeira) => (
@@ -1131,10 +1449,14 @@ export default function PayByCreditCard({
                       }}>
                         <FormControl required sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                           <FormLabel sx={{ 
-                            color: 'var(--color-secondary)',
+                            background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
                             fontFamily: 'var(--font-puffin), sans-serif',
-                            fontWeight: 600,
-                            fontSize: { xs: '0.875rem', sm: '1rem' }
+                            fontWeight: 700,
+                            fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                            mb: 1.5
                           }}>
                             Validade (MM/AA)
                           </FormLabel>
@@ -1152,9 +1474,16 @@ export default function PayByCreditCard({
                               width: '100%', 
                               maxWidth: '100%', 
                               boxSizing: 'border-box',
-                              borderRadius: '10px',
-                              boxShadow: 'none',
-                              '&:focus-within': { boxShadow: 'none' }
+                              borderRadius: '12px',
+                              transition: 'all 0.3s ease',
+                              '&:focus-within': {
+                                boxShadow: '0 0 0 3px rgba(0, 200, 236, 0.15)',
+                                borderColor: 'var(--color-primary)'
+                              },
+                              '& .MuiInput-input': {
+                                fontSize: { xs: '0.95rem', sm: '1rem' },
+                                py: 1.25
+                              }
                             }}
                           />
                         </FormControl>
@@ -1168,10 +1497,14 @@ export default function PayByCreditCard({
                       }}>
                         <FormControl required sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                           <FormLabel sx={{ 
-                            color: 'var(--color-secondary)',
+                            background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
                             fontFamily: 'var(--font-puffin), sans-serif',
-                            fontWeight: 600,
-                            fontSize: { xs: '0.875rem', sm: '1rem' }
+                            fontWeight: 700,
+                            fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                            mb: 1.5
                           }}>
                             CVV
                           </FormLabel>
@@ -1191,9 +1524,16 @@ export default function PayByCreditCard({
                               width: '100%', 
                               maxWidth: '100%', 
                               boxSizing: 'border-box',
-                              borderRadius: '10px',
-                              boxShadow: 'none',
-                              '&:focus-within': { boxShadow: 'none' }
+                              borderRadius: '12px',
+                              transition: 'all 0.3s ease',
+                              '&:focus-within': {
+                                boxShadow: '0 0 0 3px rgba(0, 200, 236, 0.15)',
+                                borderColor: 'var(--color-primary)'
+                              },
+                              '& .MuiInput-input': {
+                                fontSize: { xs: '0.95rem', sm: '1rem' },
+                                py: 1.25
+                              }
                             }}
                           />
                         </FormControl>
@@ -1201,7 +1541,7 @@ export default function PayByCreditCard({
               </Grid>
 
                     <Checkbox
-                      label="Salvar este cartÃ£o para pagamentos futuros"
+                      label="Salvar este cartão para pagamentos futuros"
                       checked={newCardData.saveCard}
                       onChange={(e) => setNewCardData({ ...newCardData, saveCard: e.target.checked })}
                       sx={{
@@ -1218,18 +1558,30 @@ export default function PayByCreditCard({
                       fullWidth
                       loading={handlePayByCreditCard.isPending || isProcessing}
                       sx={{
-                        bgcolor: 'var(--color-primary)',
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
                         color: 'white',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 700,
                         fontSize: '1rem',
-                        py: 1.5,
-                        borderRadius: '12px',
+                        py: 1.75,
+                        borderRadius: '14px',
                         width: '100%',
                         maxWidth: '100%',
                         boxSizing: 'border-box',
+                        boxShadow: '0 4px 12px rgba(1, 90, 103, 0.3)',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
-                          bgcolor: 'var(--color-secondary)',
+                          background: 'linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%)',
+                          boxShadow: '0 6px 20px rgba(1, 90, 103, 0.4)',
+                          transform: 'translateY(-2px)'
+                        },
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: '0 2px 8px rgba(1, 90, 103, 0.3)'
+                        },
+                        '&:disabled': {
+                          opacity: 0.6,
+                          cursor: 'not-allowed'
                         }
                       }}
                     >
@@ -1242,8 +1594,8 @@ export default function PayByCreditCard({
                       fullWidth
                       variant="outlined"
                       sx={{
-                        borderColor: 'var(--color-text-tertiary)',
-                        color: 'var(--color-text-tertiary)',
+                        borderColor: 'text.tertiary',
+                        color: 'text.tertiary',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600,
                         fontSize: '1rem',
@@ -1254,7 +1606,7 @@ export default function PayByCreditCard({
                         boxSizing: 'border-box',
                         '&:hover': {
                           borderColor: 'var(--color-primary)',
-                          color: 'var(--color-primary)',
+                          color: 'primary.plainColor',
                           bgcolor: 'rgba(0, 200, 236, 0.12)',
                         }
                       }}
