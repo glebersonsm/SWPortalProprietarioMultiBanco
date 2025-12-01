@@ -9,8 +9,20 @@ import WithoutData from "@/components/WithoutData";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { getUserOutstandingBills, downloadBill } from "@/services/querys/finance-users"; // downloadBill importado corretamente
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import UserOutstandingBillsFilters from "./_components/UserOutstandingBillsFilters";
 import DownloadCertificatesModal from "./_components/DownloadCertificatesModal";
+
+// Importar modais com SSR desabilitado para evitar renderização no servidor
+const PayPerPixModal = dynamic(
+  () => import("./_components/PayPerPixModal"),
+  { ssr: false }
+);
+
+const PayByCreditCard = dynamic(
+  () => import("./_components/PayByCreditCardModal"),
+  { ssr: false }
+);
 import { UserOutstandingBill } from "@/utils/types/finance-users";
 import { Button } from "@mui/joy";
 import useUser from "@/hooks/useUser";
@@ -20,9 +32,14 @@ import ModernPaginatedList from "@/components/ModernPaginatedList";
 // Use GridRowId para tipar o array de IDs
 import { GridColDef, GridRenderCellParams, GridRowClassNameParams, GridRowId } from "@mui/x-data-grid";
 import { formatMoney } from "@/utils/money";
-import { IconButton, Box as MuiBox, Typography } from "@mui/material";
+import { IconButton, Box as MuiBox, Typography, Menu, MenuItem, ListItemIcon, ListItemText, Button as MuiButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import PaymentIcon from "@mui/icons-material/Payment";
+import PixIcon from "@mui/icons-material/Pix";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { isDateBeforeToday } from "@/utils/dates";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_page";
 const ROWS_PER_PAGE_STORAGE_KEY = "user_multiownership_outstanding_accounts_rows_per_page";
@@ -40,6 +57,16 @@ export default function OutstandingAccountsPage() {
   
   // Onde o DataGrid armazena os IDs selecionados
   const [selectedRowIds, setSelectedRowIds] = React.useState<GridRowId[]>([]);
+  
+  // Contas selecionadas diretamente (seguindo padrão HotBeach)
+  const [selectedAccounts, setSelectedAccounts] = React.useState<UserOutstandingBill[]>([]);
+  
+  // Estados para pagamento
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [paymentType, setPaymentType] = useState<'card' | 'pix' | null>(null);
+  
+  const router = useRouter();
   
   // --- Lógica de Local Storage (Mantida) ---
   useEffect(() => {
@@ -71,6 +98,17 @@ export default function OutstandingAccountsPage() {
 
   const { settingsParams, isAdm } = useUser();
 
+  // Verificações de configurações de pagamento
+  const onlinePaymentEnabled = settingsParams?.enableOnlinePayment === true;
+  const cardPaymentEnabled = settingsParams?.enableCardPayment === true;
+  const pixPaymentEnabled = settingsParams?.enablePixPayment === true;
+  const canOpenCardModal = onlinePaymentEnabled && cardPaymentEnabled;
+  const canOpenPixModal = onlinePaymentEnabled && pixPaymentEnabled;
+  const canShowPaymentOptions = canOpenCardModal || canOpenPixModal;
+
+  const shouldShowPaymentButton =
+    selectedAccounts.length > 0 && canShowPaymentOptions;
+
   const { isLoading, data } = useQuery({
     queryKey: ["getUserOutstandingBills", debounceFilters, page, rowsPerPage],
     queryFn: async () => getUserOutstandingBills(debounceFilters, page, rowsPerPage)
@@ -87,57 +125,57 @@ export default function OutstandingAccountsPage() {
     return isOpenStatus(bill.status);
   }, []);
 
-  // --- LÓGICA DE SELEÇÃO CORRIGIDA ---
+  // --- LÓGICA DE SELEÇÃO CORRIGIDA (seguindo padrão HotBeach) ---
   const handleSelectionModelChange = React.useCallback((newSelection: any) => {
       try {
-        // Normalizar a seleção que vem do DataGrid
-        let normalized: GridRowId[] = [];
+        // Extrair IDs corretamente - pode vir como array ou objeto com Set
+        let selectionIds: any[] = [];
         
         if (Array.isArray(newSelection)) {
-          normalized = newSelection;
-        } else if (newSelection instanceof Set) {
-          normalized = Array.from(newSelection);
-        } else if (newSelection && typeof newSelection === "object") {
-          // Tentar extrair o array de IDs de diferentes formatos possíveis
-          if (Array.isArray(newSelection.model)) {
-            normalized = newSelection.model;
-          } else if (Array.isArray(newSelection.selectionModel)) {
-            normalized = newSelection.selectionModel;
-          } else if (Array.isArray(newSelection.ids)) {
-            normalized = newSelection.ids;
-          } else if (newSelection.id != null) {
-            normalized = [newSelection.id];
-          }
-        } else if (newSelection != null) {
-          normalized = [newSelection];
+          selectionIds = newSelection;
+        } else if (newSelection && newSelection.ids instanceof Set) {
+          selectionIds = Array.from(newSelection.ids);
+        } else if (newSelection && typeof newSelection === 'object') {
+          selectionIds = Object.values(newSelection);
         }
-
-        // Filtrar e converter para números
-        const validIds = normalized
-          .filter((id) => id != null && id !== undefined && id !== "")
-          .map((id) => Number(id))
-          .filter((id) => !isNaN(id) && id > 0);
-
-        // Filtrar apenas contas que podem ser selecionadas
-        const selectableBills = outstandingBills.filter((bill) => 
-          validIds.includes(Number(bill.id)) && canSelectBill(bill)
-        );
-
-        // Verificar se todas as contas selecionadas são da mesma empresa
-        const companyIds = Array.from(new Set(selectableBills.map((bill) => bill.companyId)));
         
-        if (companyIds.length <= 1) {
-          // Atualizar estado com os IDs normalizados (apenas contas selecionáveis)
-          const selectableIds = selectableBills.map(bill => Number(bill.id));
-          setSelectedRowIds(selectableIds);
-        } else {
-          // Se tentou selecionar contas de empresas diferentes, mostrar alerta e manter seleção anterior
-          alert("Você só pode selecionar contas da mesma empresa.");
-          // Não atualizar o estado, mantendo a seleção anterior
+        // Filtrar contas selecionadas - usar comparação direta sem conversão forçada
+        const selectedBills = outstandingBills.filter((bill) => {
+          // Comparar diretamente, permitindo que o JavaScript faça a coerção de tipo
+          return selectionIds.some(id => id == bill.id || Number(id) === Number(bill.id));
+        });
+        
+        // Filtrar apenas contas que podem ser selecionadas
+        const validBills = selectedBills.filter(bill => canSelectBill(bill));
+        
+        if (validBills.length === 0) {
+          setSelectedAccounts([]);
+          setSelectedRowIds([]);
+          return;
         }
+        
+        // Se há apenas 1 conta, aceita sem validação
+        if (validBills.length === 1) {
+          setSelectedAccounts(validBills);
+          setSelectedRowIds(validBills.map(b => b.id));
+          return;
+        }
+        
+        // Para múltiplas contas, validar se todas são da mesma empresa
+        const companyIds = Array.from(new Set(validBills.map(b => b.companyId)));
+        if (companyIds.length > 1) {
+          alert("Você só pode selecionar contas da mesma empresa.");
+          setSelectedAccounts([validBills[0]]);
+          setSelectedRowIds([validBills[0].id]);
+          return;
+        }
+        
+        // Se passou todas as validações, atualizar estados
+        setSelectedAccounts(validBills);
+        setSelectedRowIds(validBills.map(b => b.id));
       } catch (error) {
-        console.error("Erro ao processar seleção:", error);
-        // Em caso de erro, manter a seleção anterior
+        setSelectedAccounts([]);
+        setSelectedRowIds([]);
       }
   }, [outstandingBills, canSelectBill]);
   // ----------------------------------------
@@ -147,26 +185,54 @@ export default function OutstandingAccountsPage() {
   const totalOriginal = outstandingBills.reduce((acc, item) => acc + item.value, 0);
   const totalAtualizado = outstandingBills.reduce((acc, item) => acc + item.currentValue, 0);
 
-  const selectedAccounts = useMemo(() => {
-    // Converter ambos os IDs para número para garantir comparação correta
-    const selectedIdsAsNumbers = selectedRowIds
-      .map(id => Number(id))
-      .filter(id => !isNaN(id) && id > 0);
-    
-    return outstandingBills.filter((item) => {
-      const itemId = Number(item.id);
-      return selectedIdsAsNumbers.includes(itemId) && canSelectBill(item);
-    });
-  }, [outstandingBills, selectedRowIds, canSelectBill]);
+  // selectedAccounts agora é um estado gerenciado diretamente no callback
+  // Removido o useMemo que calculava a partir de selectedRowIds
 
   const totalSelecionado = useMemo(() => {
-    if (selectedAccounts.length === 0) return 0;
+    if (selectedAccounts.length === 0) {
+      return 0;
+    }
     
     return selectedAccounts.reduce((acc, item) => {
-      const value = Number(item.currentValue ?? item.value ?? 0) || 0;
-      return acc + value;
+      // Somar apenas o currentValue (valor atualizado) dos itens selecionados
+      const currentValue = Number(item.currentValue) || 0;
+      return acc + currentValue;
     }, 0);
   }, [selectedAccounts]);
+
+  // Funções de controle do menu de pagamento
+  const handleOpenPaymentMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePaymentMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handlePaymentOption = (type: 'card' | 'pix') => {
+    if (!onlinePaymentEnabled) {
+      toast.warning("O pagamento online está desabilitado.");
+      return;
+    }
+
+    setPaymentType(type);
+    handleClosePaymentMenu();
+    if (type === 'card') {
+      if (!canOpenCardModal) {
+        toast.warning("Pagamento com cartão indisponível.");
+        return;
+      }
+      setShowPaymentModal(true);
+    } else {
+      if (!canOpenPixModal) {
+        toast.warning("Pagamento via PIX indisponível.");
+        return;
+      }
+      // PIX - usar lógica existente
+      const billsIds = selectedAccounts.map(b => b.id).join(',');
+      router.push(`?action=payPerPix&bills=${billsIds}`);
+    }
+  };
 
 
 
@@ -179,6 +245,24 @@ export default function OutstandingAccountsPage() {
   const action = React.useMemo(() => {
     return searchParams.get("action");
   }, [searchParams]);
+
+  // Obter selectedBills dos searchParams para PIX
+  const selectedBills = React.useMemo(() => {
+    if (action === "payPerPix") {
+      const billsParam = searchParams.get("bills");
+      if (billsParam) {
+        const billIds = billsParam.split(',').map(id => Number(id.trim())).filter(id => !isNaN(id));
+        return outstandingBills.filter(bill => billIds.includes(Number(bill.id)));
+      }
+    }
+    return undefined;
+  }, [action, searchParams, outstandingBills]);
+
+  // Função para limpar seleção
+  const clearSelectedAccounts = React.useCallback(() => {
+    setSelectedAccounts([]);
+    setSelectedRowIds([]);
+  }, []);
 
   // Definição das colunas (mantidas)
   const columns: GridColDef[] = [
@@ -288,24 +372,129 @@ export default function OutstandingAccountsPage() {
         ) : (
             <Stack spacing={2}>
             <MuiBox sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
-              <Stack spacing={2}>
-                <Stack direction="row" alignItems="flex-start" justifyContent="space-between" sx={{ gap: 2, flexWrap: 'wrap' }}>
-                  <Stack spacing={1} sx={{ flex: 1, minWidth: 240 }}>
-                    <Stack direction="row" spacing={4} sx={{ flexWrap: 'wrap' }}>
-                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
-                        Total Original: {formatMoney(totalOriginal)}
-                      </Typography>
-                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
-                        Total Atualizado: {formatMoney(totalAtualizado)}
-                      </Typography>
-                      <Typography variant="body1" fontWeight={600} sx={{ fontFamily: "Montserrat, sans-serif" }}>
-                        Total Selecionado: {formatMoney(totalSelecionado)}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-                  
-                </Stack>
-              </Stack>
+              <MuiBox sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+                <MuiBox sx={{ display: 'flex', gap: 4 }}>
+                  <MuiBox>
+                    <strong>Total Original: {formatMoney(totalOriginal)}</strong>
+                  </MuiBox>
+                  <MuiBox>
+                    <strong>Total Atualizado: {formatMoney(totalAtualizado)}</strong>
+                  </MuiBox>
+                </MuiBox>
+
+                {/* Botão de Pagamento no Cabeçalho */}
+                {shouldShowPaymentButton && (
+                  <MuiBox sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <MuiBox sx={{ 
+                      background: 'linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
+                      color: 'white',
+                      px: 2, 
+                      py: 1, 
+                      borderRadius: 1,
+                      fontFamily: 'var(--font-puffin), sans-serif',
+                      fontWeight: 600,
+                    }}>
+                      {selectedAccounts.length} {selectedAccounts.length === 1 ? 'conta' : 'contas'} selecionada{selectedAccounts.length === 1 ? '' : 's'} - Total: {formatMoney(totalSelecionado)}
+                    </MuiBox>
+                    <MuiButton
+                      variant="contained"
+                      startIcon={<PaymentIcon />}
+                      onClick={handleOpenPaymentMenu}
+                      sx={{
+                        bgcolor: 'var(--color-primary)',
+                        color: 'var(--color-text-light, #ffffff) !important',
+                        fontFamily: 'var(--font-puffin), sans-serif',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        textTransform: 'none',
+                        px: 3,
+                        py: 1,
+                        borderRadius: '8px',
+                        boxShadow: '0 6px 18px rgba(1, 90, 103, 0.25)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease-in-out',
+                        '& .MuiButton-startIcon': {
+                          color: 'var(--color-text-light, #ffffff) !important',
+                        },
+                        '& svg': {
+                          color: 'var(--color-text-light, #ffffff) !important',
+                        },
+                        '&:hover': {
+                          bgcolor: 'var(--color-secondary) !important',
+                          color: 'var(--color-text-light, #ffffff) !important',
+                          boxShadow: '0 10px 26px rgba(0, 200, 236, 0.35)',
+                          transform: 'translateY(-2px)',
+                          '& .MuiButton-startIcon': {
+                            color: 'var(--color-text-light, #ffffff) !important',
+                          },
+                          '& svg': {
+                            color: 'var(--color-text-light, #ffffff) !important',
+                          },
+                        },
+                        '&:active': {
+                          transform: 'translateY(0px)',
+                          boxShadow: '0 4px 12px rgba(1, 90, 103, 0.2)',
+                        },
+                      }}
+                    >
+                      Opções de Pagamento
+                    </MuiButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleClosePaymentMenu}
+                      sx={{
+                        '& .MuiPaper-root': {
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                          mt: 1,
+                        },
+                      }}
+                    >
+                      {canOpenCardModal && (
+                        <MenuItem 
+                          onClick={() => handlePaymentOption('card')}
+                          sx={{
+                            fontFamily: 'var(--font-puffin), sans-serif',
+                            py: 1.5,
+                            px: 2,
+                            transition: 'all 0.15s ease-in-out',
+                            '&:hover': {
+                              bgcolor: 'rgba(0, 0, 0, 0.08)',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <ListItemIcon>
+                            <CreditCardIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>Cartão de Crédito</ListItemText>
+                        </MenuItem>
+                      )}
+                      {canOpenPixModal && (
+                        <MenuItem 
+                          onClick={() => handlePaymentOption('pix')}
+                          sx={{
+                            fontFamily: 'var(--font-puffin), sans-serif',
+                            py: 1.5,
+                            px: 2,
+                            transition: 'all 0.15s ease-in-out',
+                            '&:hover': {
+                              bgcolor: 'rgba(0, 0, 0, 0.08)',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <ListItemIcon>
+                            <PixIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>PIX</ListItemText>
+                        </MenuItem>
+                      )}
+                    </Menu>
+                  </MuiBox>
+                )}
+              </MuiBox>
             </MuiBox>
 
             <ReusableDataGrid
@@ -375,7 +564,29 @@ export default function OutstandingAccountsPage() {
       {action === "download-certificates" ? (
         <DownloadCertificatesModal shouldOpen={true} />
       ) : null}
-        </>
+      
+      {/* Modal de Pagamento com Cartão */}
+      {showPaymentModal && selectedAccounts.length > 0 && canOpenCardModal && (
+        <PayByCreditCard
+          shouldOpen={showPaymentModal}
+          selectedBills={selectedAccounts}
+          clearSelectedAccounts={() => {
+            clearSelectedAccounts();
+            setShowPaymentModal(false);
+          }}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
+      {/* Modal de Pagamento PIX */}
+      {action === "payPerPix" && selectedBills && canOpenPixModal && (
+        <PayPerPixModal
+          shouldOpen={true}
+          selectedBills={selectedBills}
+          clearSelectedAccounts={clearSelectedAccounts}
+        />
+      )}
+        </> 
       )}
     </>
   );

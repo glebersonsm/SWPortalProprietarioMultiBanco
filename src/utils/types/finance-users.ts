@@ -26,6 +26,18 @@ export type PropsToGenerateQRCode = {
   personId: number;
   totalValue: number;
   ids: number[];
+  idEmpresa?: number;
+  idTorre?: number | null;
+  idContrato?: number | null;
+  contasFinanceiras?: PixContaFinanceiraRequest[];
+};
+
+export type PixContaFinanceiraRequest = {
+  idContaFinanceira: number;
+  valor: number;
+  dataVencimento?: string;
+  valorJuros?: number;
+  valorMulta?: number;
 };
 
 export type PropsToPayByCard = {
@@ -48,6 +60,71 @@ export type FiltersUserTokenizedCards = {
   personProviderId: string;
   personId: string;
 };
+
+export type PayWithSavedCardRequestBody = {
+  idCartaoSalvo: number;
+  contasFinanceiras: {
+    idContaFinanceira: number;
+    valor: number;
+    dataVencimento: string;
+    valorJuros?: number;
+    valorMulta?: number;
+  }[];
+  idEmpresa: number;
+  idTorre?: number | null;
+  idContrato?: number | null;
+  numeroParcelas: number;
+};
+
+export type SavedCard = {
+  id: number;
+  ultimosDigitos: string;
+  mesValidade: string;
+  anoValidade: string;
+  nomeNoCartao: string;
+  bandeira: string;
+};
+
+// Alias para compatibilidade (pode ser removido depois)
+export type SavedCardTse = SavedCard;
+
+export type SaveCardRequest = {
+  numeroCartao: string;
+  codigoSeguranca: string;
+  mesValidade: string;
+  anoValidade: string;
+  nomeNoCartao: string;
+  idbandeirasaceitas?: number;
+  salvarParaProximaTransacao: boolean;
+};
+
+export type BandeiraAceita = {
+  id: number;
+  bandeira: string;
+};
+
+export interface PayWithNewCardRequestBody {
+  cartao: {
+    numeroCartao: string;
+    codigoSeguranca: string;
+    mesValidade: string;
+    anoValidade: string;
+    nomeNoCartao: string;
+    idBandeira?: number;
+  };
+  salvarCartao: boolean;
+  contasFinanceiras: Array<{
+    idContaFinanceira: number;
+    valor: number;
+    dataVencimento: string;
+    valorJuros?: number;
+    valorMulta?: number;
+  }>;
+  idEmpresa: number;
+  idTorre?: number | null;
+  idContrato?: number | null;
+  numeroParcelas: number;
+}
 
 export type AddTokenizedCardData = {
   number: string;

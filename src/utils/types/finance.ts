@@ -40,6 +40,11 @@ export type OutstandingBill = {
   status: string;
   paymentBlockedByCrcStatus: string;
   processingDate: string;
+  idTorre?: number | null;
+  idContrato?: number | null;
+  juros?: number;
+  multa?: number;
+  vencimentoDate?: string;
 };
 
 export type OutstandingBills = {

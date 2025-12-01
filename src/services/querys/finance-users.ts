@@ -11,6 +11,11 @@ import {
   PropsToPayByCard,
   UserOutstandingBills,
   UserTokenizedCard,
+  SavedCard,
+  SaveCardRequest,
+  BandeiraAceita,
+  PayWithSavedCardRequestBody,
+  PayWithNewCardRequestBody,
 } from "@/utils/types/finance-users";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
@@ -61,11 +66,15 @@ export const getUserOutstandingBills = async (
 export const generateQRCode = async (data: PropsToGenerateQRCode) => {
   try {
     const response = await axios.post(
-      "/FinanceiroUsuario/gerarQrCodePagamentoComPix",
+      "/FinanceiroUsuario/gerarQrCodePagamentoComPixItau",
       {
         pessoaId: data.personId,
         valorTotal: data.totalValue,
         itensToPay: data.ids,
+        idEmpresa: data.idEmpresa,
+        idTorre: data.idTorre,
+        idContrato: data.idContrato,
+        contas: data.contasFinanceiras
       },
       {
         timeout: 100000, // opcional
@@ -83,6 +92,56 @@ export const generateQRCode = async (data: PropsToGenerateQRCode) => {
       error.message ||
       "Erro desconhecido ao gerar QR Code.";
 
+    throw new Error(message);
+  }
+};
+
+export const consultarStatusPix = async (txid: string) => {
+  try {
+    const response = await axios.get(`/FinanceiroUsuario/consultarStatusPagamentoPix/${txid}`);
+    return response.data.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao consultar status do pagamento PIX.";
+    
+    throw new Error(message);
+  }
+};
+
+export const confirmarPagamentoPix = async (txid: string) => {
+  try {
+    const response = await axios.post("/FinanceiroUsuario/confirmarPagamentoPix", { txid });
+    return response.data.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao confirmar pagamento PIX.";
+    
+    throw new Error(message);
+  }
+};
+
+/**
+ * ⚠️ APENAS PARA DESENVOLVIMENTO ⚠️
+ * Simula o pagamento de um PIX para testes
+ */
+export const simularPagamentoPix = async (txid: string) => {
+  try {
+    const response = await axios.post(`/FinanceiroUsuario/simularPagamentoPix/${txid}`);
+    return response.data.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.errors?.[0] ||
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao simular pagamento PIX";
+    
     throw new Error(message);
   }
 };
@@ -252,6 +311,7 @@ export const downloadBill = async (
     const response = await axios.get(`/FinanceiroUsuario/downloadBoleto`, {
       responseType: "arraybuffer",
       params: {
+        IdContaFinanceira: financeId,
         LinhaDigitavelBoleto: typeableBillLine,
       },
     });
@@ -273,5 +333,129 @@ export const downloadBill = async (
     }
   } catch (error) {
     toast.error("Erro ao baixar arquivo!");
+  }
+};
+
+export const getSavedCards = async (params?: { idEmpresa?: number; idTorre?: number | null; idContrato?: number | null; }): Promise<SavedCard[]> => {
+  try {
+    // Limpar parâmetros null/undefined para evitar enviar na query string
+    const cleanParams: any = {};
+    if (params) {
+      if (params.idEmpresa !== undefined && params.idEmpresa !== null) {
+        cleanParams.idEmpresa = params.idEmpresa;
+      }
+      if (params.idTorre !== undefined && params.idTorre !== null) {
+        cleanParams.idTorre = params.idTorre;
+      }
+      if (params.idContrato !== undefined && params.idContrato !== null) {
+        cleanParams.idContrato = params.idContrato;
+      }
+    }
+
+    const requestConfig = Object.keys(cleanParams).length > 0 
+      ? { params: cleanParams }
+      : {};
+    
+    const response = await axios.get(`/CartaoSalvo/meus-cartoes`, requestConfig);
+    
+    // Tentar diferentes formatos de resposta
+    let cards: SavedCard[] = [];
+    
+    // Formato 1: response.data é um array direto
+    if (Array.isArray(response.data)) {
+      cards = response.data;
+    }
+    // Formato 2: response.data.data é um array
+    else if (Array.isArray(response.data?.data)) {
+      cards = response.data.data;
+    }
+    // Formato 3: response.data.items ou response.data.cards
+    else if (Array.isArray(response.data?.items)) {
+      cards = response.data.items;
+    }
+    else if (Array.isArray(response.data?.cards)) {
+      cards = response.data.cards;
+    }
+    // Formato 4: response.data.result
+    else if (Array.isArray(response.data?.result)) {
+      cards = response.data.result;
+    }
+    
+    return cards;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.response?.data?.errors?.[0] ||
+      error.message ||
+      "Erro ao buscar cartões salvos.";
+    
+    throw new Error(message);
+  }
+};
+
+export const saveCard = async (payload: SaveCardRequest): Promise<SavedCard> => {
+  try {
+    const response = await axios.post(`/CartaoSalvo/salvar`, payload);
+    return response.data.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao salvar cartão.";
+    throw new Error(message);
+  }
+};
+
+export const payWithSavedCard = async (
+  payload: PayWithSavedCardRequestBody
+): Promise<any> => {
+  try {
+    const response = await axios.post(
+      "/api/v1/pagamento/processar-pagamento-cartao-salvo",
+      payload
+    );
+    return response.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao processar pagamento.";
+    throw new Error(message);
+  }
+};
+
+export const payWithNewCard = async (
+  payload: PayWithNewCardRequestBody
+): Promise<any> => {
+  try {
+    const response = await axios.post(
+      "/api/v1/pagamento/processar-pagamento-cartao-novo",
+      payload
+    );
+    return response.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao processar pagamento.";
+    throw new Error(message);
+  }
+};
+
+export const getBandeirasAceitas = async (): Promise<BandeiraAceita[]> => {
+  try {
+    const response = await axios.get(`/CartaoSalvo/bandeiras-aceitas`);
+    return response.data.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "Erro ao buscar bandeiras aceitas.";
+    throw new Error(message);
   }
 };
