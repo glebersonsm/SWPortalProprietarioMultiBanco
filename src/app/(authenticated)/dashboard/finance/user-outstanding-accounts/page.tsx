@@ -106,9 +106,6 @@ export default function OutstandingAccountsPage() {
   const canOpenPixModal = onlinePaymentEnabled && pixPaymentEnabled;
   const canShowPaymentOptions = canOpenCardModal || canOpenPixModal;
 
-  const shouldShowPaymentButton =
-    selectedAccounts.length > 0 && canShowPaymentOptions;
-
   const { isLoading, data } = useQuery({
     queryKey: ["getUserOutstandingBills", debounceFilters, page, rowsPerPage],
     queryFn: async () => getUserOutstandingBills(debounceFilters, page, rowsPerPage)
@@ -119,6 +116,26 @@ export default function OutstandingAccountsPage() {
 
   // Função para checar se a conta está "Em Aberto" (pode ser selecionada e paga)
   const isOpenStatus = (status: any) => String(status || "").toLowerCase().includes("em aberto");
+
+  // Verificar se há contas "Em aberto" selecionadas
+  const hasOpenStatusBills = useMemo(() => {
+    if (selectedAccounts.length === 0) return false;
+    // Verificar se TODAS as contas selecionadas estão "Em aberto"
+    return selectedAccounts.every(bill => {
+      const status = String(bill.status || "").toLowerCase();
+      return status.includes("em aberto");
+    });
+  }, [selectedAccounts]);
+
+  // Botão de pagamento só aparece se:
+  // 1. Houver contas selecionadas
+  // 2. TODAS as contas selecionadas estejam "Em aberto"
+  // 3. Pelo menos uma opção de pagamento (PIX ou Cartão) estiver habilitada
+  const shouldShowPaymentButton =
+    selectedAccounts.length > 0 && 
+    hasOpenStatusBills && 
+    onlinePaymentEnabled && 
+    (cardPaymentEnabled || pixPaymentEnabled);
 
   // Função que retorna se uma linha pode ser selecionada
   const canSelectBill = React.useCallback((bill: UserOutstandingBill): boolean => {

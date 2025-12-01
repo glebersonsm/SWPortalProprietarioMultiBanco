@@ -168,9 +168,40 @@ export default function FinanceirasSettingsPage() {
   });
 
   const onSubmit = async (data: FrameworkSent) => {
+    // Incluir todos os campos da página geral para não perder dados
+    const generalFields = {
+      // Campos de empreendimento
+      condominiumName: settingsParams?.condominiumName,
+      condominiumDocument: settingsParams?.condominiumDocument,
+      condominiumAddress: settingsParams?.condominiumAddress,
+      condominiumAdministratorName: settingsParams?.condominiumAdministratorName,
+      condominiumAdministratorDocument: settingsParams?.condominiumAdministratorDocument,
+      condominiumAdministratorAddress: settingsParams?.condominiumAdministratorAddress,
+      // Campos de usuário
+      allowUserChangeYourEmail: settingsParams?.allowUserChangeYourEmail ?? false,
+      allowUserChangeYourDoc: settingsParams?.allowUserChangeYourDoc ?? false,
+      // Campos de sidebar
+      sidebarShowDocuments: settingsParams?.sidebarShowDocuments ?? false,
+      sidebarShowFinance: settingsParams?.sidebarShowFinance ?? false,
+      sidebarShowImages: settingsParams?.sidebarShowImages ?? false,
+      sidebarShowFaqs: settingsParams?.sidebarShowFaqs ?? false,
+      // Campos de integração
+      integratedWithTimeSharing: settingsParams?.integratedWithTimeSharing ?? false,
+      serverAddress: settingsParams?.serverAddress,
+      websiteToBook: settingsParams?.websiteToBook,
+      // Campos de imagens (homeImageUrl1 até homeImageUrl20)
+      ...Object.fromEntries(
+        Array.from({ length: 20 }, (_, i) => {
+          const key = `homeImageUrl${i + 1}` as keyof Framework;
+          return [`homeImageUrl${i + 1}`, settingsParams?.[key]];
+        })
+      ),
+    };
+
     handleEditSettingsParams.mutate(
       untransformedFrameworks({
         ...data,
+        ...generalFields, // Incluir campos da página geral
         id: settingsParams?.id,
         groupCertificateByClient:
           data.certificationByClient === "groupCertificateByClient",
