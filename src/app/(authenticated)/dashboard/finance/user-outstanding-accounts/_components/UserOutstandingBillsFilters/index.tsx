@@ -29,14 +29,15 @@ export default function UserOutstandingBillsFilters({
   return (
     <>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-        <Grid xs={12} sm={2}>
-          <FormControl>
+        <Grid xs={12} sm={6} md={3} lg={2}>
+          <FormControl sx={{ width: '100%' }}>
             <FormLabel
               color={undefined}
               sx={{
                 color: "var(--color-secondary) !important",
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 500,
+                fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
             >
               Vencimento Inicial
@@ -49,6 +50,7 @@ export default function UserOutstandingBillsFilters({
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 500,
                 color: "text.primary",
+                fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
               onChange={(e) =>
                 setFilters({ ...filters, initialDueDate: e.target.value })
@@ -57,14 +59,15 @@ export default function UserOutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={2}>
-          <FormControl>
+        <Grid xs={12} sm={6} md={3} lg={2}>
+          <FormControl sx={{ width: '100%' }}>
             <FormLabel
               color={undefined}
               sx={{
                 color: "var(--color-secondary) !important",
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 500,
+                fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
             >
               Vencimento Final
@@ -77,6 +80,7 @@ export default function UserOutstandingBillsFilters({
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 500,
                 color: "text.primary",
+                fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
               onChange={(e) =>
                 setFilters({ ...filters, finalDueDate: e.target.value })
@@ -85,32 +89,56 @@ export default function UserOutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={6}>
-          <FormControl>
+        <Grid xs={12} md={6} lg={6}>
+          <FormControl sx={{ width: '100%' }}>
             <FormLabel
               color={undefined}
               sx={{
                 color: "var(--color-secondary) !important",
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 500,
+                fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
             >
               Status da conta
             </FormLabel>
-            <ButtonGroup sx={{ display: "flex", flexWrap: "nowrap", gap: 1, width: "100%", overflowX: { xs: "auto", sm: "visible" } }}>
+            <ButtonGroup 
+              sx={{ 
+                display: "flex", 
+                flexWrap: { xs: "wrap", sm: "nowrap" }, 
+                gap: { xs: 1, sm: 1 }, 
+                width: "100%",
+                '& > button': {
+                  flex: { xs: '1 1 calc(50% - 8px)', sm: '1 1 auto' },
+                  minWidth: { xs: 'calc(50% - 8px)', sm: 100 },
+                }
+              }}
+            >
               <Button
                 variant={filters.status === "T" ? "solid" : "outlined"}
                 color={filters.status === "T" ? "primary" : "neutral"}
                 onClick={() => setStatus("T")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1, sm: 2 },
+                  py: { xs: 0.5, sm: 1 },
+                }}
               >
-                Todas as contas
+                Todas
               </Button>
               <Button
                 variant={filters.status === "P" ? "solid" : "outlined"}
                 color={filters.status === "P" ? "primary" : "neutral"}
                 onClick={() => setStatus("P")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1, sm: 2 },
+                  py: { xs: 0.5, sm: 1 },
+                }}
               >
                 Em aberto
               </Button>
@@ -118,7 +146,13 @@ export default function UserOutstandingBillsFilters({
                 variant={filters.status === "V" ? "solid" : "outlined"}
                 color={filters.status === "V" ? "primary" : "neutral"}
                 onClick={() => setStatus("V")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1, sm: 2 },
+                  py: { xs: 0.5, sm: 1 },
+                }}
               >
                 Vencidas
               </Button>
@@ -126,7 +160,13 @@ export default function UserOutstandingBillsFilters({
                 variant={filters.status === "B" ? "solid" : "outlined"}
                 color={filters.status === "B" ? "primary" : "neutral"}
                 onClick={() => setStatus("B")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, minWidth: 100 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1, sm: 2 },
+                  py: { xs: 0.5, sm: 1 },
+                }}
               >
                 Pagas
               </Button>
@@ -134,7 +174,7 @@ export default function UserOutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={2} sx={{ marginTop: "auto" }}>
+        <Grid xs={12} md={12} lg={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
           <Button
             sx={{
               width: "100%",
@@ -142,8 +182,10 @@ export default function UserOutstandingBillsFilters({
               color: "var(--color-button-text)",
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 500,
+              fontSize: { xs: '0.875rem', sm: '1rem' },
               border: "none",
               transition: "0.6s",
+              py: { xs: 1, sm: 1.25 },
               "&:hover": {
                 bgcolor: "var(--color-button-primary-hover)",
               },

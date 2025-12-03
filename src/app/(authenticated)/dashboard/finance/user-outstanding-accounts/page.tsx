@@ -281,37 +281,39 @@ export default function OutstandingAccountsPage() {
     setSelectedRowIds([]);
   }, []);
 
-  // Definição das colunas (mantidas)
+  // Definição das colunas com melhor responsividade
   const columns: GridColDef[] = [
-    // ... (restante das colunas mantido)
     {
       field: 'id',
       headerName: 'ID',
-      width: 80,
+      minWidth: 70,
+      maxWidth: 90,
+      flex: 0.3,
       type: 'number',
     },
     {
       field: 'companyName',
       headerName: 'Empresa',
-      width: 200,
+      minWidth: 150,
       flex: 1,
     },
     {
       field: 'contrato',
       headerName: 'Contrato',
-      width: 200,
+      minWidth: 150,
       flex: 1,
     },
     {
       field: 'accountTypeName',
       headerName: 'Detalhes',
-      width: 200,
+      minWidth: 150,
       flex: 1,
     },
     {
       field: 'value',
       headerName: 'Valor original',
-      width: 140,
+      minWidth: 130,
+      flex: 0.7,
       type: 'number',
       renderCell: (params: GridRenderCellParams<UserOutstandingBill>) => {
         return formatMoney(params.row.value);
@@ -320,7 +322,8 @@ export default function OutstandingAccountsPage() {
     {
       field: 'currentValue',
       headerName: 'Valor atualizado',
-      width: 140,
+      minWidth: 130,
+      flex: 0.7,
       type: 'number',
       renderCell: (params: GridRenderCellParams<UserOutstandingBill>) => {
         return formatMoney(params.row.currentValue);
@@ -329,7 +332,8 @@ export default function OutstandingAccountsPage() {
     {
       field: 'dueDate',
       headerName: 'Vencimento',
-      width: 120,
+      minWidth: 110,
+      flex: 0.5,
       renderCell: (params: GridRenderCellParams<UserOutstandingBill>) => {
         return params.row.processingDate ?? params.row.dueDate;
       },
@@ -337,17 +341,21 @@ export default function OutstandingAccountsPage() {
     {
       field: 'paymentDate',
       headerName: 'Pagamento',
-      width: 120,
+      minWidth: 110,
+      flex: 0.5,
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 120,
+      minWidth: 110,
+      flex: 0.5,
     },
     {
       field: 'actions',
       headerName: 'Ações',
-      width: 80,
+      minWidth: 80,
+      maxWidth: 100,
+      flex: 0.3,
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams<UserOutstandingBill>) => {
@@ -380,17 +388,33 @@ export default function OutstandingAccountsPage() {
     <>
       {!mounted ? <LoadingData /> : (
         <>
-        <Stack spacing={3} divider={<Divider />}>
+        <Stack spacing={{ xs: 2, sm: 3 }} divider={<Divider />} sx={{ px: { xs: 1, sm: 0 } }}>
         <UserOutstandingBillsFilters filters={filters} setFilters={setFilters} />
         {isLoading ? (
           <LoadingData />
         ) : outstandingBills.length === 0 ? (
           <WithoutData />
         ) : (
-            <Stack spacing={2}>
-            <MuiBox sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
-              <MuiBox sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
-                <MuiBox sx={{ display: 'flex', gap: 4 }}>
+            <Stack spacing={{ xs: 1.5, sm: 2 }}>
+            <MuiBox sx={{ 
+              mb: 2, 
+              p: { xs: 1.5, sm: 2 }, 
+              bgcolor: 'background.paper', 
+              borderRadius: 1 
+            }}>
+              <MuiBox sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'stretch', md: 'center' }, 
+                gap: 2 
+              }}>
+                <MuiBox sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: { xs: 1.5, sm: 4 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }}>
                   <MuiBox>
                     <strong>Total Original: {formatMoney(totalOriginal)}</strong>
                   </MuiBox>
@@ -401,7 +425,12 @@ export default function OutstandingAccountsPage() {
 
                 {/* Botão de Pagamento no Cabeçalho */}
                 {shouldShowPaymentButton && (
-                  <MuiBox sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <MuiBox sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2, 
+                    alignItems: { xs: 'stretch', sm: 'center' } 
+                  }}>
                     <MuiBox sx={{ 
                       background: 'linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
                       color: 'white',
@@ -410,6 +439,8 @@ export default function OutstandingAccountsPage() {
                       borderRadius: 1,
                       fontFamily: 'var(--font-puffin), sans-serif',
                       fontWeight: 600,
+                      fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                      textAlign: 'center',
                     }}>
                       {selectedAccounts.length} {selectedAccounts.length === 1 ? 'conta' : 'contas'} selecionada{selectedAccounts.length === 1 ? '' : 's'} - Total: {formatMoney(totalSelecionado)}
                     </MuiBox>
@@ -417,19 +448,21 @@ export default function OutstandingAccountsPage() {
                       variant="contained"
                       startIcon={<PaymentIcon />}
                       onClick={handleOpenPaymentMenu}
+                      fullWidth={false}
                       sx={{
                         bgcolor: 'var(--color-primary)',
                         color: 'var(--color-text-light, #ffffff) !important',
                         fontFamily: 'var(--font-puffin), sans-serif',
                         fontWeight: 600,
-                        fontSize: '0.9rem',
+                        fontSize: { xs: '0.8rem', sm: '0.9rem' },
                         textTransform: 'none',
-                        px: 3,
+                        px: { xs: 2, sm: 3 },
                         py: 1,
                         borderRadius: '8px',
                         boxShadow: '0 6px 18px rgba(1, 90, 103, 0.25)',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease-in-out',
+                        minWidth: { xs: '100%', sm: 'auto' },
                         '& .MuiButton-startIcon': {
                           color: 'var(--color-text-light, #ffffff) !important',
                         },
@@ -460,11 +493,14 @@ export default function OutstandingAccountsPage() {
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleClosePaymentMenu}
-                      sx={{
-                        '& .MuiPaper-root': {
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-                          mt: 1,
+                      slotProps={{
+                        paper: {
+                          sx: {
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                            mt: 1,
+                            minWidth: anchorEl?.offsetWidth || 'auto',
+                          },
                         },
                       }}
                     >
@@ -562,7 +598,15 @@ export default function OutstandingAccountsPage() {
                 columnFilters: true,
               }}
             />
-            <MuiBox alignSelf="flex-end" marginTop="8px">
+            <MuiBox 
+              sx={{ 
+                alignSelf: { xs: 'stretch', sm: 'flex-end' },
+                marginTop: '8px',
+                display: 'flex',
+                justifyContent: { xs: 'center', sm: 'flex-end' },
+                width: { xs: '100%', sm: 'auto' },
+              }}
+            >
               <ModernPaginatedList
                 items={outstandingBills}
                 lastPageNumber={lastPageNumber ?? 1}

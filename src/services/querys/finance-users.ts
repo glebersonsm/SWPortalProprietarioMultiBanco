@@ -66,7 +66,7 @@ export const getUserOutstandingBills = async (
 export const generateQRCode = async (data: PropsToGenerateQRCode) => {
   try {
     const response = await axios.post(
-      "/FinanceiroUsuario/gerarQrCodePagamentoComPixItau",
+      "/FinanceiroUsuario/gerarQrCodePagamentoPix",
       {
         pessoaId: data.personId,
         valorTotal: data.totalValue,
