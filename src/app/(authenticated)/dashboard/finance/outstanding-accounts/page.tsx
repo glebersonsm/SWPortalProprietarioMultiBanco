@@ -45,30 +45,60 @@ export default function OutstandingAccountsPage() {
       headerName: 'ID',
       width: 80,
       type: 'number',
+      renderCell: (params: GridRenderCellParams<OutstandingBill>) => {
+        const status = params.row.status?.toLowerCase();
+        const color = status?.includes("em aberto") && isDateBeforeToday(params.row.dueDate) ? "red" : 
+                     status?.includes("paga") ? "#2ca2cc" : "black";
+        return <span style={{ color }}>{params.row.id}</span>;
+      },
     },
     {
       field: 'contrato',
       headerName: 'Contrato',
       width: 150,
       flex: 1,
+      renderCell: (params: GridRenderCellParams<OutstandingBill>) => {
+        const status = params.row.status?.toLowerCase();
+        const color = status?.includes("em aberto") && isDateBeforeToday(params.row.dueDate) ? "red" : 
+                     status?.includes("paga") ? "#2ca2cc" : "black";
+        return <span style={{ color }}>{params.row.contrato}</span>;
+      },
     },
     {
       field: 'companyName',
       headerName: 'Empresa',
       width: 200,
       flex: 1,
+      renderCell: (params: GridRenderCellParams<OutstandingBill>) => {
+        const status = params.row.status?.toLowerCase();
+        const color = status?.includes("em aberto") && isDateBeforeToday(params.row.dueDate) ? "red" : 
+                     status?.includes("paga") ? "#2ca2cc" : "black";
+        return <span style={{ color }}>{params.row.companyName}</span>;
+      },
     },
     {
       field: 'personName',
       headerName: 'Nome cliente',
       width: 200,
       flex: 1,
+      renderCell: (params: GridRenderCellParams<OutstandingBill>) => {
+        const status = params.row.status?.toLowerCase();
+        const color = status?.includes("em aberto") && isDateBeforeToday(params.row.dueDate) ? "red" : 
+                     status?.includes("paga") ? "#2ca2cc" : "black";
+        return <span style={{ color }}>{params.row.personName}</span>;
+      },
     },
     {
       field: 'accountTypeName',
       headerName: 'Tipo conta',
       width: 150,
       flex: 1,
+      renderCell: (params: GridRenderCellParams<OutstandingBill>) => {
+        const status = params.row.status?.toLowerCase();
+        const color = status?.includes("em aberto") && isDateBeforeToday(params.row.dueDate) ? "red" : 
+                     status?.includes("paga") ? "#2ca2cc" : "black";
+        return <span style={{ color }}>{params.row.accountTypeName}</span>;
+      },
     },
     {
       field: 'value',

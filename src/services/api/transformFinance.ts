@@ -25,6 +25,7 @@ export function transformedOutstandingBills(
       typeableBillLine: finance.linhaDigitavelBoleto,
       observation: finance.observacao,
       dueDate: formatDate(finance.vencimento),
+      vencimentoDate: finance.vencimento,
       creationDate: formatDate(finance.dataHoraCriacao),
       paymentDate: formatDate(finance.dataHoraBaixa),
       contrato: finance.contrato,

@@ -15,6 +15,24 @@ import Image from "next/image";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
+import { format, parse } from "date-fns";
+
+const formatToISO = (dateStr?: string) => {
+  if (!dateStr) return undefined;
+  // Se já for ISO (YYYY-MM-DD...), retorna como está
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr;
+  
+  try {
+    // Tenta parsear formato brasileiro dd/MM/yyyy
+    const parsed = parse(dateStr, 'dd/MM/yyyy', new Date());
+    if (!isNaN(parsed.getTime())) {
+      return format(parsed, 'yyyy-MM-dd');
+    }
+  } catch (e) {
+    console.warn("Erro ao converter data:", dateStr);
+  }
+  return dateStr;
+};
 
 type PayPerPixModalProps = {
   shouldOpen: boolean;
@@ -80,21 +98,14 @@ export default function PayPerPixModal({
   }, []);
 
   const processarRetornoQrCode = useCallback((data: any) => {
-    console.debug("[PIX] Sucesso na geração do QR Code", data);
-    console.log('[DEBUG PIX] Resposta do backend:', data);
-    console.log('[DEBUG PIX] Data expiração recebida:', data.expiracao);
     
     const dataExpiracao = new Date(data.expiracao);
     const agora = new Date();
     
-    console.log('[DEBUG PIX] Data expiração parseada:', dataExpiracao);
-    console.log('[DEBUG PIX] Data atual:', agora);
     
     const diferencaMs = dataExpiracao.getTime() - agora.getTime();
     const segundosRestantes = Math.floor(diferencaMs / 1000);
     
-    console.log('[DEBUG PIX] Diferença em ms:', diferencaMs);
-    console.log('[DEBUG PIX] Segundos restantes:', segundosRestantes);
     
     setQrCode(data.qrCode);
     setTxid(data.txid);
@@ -127,15 +138,19 @@ export default function PayPerPixModal({
       return;
     }
 
+    if (!userData || !selectedBills || selectedBills.length === 0 || totalSelecionado <= 0) {
+      setStatusGeracao("erro");
+      toast.error("Seleção ou usuário inválidos para gerar PIX.");
+      return;
+    }
+
     hasGeneratedQrRef.current = true;
     setStatusGeracao("carregando");
-    console.debug("[PIX] Iniciando geração de QR Code (force:", force, ")");
-
     resetarEstado({ manterStatus: true });
 
     try {
       const data = await generateQRCode({
-        personId: userData!.personId,
+        personId: userData.personId,
         ids: selectedBills.map((bill) => bill.id),
         totalValue: totalSelecionado,
         idEmpresa: selectedBills[0]?.companyId,
@@ -144,7 +159,7 @@ export default function PayPerPixModal({
         contasFinanceiras: selectedBills.map((bill) => ({
           idContaFinanceira: bill.id,
           valor: bill.currentValue,
-          dataVencimento: bill.vencimentoDate || bill.dueDate,
+          dataVencimento: formatToISO(bill.vencimentoDate || bill.dueDate),
           valorJuros: bill.juros ?? 0,
           valorMulta: bill.multa ?? 0,
         })),
@@ -152,12 +167,9 @@ export default function PayPerPixModal({
 
       processarRetornoQrCode(data);
     } catch (error) {
-      console.error("[PIX] Erro ao gerar QR Code", error);
-      hasGeneratedQrRef.current = true; // evita novas tentativas automáticas
+      hasGeneratedQrRef.current = true;
       toast.error("Não foi possível gerar o QR-Code, por favor tente novamente mais tarde!");
       setStatusGeracao("erro");
-    } finally {
-      console.debug("[PIX] Finalizou processamento da geração de QR Code");
     }
   }, [selectedBills, totalSelecionado, userData, resetarEstado, processarRetornoQrCode]);
   // Gerar QR Code automaticamente quando abrir o modal
@@ -278,14 +290,11 @@ export default function PayPerPixModal({
     if (txid && qrCode && !expirado && !processandoPagamento) {
       const executarConsulta = async () => {
         try {
-          console.debug("[PIX] Consulta status PIX iniciada", txid);
           const statusResponse = await consultarStatusPix(txid);
-          console.debug("[PIX] Resposta consulta status", statusResponse);
 
           if (statusResponse.pago) {
             limparIntervalos();
             setProcessandoPagamento(true);
-            console.debug("[PIX] Status pago, confirmando no backend");
 
             await confirmarPagamentoPix(txid);
             toast.success("Pagamento PIX realizado com sucesso!");
@@ -297,7 +306,7 @@ export default function PayPerPixModal({
             }, 1500);
           }
         } catch (error: any) {
-          console.error("Erro no polling PIX:", error);
+      
         }
       };
 
@@ -343,7 +352,7 @@ export default function PayPerPixModal({
         setSimulandoPagamento(false);
       }
     } catch (error: any) {
-      console.error("Erro ao simular pagamento:", error);
+      
       toast.error(error.message || "Erro ao simular pagamento PIX");
       setSimulandoPagamento(false);
     }

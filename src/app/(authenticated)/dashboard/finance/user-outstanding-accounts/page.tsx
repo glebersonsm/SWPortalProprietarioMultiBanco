@@ -179,12 +179,25 @@ export default function OutstandingAccountsPage() {
         }
         
         // Para múltiplas contas, validar se todas são da mesma empresa
-        const companyIds = Array.from(new Set(validBills.map(b => b.companyId)));
-        if (companyIds.length > 1) {
-          alert("Você só pode selecionar contas da mesma empresa.");
-          setSelectedAccounts([validBills[0]]);
-          setSelectedRowIds([validBills[0].id]);
-          return;
+        if (validBills.length > 0) {
+          const firstCompanyId = validBills[0].companyId;
+          const allSameCompany = validBills.every(b => b.companyId === firstCompanyId);
+          
+          if (!allSameCompany) {
+            toast.warning("Selecione contas apenas da mesma empresa para realizar o pagamento.");
+            
+            // Mantém apenas as contas da primeira empresa selecionada ou a seleção anterior válida
+            const sameCompanyBills = validBills.filter(b => b.companyId === firstCompanyId);
+            
+            // Se a seleção anterior tinha contas e o usuário tentou adicionar de outra empresa,
+            // idealmente manteríamos a seleção anterior. Mas como aqui recebemos o novo estado completo,
+            // vamos filtrar para manter consistência com a última ação ou a primeira empresa.
+            
+            // Estratégia: Manter apenas as contas da empresa do primeiro item selecionado na nova lista
+            setSelectedAccounts(sameCompanyBills);
+            setSelectedRowIds(sameCompanyBills.map(b => b.id));
+            return;
+          }
         }
         
         // Se passou todas as validações, atualizar estados
@@ -269,11 +282,26 @@ export default function OutstandingAccountsPage() {
       const billsParam = searchParams.get("bills");
       if (billsParam) {
         const billIds = billsParam.split(',').map(id => Number(id.trim())).filter(id => !isNaN(id));
-        return outstandingBills.filter(bill => billIds.includes(Number(bill.id)));
+        
+        // Tenta encontrar nas contas selecionadas (memória) primeiro
+        const fromSelected = selectedAccounts.filter(bill => billIds.includes(Number(bill.id)));
+        
+        // Se encontrou todas em selectedAccounts, retorna elas
+        if (fromSelected.length > 0 && fromSelected.length === billIds.length) {
+            return fromSelected;
+        }
+
+        // Caso contrário, procura em outstandingBills (útil para deep link/refresh)
+        // Combina para garantir que achamos o máximo possível
+        const allAvailable = [...selectedAccounts, ...outstandingBills];
+        // Remove duplicatas por ID
+        const uniqueAvailable = Array.from(new Map(allAvailable.map(item => [item.id, item])).values());
+        
+        return uniqueAvailable.filter(bill => billIds.includes(Number(bill.id)));
       }
     }
     return undefined;
-  }, [action, searchParams, outstandingBills]);
+  }, [action, searchParams, outstandingBills, selectedAccounts]);
 
   // Função para limpar seleção
   const clearSelectedAccounts = React.useCallback(() => {
@@ -558,21 +586,57 @@ export default function OutstandingAccountsPage() {
               onSelectionModelChange={handleSelectionModelChange}
               additionalProps={{
                  // Garante que só contas "em aberto" podem ser selecionadas
-                isRowSelectable: (params: any) => { 
-                  const bill = params.row as UserOutstandingBill;
-                  return canSelectBill(bill);
-                },
-                getRowClassName: (params: GridRowClassNameParams<UserOutstandingBill>) => {
-                  const status = params.row?.status?.toLowerCase();
-                   if (status && status.includes("em aberto") && isDateBeforeToday(params.row?.dueDate)) {
-                     return "overdue-row";
+                 isRowSelectable: (params: any) => canSelectBill(params.row),
+                 getRowClassName: (params: GridRowClassNameParams<UserOutstandingBill>) => {
+                   const status = String(params.row.status || "").toLowerCase();
+                   if (!status.includes("em aberto")) return "";
+                   
+                   // Tenta usar vencimentoDate (ISO) se disponível, senão dueDate
+                   const dateStr = params.row.vencimentoDate || params.row.dueDate;
+                   if (!dateStr) return "";
+
+                   // Ajuste para garantir comparação correta de datas
+                   // Se for ISO (yyyy-MM-dd), o construtor Date funciona bem
+                   // Se for dd/MM/yyyy, precisa converter
+                   let dueDate: Date;
+                   
+                   if (dateStr.includes('/')) {
+                     const [day, month, year] = dateStr.split('/').map(Number);
+                     dueDate = new Date(year, month - 1, day);
+                   } else {
+                     dueDate = new Date(dateStr);
                    }
-                   if (status?.includes("paga")) {
-                     return "paid-row";
+                   
+                   const today = new Date();
+                   
+                   // Zera horas para comparação apenas de data
+                   dueDate.setHours(0,0,0,0);
+                   today.setHours(0,0,0,0);
+                   
+                   // Vencimento menor ou igual a hoje
+                   return dueDate <= today ? "row-overdue" : "";
+                 },
+                 sx: {
+                   '.MuiDataGrid-root': {
+                     border: 'none',
+                   },
+                   '& .row-overdue': {
+                     color: '#d32f2f !important',
+                   },
+                   '& .row-overdue .MuiDataGrid-cell': {
+                     color: '#d32f2f !important',
+                   },
+                   '& .row-overdue .MuiDataGrid-cellContent': {
+                     color: '#d32f2f !important',
+                   },
+                   '& .row-overdue .MuiTypography-root': {
+                     color: '#d32f2f !important',
+                   },
+                   '& .row-overdue .MuiDataGrid-cell div': {
+                     color: '#d32f2f !important',
                    }
-                   return "";
                  }
-               }}
+              }}
               pagination={{
                 enabled: false,
               }}
