@@ -320,6 +320,7 @@ export default function PayByCreditCard({
         idEmpresa: empresaId,
         idTorre: torreId,
         idContrato: contratoId,
+        contrato: contratoId,
         numeroParcelas: 1
       };
       
@@ -396,6 +397,7 @@ export default function PayByCreditCard({
         idEmpresa: empresaId,
         idTorre: torreId,
         idContrato: contratoId,
+        Contrato: contratoId,
         numeroParcelas: 1
       };
 

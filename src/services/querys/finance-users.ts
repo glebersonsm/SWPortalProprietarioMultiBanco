@@ -72,8 +72,8 @@ export const generateQRCode = async (data: PropsToGenerateQRCode) => {
         valorTotal: data.totalValue,
         itensToPay: data.ids,
         idEmpresa: data.idEmpresa,
-        idTorre: data.idTorre,
         idContrato: data.idContrato,
+        contrato: data.contrato,
         contas: data.contasFinanceiras
       },
       {

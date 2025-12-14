@@ -155,7 +155,8 @@ export default function PayPerPixModal({
         totalValue: totalSelecionado,
         idEmpresa: selectedBills[0]?.companyId,
         idTorre: selectedBills[0]?.idTorre,
-        idContrato: selectedBills[0]?.idContrato,
+        idContrato: selectedBills[0]?.idContrato?.toString(),
+        contrato: selectedBills[0]?.contrato,
         contasFinanceiras: selectedBills.map((bill) => ({
           idContaFinanceira: bill.id,
           valor: bill.currentValue,

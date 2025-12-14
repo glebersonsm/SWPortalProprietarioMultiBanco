@@ -254,7 +254,7 @@ export default function SettingsPage() {
                     color: "text.secondary",
                   }}
                 >
-                  Configurações financeiras, gateways e vínculos
+                  Configurações financeiras e gateways
                 </Typography>
               </Stack>
             </CardContent>

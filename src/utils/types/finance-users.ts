@@ -28,7 +28,8 @@ export type PropsToGenerateQRCode = {
   ids: number[];
   idEmpresa?: number;
   idTorre?: number | null;
-  idContrato?: number | null;
+  idContrato?: string | null;
+  contrato?: string | null;
   contasFinanceiras?: PixContaFinanceiraRequest[];
 };
 
@@ -73,6 +74,7 @@ export type PayWithSavedCardRequestBody = {
   idEmpresa: number;
   idTorre?: number | null;
   idContrato?: number | null;
+  Contrato?: string | null;
   numeroParcelas: number;
 };
 
@@ -128,6 +130,7 @@ export interface PayWithNewCardRequestBody {
   idEmpresa: number;
   idTorre?: number | null;
   idContrato?: number | null;
+  Contrato?: number | null;
   numeroParcelas: number;
 }
 

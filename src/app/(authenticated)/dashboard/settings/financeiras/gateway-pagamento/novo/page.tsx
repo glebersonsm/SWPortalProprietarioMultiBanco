@@ -47,6 +47,8 @@ import {
   criar,
   listarGateways,
   uploadCertificadoPix,
+  listarContasFinanceiras,
+  ContaFinanceiraDto,
   GatewayPagamentoDto,
   GatewayPagamentoConfiguracaoDto,
 } from '@/services/api/gatewayPagamentoService';
@@ -90,11 +92,12 @@ export default function NovaConfiguracaoPage() {
     santanderClientId: '',
     santanderClientSecret: '',
     certificadoPixConfigurado: false,
-    idContaMovimentacaoBancariaTse: undefined,
+    contaFinanceiraVariacaoId: undefined,
   });
 
   const [gatewaySelected, setGatewaySelected] = useState<string>('');
   const [empresaSelecionada, setEmpresaSelecionada] = useState<number | null>(null);
+  const [contasFinanceiras, setContasFinanceiras] = useState<ContaFinanceiraDto[]>([]);
   const [showPV, setShowPV] = useState(false);
   const [showToken, setShowToken] = useState(false);
   const [showClientId, setShowClientId] = useState(false);
@@ -209,6 +212,19 @@ export default function NovaConfiguracaoPage() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gatewaySelected]);
+
+  useEffect(() => {
+    if (empresaSelecionada) {
+      listarContasFinanceiras(empresaSelecionada)
+        .then(setContasFinanceiras)
+        .catch((err) => {
+          console.error(err);
+          toast.error('Erro ao carregar contas financeiras');
+        });
+    } else {
+      setContasFinanceiras([]);
+    }
+  }, [empresaSelecionada]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -505,6 +521,31 @@ export default function NovaConfiguracaoPage() {
                       </Typography>
                     </FormControl>
                   </Grid>
+
+                  {isAnyPix && (
+                    <Grid xs={12} md={6}>
+                      <FormControl required>
+                        <FormLabel>Conta Financeira</FormLabel>
+                        <Select
+                          value={formData.contaFinanceiraVariacaoId}
+                          onChange={(event, newValue) => {
+                             setFormData({ ...formData, contaFinanceiraVariacaoId: newValue as number });
+                          }}
+                          placeholder="Selecione a conta financeira..."
+                          disabled={!empresaSelecionada}
+                        >
+                          {contasFinanceiras.map((conta) => (
+                            <Option value={conta.id} key={conta.id}>
+                               Banco: {conta.banco} / Ag: {conta.agenciaNumero} / CC: {conta.contaNumero}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Typography level="body-xs" sx={{ mt: 0.5, color: 'text.secondary' }}>
+                          Conta para lançamento do crédito PIX
+                        </Typography>
+                      </FormControl>
+                    </Grid>
+                  )}
 
                   <Grid xs={12} md={6}>
                     <FormControl>

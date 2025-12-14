@@ -31,7 +31,7 @@ export interface GatewayPagamentoConfiguracaoDto {
   santanderClientSecret?: string;
   certificadoPixConfigurado?: boolean;
   certificadoPixSenha?: string;
-  idContaMovimentacaoBancariaTse?: number;
+  contaFinanceiraVariacaoId?: number;
   certificadoPixValidade?: string;
   
   observacao?: string;
@@ -56,6 +56,21 @@ export const listarGateways = async (): Promise<GatewayPagamentoDto[]> => {
 export const buscarPorId = async (id: number): Promise<GatewayPagamentoConfiguracaoDto> => {
   const response = await axios.get(`/api/configuracoes/gateway-pagamento/${id}`);
   return response.data;
+};
+
+export interface ContaFinanceiraDto {
+  id: number;
+  banco: string;
+  agenciaNumero: string;
+  agenciaDigito: string;
+  contaNumero: string;
+  contaDigito: string;
+  cedente: string;
+}
+
+export const listarContasFinanceiras = async (empresaId: number): Promise<ContaFinanceiraDto[]> => {
+  const response = await axios.get(`/Financeiro/contasfinanceiras/empresa/${empresaId}`);
+  return response.data.data;
 };
 
 export const criar = async (dto: GatewayPagamentoConfiguracaoDto): Promise<GatewayPagamentoConfiguracaoDto> => {
@@ -86,7 +101,7 @@ export const criar = async (dto: GatewayPagamentoConfiguracaoDto): Promise<Gatew
 
   if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId) {
     payload.chavePix = dto.chavePix || null;
-    payload.idContaMovimentacaoBancariaTse = dto.idContaMovimentacaoBancariaTse || null;
+    payload.contaFinanceiraVariacaoId = dto.contaFinanceiraVariacaoId || null;
 
     if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_ITAU_PIX' || dto.itauClientId || dto.itauClientSecret) {
       payload.itauClientId = dto.itauClientId || null;
@@ -131,7 +146,7 @@ export const atualizar = async (id: number, dto: GatewayPagamentoConfiguracaoDto
 
   if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId) {
     payload.chavePix = dto.chavePix || null;
-    payload.idContaMovimentacaoBancariaTse = dto.idContaMovimentacaoBancariaTse || null;
+    payload.contaFinanceiraVariacaoId = dto.contaFinanceiraVariacaoId || null;
 
     if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_ITAU_PIX' || dto.itauClientId || dto.itauClientSecret) {
       payload.itauClientId = dto.itauClientId || null;
