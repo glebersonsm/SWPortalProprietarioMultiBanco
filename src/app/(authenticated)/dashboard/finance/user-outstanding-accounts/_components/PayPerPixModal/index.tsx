@@ -98,32 +98,50 @@ export default function PayPerPixModal({
   }, []);
 
   const processarRetornoQrCode = useCallback((data: any) => {
+    if (!data || !data.qrCode) {
+      toast.error("Dados do QR Code inválidos ou incompletos.");
+      setStatusGeracao("erro");
+      return;
+    }
     
-    const dataExpiracao = new Date(data.expiracao);
-    const agora = new Date();
-    
-    
-    const diferencaMs = dataExpiracao.getTime() - agora.getTime();
-    const segundosRestantes = Math.floor(diferencaMs / 1000);
-    
-    
-    setQrCode(data.qrCode);
-    setTxid(data.txid);
-    setExpiracao(dataExpiracao);
-    setTempoRestante(segundosRestantes > 0 ? segundosRestantes : TEMPO_EXPIRACAO_SEGUNDOS);
-    setExpirado(false);
-    clearSelectedAccounts();
-    toast.info("QR Code gerado! Aguardando pagamento...");
-    setStatusGeracao("sucesso");
+    try {
+      const dataExpiracao = new Date(data.expiracao);
+      const agora = new Date();
+      
+      const diferencaMs = dataExpiracao.getTime() - agora.getTime();
+      const segundosRestantes = Math.floor(diferencaMs / 1000);
+      
+      setQrCode(data.qrCode);
+      setTxid(data.txid);
+      setExpiracao(dataExpiracao);
+      setTempoRestante(segundosRestantes > 0 ? segundosRestantes : TEMPO_EXPIRACAO_SEGUNDOS);
+      setExpirado(false);
+      
+      setStatusGeracao("sucesso");
+      
+      // Adia a limpeza da seleção para evitar conflitos de renderização
+      setTimeout(() => {
+        clearSelectedAccounts();
+      }, 500);
+      
+      toast.info("QR Code gerado! Aguardando pagamento...");
+    } catch (error) {
+      console.error("Erro ao processar QR Code:", error);
+      setStatusGeracao("erro");
+      toast.error("Erro ao processar o QR Code gerado.");
+    }
   }, [clearSelectedAccounts]);
 
-  const handleCloseModal = useCallback(() => {
-    if (processandoPagamento) {
+  const handleCloseModal = useCallback((force: boolean | any = false) => {
+    // Se for evento do React, force é false
+    const isForce = typeof force === 'boolean' ? force : false;
+
+    if (processandoPagamento && !isForce) {
       toast.warning("⏳ Processamento em andamento. Aguarde a conclusão do pagamento.");
       return;
     }
 
-    if (qrCode && !expirado) {
+    if (qrCode && !expirado && !isForce) {
       setMostrarConfirmacaoCancelamento(true);
       return;
     }
@@ -543,7 +561,10 @@ export default function PayPerPixModal({
                         borderColor: 'divider'
                       }}>
                         <QRCode
-                          size={200}
+                          size={256}
+                          level="M"
+                          bgColor="#FFFFFF"
+                          fgColor="#000000"
                           style={{
                             height: "auto",
                             maxWidth: "100%",
@@ -551,7 +572,6 @@ export default function PayPerPixModal({
                             aspectRatio: '1',
                           }}
                           value={qrCode}
-                          viewBox={`0 0 256 256`}
                         />
                       </Box>
                       

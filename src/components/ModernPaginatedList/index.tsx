@@ -97,7 +97,10 @@ export default function ModernPaginatedList<T>({
   // Garante consistência quando o total de páginas diminui (ex.: filtros alterados)
   React.useEffect(() => {
     if (page > effectiveLastPage) {
-      callHandleChangePage(effectiveLastPage);
+      const timer = setTimeout(() => {
+        callHandleChangePage(effectiveLastPage);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [effectiveLastPage, page, handleChangePage]);
 
