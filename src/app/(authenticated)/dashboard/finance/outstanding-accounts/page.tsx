@@ -217,16 +217,48 @@ export default function OutstandingAccountsPage() {
         ) : (
           <Stack spacing={2}>
             {/* Exibição dos totais */}
-            <MuiBox sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
-              <MuiBox sx={{ display: 'flex', gap: 4 }}>
-                <MuiBox>
-                  <strong>Qtd.: {outstandingBills.length}</strong>
+            <MuiBox 
+              sx={{ 
+                mb: 2, 
+                p: 2.5, 
+                bgcolor: 'background.paper', 
+                borderRadius: 2,
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                border: '1px solid',
+                borderColor: 'divider'
+              }}
+            >
+              <MuiBox 
+                sx={{ 
+                  display: 'flex', 
+                  gap: { xs: 2, sm: 4, md: 6 },
+                  flexWrap: 'wrap',
+                  alignItems: 'center'
+                }}
+              >
+                <MuiBox sx={{ minWidth: { xs: '100%', sm: 'auto' } }}>
+                  <MuiBox sx={{ fontSize: '0.875rem', color: 'text.secondary', mb: 0.5 }}>
+                    Quantidade
+                  </MuiBox>
+                  <MuiBox sx={{ fontSize: '1.125rem', fontWeight: 600, color: 'text.primary' }}>
+                    {outstandingBills.length}
+                  </MuiBox>
                 </MuiBox>
-                <MuiBox>
-                  <strong>Original: {formatMoney(totalOriginal)}</strong>
+                <MuiBox sx={{ minWidth: { xs: '100%', sm: 'auto' } }}>
+                  <MuiBox sx={{ fontSize: '0.875rem', color: 'text.secondary', mb: 0.5 }}>
+                    Valor Original
+                  </MuiBox>
+                  <MuiBox sx={{ fontSize: '1.125rem', fontWeight: 600, color: 'text.primary' }}>
+                    {formatMoney(totalOriginal)}
+                  </MuiBox>
                 </MuiBox>
-                <MuiBox>
-                  <strong>Atualizado: {formatMoney(totalAtualizado)}</strong>
+                <MuiBox sx={{ minWidth: { xs: '100%', sm: 'auto' } }}>
+                  <MuiBox sx={{ fontSize: '0.875rem', color: 'text.secondary', mb: 0.5 }}>
+                    Valor Atualizado
+                  </MuiBox>
+                  <MuiBox sx={{ fontSize: '1.125rem', fontWeight: 600, color: 'primary.main' }}>
+                    {formatMoney(totalAtualizado)}
+                  </MuiBox>
                 </MuiBox>
               </MuiBox>
             </MuiBox>

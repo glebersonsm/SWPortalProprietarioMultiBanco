@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import WithoutData from "@/components/WithoutData";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { getUserOutstandingBills, downloadBill } from "@/services/querys/finance-users"; // downloadBill importado corretamente
+import { buscarPorEmpresa } from "@/services/api/gatewayPagamentoService";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import UserOutstandingBillsFilters from "./_components/UserOutstandingBillsFilters";
@@ -102,8 +103,38 @@ export default function OutstandingAccountsPage() {
   const onlinePaymentEnabled = settingsParams?.enableOnlinePayment === true;
   const cardPaymentEnabled = settingsParams?.enableCardPayment === true;
   const pixPaymentEnabled = settingsParams?.enablePixPayment === true;
-  const canOpenCardModal = onlinePaymentEnabled && cardPaymentEnabled;
-  const canOpenPixModal = onlinePaymentEnabled && pixPaymentEnabled;
+
+  // Obter companyId da primeira conta selecionada (se houver)
+  const selectedCompanyId = selectedAccounts.length > 0 ? selectedAccounts[0].companyId : null;
+
+  // Buscar gateways configurados para a empresa das contas selecionadas
+  const { data: gatewayConfigs } = useQuery({
+    queryKey: ["getGatewayPorEmpresa", selectedCompanyId],
+    queryFn: () => buscarPorEmpresa(selectedCompanyId!),
+    enabled: !!selectedCompanyId && selectedAccounts.length > 0,
+  });
+
+  // Verificar se existe gateway PIX configurado para a empresa
+  const hasPixGateway = useMemo(() => {
+    if (!gatewayConfigs || gatewayConfigs.length === 0) return false;
+    return gatewayConfigs.some(config => {
+      const sysId = config.gatewaySysId?.toUpperCase() || "";
+      return sysId.includes("PIX");
+    });
+  }, [gatewayConfigs]);
+
+  // Verificar se existe gateway Cartão configurado para a empresa
+  const hasCardGateway = useMemo(() => {
+    if (!gatewayConfigs || gatewayConfigs.length === 0) return false;
+    return gatewayConfigs.some(config => {
+      const sysId = config.gatewaySysId?.toUpperCase() || "";
+      return sysId.includes("GETNET") || sysId.includes("REDE");
+    });
+  }, [gatewayConfigs]);
+
+  // Atualizar condições considerando gateway da empresa
+  const canOpenCardModal = onlinePaymentEnabled && cardPaymentEnabled && hasCardGateway;
+  const canOpenPixModal = onlinePaymentEnabled && pixPaymentEnabled && hasPixGateway;
   const canShowPaymentOptions = canOpenCardModal || canOpenPixModal;
 
   const { isLoading, data } = useQuery({
@@ -131,11 +162,11 @@ export default function OutstandingAccountsPage() {
   // 1. Houver contas selecionadas
   // 2. TODAS as contas selecionadas estejam "Em aberto"
   // 3. Pelo menos uma opção de pagamento (PIX ou Cartão) estiver habilitada
+  // 4. Existir gateway configurado para a empresa da conta selecionada
   const shouldShowPaymentButton =
     selectedAccounts.length > 0 && 
     hasOpenStatusBills && 
-    onlinePaymentEnabled && 
-    (cardPaymentEnabled || pixPaymentEnabled);
+    canShowPaymentOptions;
 
   // Função que retorna se uma linha pode ser selecionada
   const canSelectBill = React.useCallback((bill: UserOutstandingBill): boolean => {

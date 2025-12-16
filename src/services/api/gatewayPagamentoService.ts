@@ -10,6 +10,7 @@ export interface GatewayPagamentoDto {
 export interface GatewayPagamentoConfiguracaoDto {
   id?: number;
   gatewayPagamentoId: number;
+  idEmpresaTse?: number;
   nomeExibicao: string;
   identificador: string;
   ativo: boolean;
@@ -45,6 +46,11 @@ export interface GatewayPagamentoConfiguracaoDto {
 
 export const listarConfiguracoes = async (): Promise<GatewayPagamentoConfiguracaoDto[]> => {
   const response = await axios.get('/api/configuracoes/gateway-pagamento');
+  return response.data;
+};
+
+export const buscarPorEmpresa = async (empresaId: number): Promise<GatewayPagamentoConfiguracaoDto[]> => {
+  const response = await axios.get(`/api/configuracoes/gateway-pagamento/empresa/${empresaId}`);
   return response.data;
 };
 

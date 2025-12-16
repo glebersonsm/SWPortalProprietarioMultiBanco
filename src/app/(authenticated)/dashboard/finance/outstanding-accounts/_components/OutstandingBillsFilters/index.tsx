@@ -58,46 +58,47 @@ export default function OutstandingBillsFilters({
     setFilters({ ...filters, status: value });
   };
 
+  const commonInputStyles = {
+    fontFamily: "Montserrat, sans-serif",
+    fontWeight: 500,
+    color: "text.primary",
+    "&::placeholder": {
+      color: "text.secondary",
+      opacity: 0.6,
+    },
+    "&:hover": {
+      borderColor: "primary.500",
+    },
+    "&.Mui-focused": {
+      borderColor: "primary.500",
+      boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
+    },
+    "&.Mui-error": {
+      borderColor: "danger.500",
+    },
+  };
+
+  const commonLabelStyles = {
+    color: "primary.solidHoverBg",
+    fontFamily: "Montserrat, sans-serif",
+    fontWeight: 500,
+  };
+
   return (
     <>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-        <Grid xs={12} sm={4}>
+        {/* Primeira linha: Empresa e Nome do cliente */}
+        <Grid xs={12} sm={6} md={4}>
           <FormControl>
-            <FormLabel
-              sx={{
-                color: "primary.solidHoverBg",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-              }}
-            >
-              Empresa
-            </FormLabel>
+            <FormLabel sx={commonLabelStyles}>Empresa</FormLabel>
             <Select
               size="sm"
               value={filters.companyId}
               onChange={(event, value) =>
                 setFilters({ ...filters, companyId: Number(value ?? -1) })
               }
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "text.primary",
-                "&::placeholder": {
-                  color: "text.secondary",
-                  opacity: 0.6,
-                },
-                "&:hover": {
-                  borderColor: "primary.500",
-                },
-                "&.Mui-focused": {
-                  borderColor: "primary.500",
-                  boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
-                },
-                "&.Mui-error": {
-                  borderColor: "danger.500",
-                },
-              }}
-              >
+              sx={commonInputStyles}
+            >
               <Option value={-1}>Todas</Option>
               {data?.map((item) => (
                 <Option value={Number(item.id)} key={item.id}>
@@ -108,40 +109,14 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3} md={3} lg={3} xl={6}>
+        <Grid xs={12} sm={6} md={4}>
           <FormControl>
-            <FormLabel
-              sx={{
-                color: "primary.solidHoverBg",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-              }}
-            >
-              Nome do cliente
-            </FormLabel>
+            <FormLabel sx={commonLabelStyles}>Nome do cliente</FormLabel>
             <Input
               size="sm"
               placeholder="Filtrar nome do cliente"
               value={filters.personName}
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "text.primary",
-                "&::placeholder": {
-                  color: "text.secondary",
-                  opacity: 0.6,
-                },
-                "&:hover": {
-                  borderColor: "primary.500",
-                },
-                "&.Mui-focused": {
-                  borderColor: "primary.500",
-                  boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
-                },
-                "&.Mui-error": {
-                  borderColor: "danger.500",
-                },
-              }}
+              sx={commonInputStyles}
               onChange={(e) =>
                 setFilters({ ...filters, personName: e.target.value })
               }
@@ -149,41 +124,16 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={2}>
+        {/* Segunda linha: Datas de vencimento */}
+        <Grid xs={12} sm={6} md={2}>
           <FormControl>
-            <FormLabel
-              sx={{
-                color: "primary.solidHoverBg",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-              }}
-            >
-              Vencimento Inicial
-            </FormLabel>
+            <FormLabel sx={commonLabelStyles}>Vencimento Inicial</FormLabel>
             <Input
               size="sm"
-              placeholder="Filtrar por data inicial de vencimento"
+              placeholder="Data inicial"
               value={filters.initialDueDate}
               type="date"
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "text.primary",
-                "&::placeholder": {
-                  color: "text.secondary",
-                  opacity: 0.6,
-                },
-                "&:hover": {
-                  borderColor: "primary.500",
-                },
-                "&.Mui-focused": {
-                  borderColor: "primary.500",
-                  boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
-                },
-                "&.Mui-error": {
-                  borderColor: "danger.500",
-                },
-              }}
+              sx={commonInputStyles}
               onChange={(e) =>
                 setFilters({ ...filters, initialDueDate: e.target.value })
               }
@@ -191,41 +141,15 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={2}>
+        <Grid xs={12} sm={6} md={2}>
           <FormControl>
-            <FormLabel
-              sx={{
-                color: "primary.solidHoverBg",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-              }}
-            >
-              Vencimento Final
-            </FormLabel>
+            <FormLabel sx={commonLabelStyles}>Vencimento Final</FormLabel>
             <Input
               size="sm"
-              placeholder="Filtrar por data final de vencimento"
+              placeholder="Data final"
               value={filters.finalDueDate}
               type="date"
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "text.primary",
-                "&::placeholder": {
-                  color: "text.secondary",
-                  opacity: 0.6,
-                },
-                "&:hover": {
-                  borderColor: "primary.500",
-                },
-                "&.Mui-focused": {
-                  borderColor: "primary.500",
-                  boxShadow: "0 0 0 2px rgba(44, 162, 204, 0.2)",
-                },
-                "&.Mui-error": {
-                  borderColor: "danger.500",
-                },
-              }}
+              sx={commonInputStyles}
               onChange={(e) =>
                 setFilters({ ...filters, finalDueDate: e.target.value })
               }
@@ -233,33 +157,45 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
-        <Grid xs={12} sm={3} md={3} lg={6} xl={6}>
+        {/* Terceira linha: Status e Botões de ação */}
+        <Grid xs={12} sm={12} md={4}>
           <FormControl>
-            <FormLabel
-              sx={{
-                color: "primary.solidHoverBg",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
+            <FormLabel sx={commonLabelStyles}>Status da conta</FormLabel>
+            <ButtonGroup 
+              sx={{ 
+                display: "flex", 
+                flexWrap: { xs: "wrap", sm: "nowrap" }, 
+                gap: 0.5,
+                width: "100%"
               }}
             >
-              Status da conta
-            </FormLabel>
-            <ButtonGroup sx={{ display: "flex", flexWrap: { xs: "wrap", lg: "nowrap" }, gap: 0.5 }}>
               <Button
                 size="sm"
                 variant={filters.status === "T" ? "solid" : "outlined"}
                 color={filters.status === "T" ? "primary" : "neutral"}
                 onClick={() => setStatus("T")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500, 
+                  fontSize: 12, 
+                  flex: 1,
+                  minWidth: { xs: "calc(50% - 4px)", sm: "auto" }
+                }}
               >
-                Todas as contas
+                Todas
               </Button>
               <Button
                 size="sm"
                 variant={filters.status === "P" ? "solid" : "outlined"}
                 color={filters.status === "P" ? "primary" : "neutral"}
                 onClick={() => setStatus("P")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500, 
+                  fontSize: 12, 
+                  flex: 1,
+                  minWidth: { xs: "calc(50% - 4px)", sm: "auto" }
+                }}
               >
                 Em aberto
               </Button>
@@ -268,7 +204,13 @@ export default function OutstandingBillsFilters({
                 variant={filters.status === "V" ? "solid" : "outlined"}
                 color={filters.status === "V" ? "primary" : "neutral"}
                 onClick={() => setStatus("V")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500, 
+                  fontSize: 12, 
+                  flex: 1,
+                  minWidth: { xs: "calc(50% - 4px)", sm: "auto" }
+                }}
               >
                 Vencidas
               </Button>
@@ -277,7 +219,13 @@ export default function OutstandingBillsFilters({
                 variant={filters.status === "B" ? "solid" : "outlined"}
                 color={filters.status === "B" ? "primary" : "neutral"}
                 onClick={() => setStatus("B")}
-                sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontSize: 12, minWidth: 70 }}
+                sx={{ 
+                  fontFamily: "Montserrat, sans-serif", 
+                  fontWeight: 500, 
+                  fontSize: 12, 
+                  flex: 1,
+                  minWidth: { xs: "calc(50% - 4px)", sm: "auto" }
+                }}
               >
                 Pagas
               </Button>
@@ -285,6 +233,7 @@ export default function OutstandingBillsFilters({
           </FormControl>
         </Grid>
 
+        {/* Botões de ação */}
         <SearchAndClearFilters
           handleSearch={handleSearchWithSave}
           handleClear={() => {
