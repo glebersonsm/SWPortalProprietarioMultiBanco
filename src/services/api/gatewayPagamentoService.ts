@@ -24,12 +24,15 @@ export interface GatewayPagamentoConfiguracaoDto {
   pv?: string;
   token?: string;
   
-  // PIX (Itaú, Santander, etc)
+  // PIX (Itaú, Santander, GetNet, etc)
   chavePix?: string;
   itauClientId?: string;
   itauClientSecret?: string;
   santanderClientId?: string;
   santanderClientSecret?: string;
+  getNetPixClientId?: string;
+  getNetPixClientSecret?: string;
+  getNetPixSellerId?: string;
   certificadoPixConfigurado?: boolean;
   certificadoPixSenha?: string;
   contaFinanceiraVariacaoId?: number;
@@ -103,9 +106,10 @@ export const criar = async (dto: GatewayPagamentoConfiguracaoDto): Promise<Gatew
 
   const isPixGateway =
     dto.gatewaySysId === 'GATEWAY_PAGAMENTO_ITAU_PIX' ||
-    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX';
+    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX' ||
+    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_GETNET_PIX';
 
-  if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId) {
+  if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId || dto.getNetPixClientId) {
     payload.chavePix = dto.chavePix || null;
     payload.contaFinanceiraVariacaoId = dto.contaFinanceiraVariacaoId || null;
 
@@ -117,6 +121,12 @@ export const criar = async (dto: GatewayPagamentoConfiguracaoDto): Promise<Gatew
     if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX' || dto.santanderClientId || dto.santanderClientSecret) {
       payload.santanderClientId = dto.santanderClientId || null;
       payload.santanderClientSecret = dto.santanderClientSecret || null;
+    }
+
+    if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_GETNET_PIX' || dto.getNetPixClientId || dto.getNetPixClientSecret || dto.getNetPixSellerId) {
+      payload.getNetPixClientId = dto.getNetPixClientId || null;
+      payload.getNetPixClientSecret = dto.getNetPixClientSecret || null;
+      payload.getNetPixSellerId = dto.getNetPixSellerId || null;
     }
   }
 
@@ -148,9 +158,10 @@ export const atualizar = async (id: number, dto: GatewayPagamentoConfiguracaoDto
 
   const isPixGateway =
     dto.gatewaySysId === 'GATEWAY_PAGAMENTO_ITAU_PIX' ||
-    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX';
+    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX' ||
+    dto.gatewaySysId === 'GATEWAY_PAGAMENTO_GETNET_PIX';
 
-  if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId) {
+  if (isPixGateway || dto.chavePix || dto.itauClientId || dto.santanderClientId || dto.getNetPixClientId) {
     payload.chavePix = dto.chavePix || null;
     payload.contaFinanceiraVariacaoId = dto.contaFinanceiraVariacaoId || null;
 
@@ -162,6 +173,12 @@ export const atualizar = async (id: number, dto: GatewayPagamentoConfiguracaoDto
     if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX' || dto.santanderClientId || dto.santanderClientSecret) {
       payload.santanderClientId = dto.santanderClientId || null;
       payload.santanderClientSecret = dto.santanderClientSecret || null;
+    }
+
+    if (dto.gatewaySysId === 'GATEWAY_PAGAMENTO_GETNET_PIX' || dto.getNetPixClientId || dto.getNetPixClientSecret || dto.getNetPixSellerId) {
+      payload.getNetPixClientId = dto.getNetPixClientId || null;
+      payload.getNetPixClientSecret = dto.getNetPixClientSecret || null;
+      payload.getNetPixSellerId = dto.getNetPixSellerId || null;
     }
   }
 
