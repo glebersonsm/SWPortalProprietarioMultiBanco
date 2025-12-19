@@ -98,8 +98,18 @@ export default function PayPerPixModal({
   }, []);
 
   const processarRetornoQrCode = useCallback((data: any) => {
-    if (!data || !data.qrCode) {
+    console.log("processarRetornoQrCode - Dados recebidos:", data);
+    
+    if (!data) {
+      console.error("processarRetornoQrCode - Data é null ou undefined");
       toast.error("Dados do QR Code inválidos ou incompletos.");
+      setStatusGeracao("erro");
+      return;
+    }
+    
+    if (!data.qrCode || data.qrCode.trim() === "") {
+      console.error("processarRetornoQrCode - QR Code ausente ou vazio. Data completa:", JSON.stringify(data));
+      toast.error("QR Code não foi gerado. Verifique as configurações do gateway de pagamento.");
       setStatusGeracao("erro");
       return;
     }
@@ -111,8 +121,15 @@ export default function PayPerPixModal({
       const diferencaMs = dataExpiracao.getTime() - agora.getTime();
       const segundosRestantes = Math.floor(diferencaMs / 1000);
       
+      console.log("processarRetornoQrCode - Configurando QR Code:", {
+        qrCodeLength: data.qrCode?.length,
+        txid: data.txid,
+        expiracao: data.expiracao,
+        segundosRestantes
+      });
+      
       setQrCode(data.qrCode);
-      setTxid(data.txid);
+      setTxid(data.txid || "");
       setExpiracao(dataExpiracao);
       setTempoRestante(segundosRestantes > 0 ? segundosRestantes : TEMPO_EXPIRACAO_SEGUNDOS);
       setExpirado(false);
@@ -184,6 +201,7 @@ export default function PayPerPixModal({
         })),
       });
 
+      console.log("handleGenerateQrCode - Resposta da API:", data);
       processarRetornoQrCode(data);
     } catch (error) {
       hasGeneratedQrRef.current = true;
