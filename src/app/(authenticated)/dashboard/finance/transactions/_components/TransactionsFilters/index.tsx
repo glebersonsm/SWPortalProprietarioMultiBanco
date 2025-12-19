@@ -182,7 +182,7 @@ React.useEffect(() => {
             setFilters(initialFilters);
             localStorage.removeItem(FILTERS_STORAGE_KEY);
           }}
-          gridSize={4}
+          gridSize={2}
         />
       </Grid>
     </>

@@ -4,7 +4,7 @@ import LoadingData from "@/components/LoadingData";
 import AlertDialogModal from "@/components/AlertDialogModal";
 import useCloseModal from "@/hooks/useCloseModal";
 import useUser from "@/hooks/useUser";
-import { generateQRCode, consultarStatusPix, confirmarPagamentoPix, simularPagamentoPix } from "@/services/querys/finance-users";
+import { generateQRCode, consultarStatusPix, confirmarPagamentoPix } from "@/services/querys/finance-users";
 import { formatMoney } from "@/utils/money";
 import { UserOutstandingBill } from "@/utils/types/finance-users";
 import { Box, Button, Stack, Typography, LinearProgress, CircularProgress } from "@mui/joy";
@@ -54,15 +54,10 @@ export default function PayPerPixModal({
   const [expirado, setExpirado] = useState(false);
   const [processandoPagamento, setProcessandoPagamento] = useState(false);
   const [mostrarConfirmacaoCancelamento, setMostrarConfirmacaoCancelamento] = useState(false);
-  const [simulandoPagamento, setSimulandoPagamento] = useState(false);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasGeneratedQrRef = useRef(false);
   const [statusGeracao, setStatusGeracao] = useState<"idle" | "carregando" | "sucesso" | "erro">("idle");
-  
-  // Detectar se está em modo desenvolvimento (localhost)
-  const isDesenvolvimento = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   
   const { userData } = useUser();
   const closeModal = useCloseModal();
@@ -135,11 +130,6 @@ export default function PayPerPixModal({
       setExpirado(false);
       
       setStatusGeracao("sucesso");
-      
-      // Adia a limpeza da seleção para evitar conflitos de renderização
-      setTimeout(() => {
-        clearSelectedAccounts();
-      }, 500);
       
       toast.info("QR Code gerado! Aguardando pagamento...");
     } catch (error) {
@@ -336,6 +326,7 @@ export default function PayPerPixModal({
             await confirmarPagamentoPix(txid);
             toast.success("Pagamento PIX realizado com sucesso!");
 
+            clearSelectedAccounts();
             queryClient.invalidateQueries({ queryKey: ["getUserOutstandingBills"] });
 
             setTimeout(() => {
@@ -357,43 +348,6 @@ export default function PayPerPixModal({
       };
     }
   }, [txid, qrCode, expirado, processandoPagamento, handleCloseModal, queryClient, limparIntervalos]);
-
-  const handleSimularPagamento = async () => {
-    if (!txid) {
-      toast.error("Txid não encontrado");
-      return;
-    }
-
-    try {
-      setSimulandoPagamento(true);
-      limparIntervalos(); // Parar polling
-      
-      toast.info("🔧 Simulando pagamento PIX...");
-      
-      const resultado = await simularPagamentoPix(txid);
-      
-      if (resultado.autorizado) {
-        toast.success("✅ Pagamento PIX simulado com sucesso!");
-        
-        // Recarregar lista de contas
-        queryClient.invalidateQueries({ queryKey: ["getUserOutstandingBills"] });
-        
-        // Fechar modal após delay para usuário ver a mensagem
-        setTimeout(() => {
-          limparIntervalos();
-          resetarEstado();
-          closeModal();
-        }, 1500);
-      } else {
-        toast.error("❌ Falha na simulação do pagamento");
-        setSimulandoPagamento(false);
-      }
-    } catch (error: any) {
-      
-      toast.error(error.message || "Erro ao simular pagamento PIX");
-      setSimulandoPagamento(false);
-    }
-  };
 
   const formatarTempoRestante = (segundos: number): string => {
     const minutos = Math.floor(segundos / 60);
@@ -435,8 +389,8 @@ export default function PayPerPixModal({
         <ModalDialog sx={{ 
           minWidth: { xs: '95%', sm: 500, md: 600 }, 
           maxWidth: { xs: '95%', sm: 600, md: 700 },
-          maxHeight: '95vh',
-          overflow: 'auto'
+          // Removed internal scroll and max-height to let ModalOverflow handle it if needed,
+          // but content should be small enough now.
         }}>
           <DialogTitle sx={{ 
             color: 'var(--color-primary)', 
@@ -525,7 +479,7 @@ export default function PayPerPixModal({
               ) : qrCode ? (
                 <Stack
                   textAlign="center"
-                  gap={2}
+                  gap={1}
                   sx={{
                     height: "auto",
                     margin: "0 auto",
@@ -569,7 +523,9 @@ export default function PayPerPixModal({
                   ) : (
                     <>
                       <Box sx={{ 
-                        width: "100%", 
+                        width: "auto", 
+                        maxWidth: "280px",
+                        margin: "0 auto",
                         display: 'flex', 
                         justifyContent: 'center',
                         p: { xs: 1, sm: 1.5 },
@@ -579,7 +535,7 @@ export default function PayPerPixModal({
                         borderColor: 'divider'
                       }}>
                         <QRCode
-                          size={256}
+                          size={200}
                           level="M"
                           bgColor="#FFFFFF"
                           fgColor="#000000"
@@ -628,34 +584,6 @@ export default function PayPerPixModal({
                       >
                         Copiar Código PIX (Copia e Cola)
                       </Button>
-
-                      {/* Botão Simular Pagamento - APENAS EM DESENVOLVIMENTO */}
-                      {isDesenvolvimento && (
-                        <Button
-                          variant="solid"
-                          onClick={handleSimularPagamento}
-                          disabled={simulandoPagamento || processandoPagamento}
-                          loading={simulandoPagamento}
-                          fullWidth
-                          sx={{
-                            mt: 1,
-                            fontFamily: 'var(--font-puffin), sans-serif',
-                            fontWeight: 600,
-                            background: 'linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%)',
-                            color: 'var(--color-text-light, #ffffff)',
-                            boxShadow: '0 6px 18px rgba(1, 90, 103, 0.25)',
-                            '&:hover': {
-                              background: 'linear-gradient(180deg, var(--color-secondary) 0%, var(--color-primary) 100%)'
-                            },
-                            '&:disabled': {
-                              background: 'linear-gradient(180deg, rgba(1, 90, 103, 0.5) 0%, rgba(0, 200, 236, 0.5) 100%)',
-                              boxShadow: 'none'
-                            }
-                          }}
-                        >
-                          {simulandoPagamento ? '🔧 Simulando...' : '🔧 Simular Pagamento (DEV)'}
-                        </Button>
-                      )}
                       
                       <Typography level="body-xs" color="primary" textAlign="center">
                         Escaneie o QR Code com o app do seu banco

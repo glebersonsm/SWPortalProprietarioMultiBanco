@@ -126,25 +126,25 @@ export const confirmarPagamentoPix = async (txid: string) => {
   }
 };
 
-/**
- * ⚠️ APENAS PARA DESENVOLVIMENTO ⚠️
- * Simula o pagamento de um PIX para testes
- */
-export const simularPagamentoPix = async (txid: string) => {
-  try {
-    const response = await axios.post(`/FinanceiroUsuario/simularPagamentoPix/${txid}`);
-    return response.data.data;
-  } catch (error: any) {
-    const message =
-      error.response?.data?.errors?.[0] ||
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      "Erro ao simular pagamento PIX";
+// /**
+//  * ⚠️ APENAS PARA DESENVOLVIMENTO ⚠️
+//  * Simula o pagamento de um PIX para testes
+//  */
+// export const simularPagamentoPix = async (txid: string) => {
+//   try {
+//     const response = await axios.post(`/FinanceiroUsuario/simularPagamentoPix/${txid}`);
+//     return response.data.data;
+//   } catch (error: any) {
+//     const message =
+//       error.response?.data?.errors?.[0] ||
+//       error.response?.data?.message ||
+//       error.response?.data?.error ||
+//       error.message ||
+//       "Erro ao simular pagamento PIX";
     
-    throw new Error(message);
-  }
-};
+//     throw new Error(message);
+//   }
+// };
 
 
 export const getUserTokenizedCards = async (): Promise<UserTokenizedCard[]> => {
