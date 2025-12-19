@@ -115,10 +115,16 @@ export default function OutstandingAccountsPage() {
   });
 
   // Verificar se existe gateway PIX configurado para a empresa
+  // Inclui GetNet, Itaú PIX e Santander PIX
   const hasPixGateway = useMemo(() => {
     if (!gatewayConfigs || gatewayConfigs.length === 0) return false;
     return gatewayConfigs.some(config => {
       const sysId = config.gatewaySysId?.toUpperCase() || "";
+      // GetNet pode ser usado tanto para cartão quanto PIX
+      // Se tiver chave PIX configurada, considera como gateway PIX também
+      if (sysId === "GATEWAY_PAGAMENTO_GETNET" && config.chavePix) {
+        return true;
+      }
       return sysId.includes("PIX");
     });
   }, [gatewayConfigs]);

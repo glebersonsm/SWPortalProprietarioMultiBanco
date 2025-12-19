@@ -91,6 +91,9 @@ export default function NovaConfiguracaoPage() {
     itauClientSecret: '',
     santanderClientId: '',
     santanderClientSecret: '',
+    getNetPixClientId: '',
+    getNetPixClientSecret: '',
+    getNetPixSellerId: '',
     certificadoPixConfigurado: false,
     contaFinanceiraVariacaoId: undefined,
   });
@@ -107,6 +110,8 @@ export default function NovaConfiguracaoPage() {
   const [showItauClientSecret, setShowItauClientSecret] = useState(false);
   const [showSantanderClientId, setShowSantanderClientId] = useState(false);
   const [showSantanderClientSecret, setShowSantanderClientSecret] = useState(false);
+  const [showGetNetPixClientId, setShowGetNetPixClientId] = useState(false);
+  const [showGetNetPixClientSecret, setShowGetNetPixClientSecret] = useState(false);
   const [certificadoFile, setCertificadoFile] = useState<File | null>(null);
   const [certificadoSenha, setCertificadoSenha] = useState('');
 
@@ -204,7 +209,8 @@ export default function NovaConfiguracaoPage() {
     // Se não for PIX, não mostrar aba de certificado
     const isPixGateway =
       gatewaySelected === 'GATEWAY_PAGAMENTO_ITAU_PIX' ||
-      gatewaySelected === 'GATEWAY_PAGAMENTO_SANTANDER_PIX';
+      gatewaySelected === 'GATEWAY_PAGAMENTO_SANTANDER_PIX' ||
+      gatewaySelected === 'GATEWAY_PAGAMENTO_GETNET_PIX';
 
     if (!isPixGateway && tabIndex === 'certificate') {
       setTabIndex('credentials');
@@ -272,13 +278,23 @@ export default function NovaConfiguracaoPage() {
         }
       }
 
-      if (!certificadoFile) {
+      const isGetNetPix = gatewaySelected === 'GATEWAY_PAGAMENTO_GETNET_PIX';
+      if (isGetNetPix) {
+        if (!formData.getNetPixClientId || !formData.getNetPixClientSecret || !formData.getNetPixSellerId) {
+          toast.error('Preencha Client ID, Client Secret e Seller ID do GetNet PIX');
+          setTabIndex('credentials');
+          return;
+        }
+      }
+
+      // Certificado não é obrigatório para GetNet PIX
+      if (!isGetNetPix && !certificadoFile) {
         toast.error('É necessário enviar um certificado digital para PIX');
         setTabIndex('certificate');
         return;
       }
 
-      if (!certificadoSenha) {
+      if (certificadoFile && !certificadoSenha) {
         toast.error('Informe a senha do certificado');
         setTabIndex('certificate');
         return;
@@ -345,7 +361,8 @@ export default function NovaConfiguracaoPage() {
   const isRede = gatewaySelected === 'GATEWAY_PAGAMENTO_REDE';
   const isItauPix = gatewaySelected === 'GATEWAY_PAGAMENTO_ITAU_PIX';
   const isSantanderPix = gatewaySelected === 'GATEWAY_PAGAMENTO_SANTANDER_PIX';
-  const isAnyPix = isItauPix || isSantanderPix;
+  const isGetNetPix = gatewaySelected === 'GATEWAY_PAGAMENTO_GETNET_PIX';
+  const isAnyPix = isItauPix || isSantanderPix || isGetNetPix;
 
   const getGatewayIcon = () => {
     const iconProps = { sx: { fontSize: 20, color: '#ffffff' } } as const;
@@ -639,7 +656,7 @@ export default function NovaConfiguracaoPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, clientSecret: e.target.value })
                             }
-                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                            placeholder="Client Secret fornecido pela GetNet"
                             endDecorator={
                               <IconButton
                                 size="sm"
@@ -718,7 +735,7 @@ export default function NovaConfiguracaoPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, token: e.target.value })
                             }
-                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                            placeholder="Token fornecido pela e.Rede"
                             endDecorator={
                               <IconButton
                                 size="sm"
@@ -886,6 +903,93 @@ export default function NovaConfiguracaoPage() {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* GetNet PIX */}
+                {isGetNetPix && (
+                  <Card variant="outlined" sx={sectionCardStyles}>
+                    <CardContent>
+                      <Typography
+                        level="title-md"
+                        startDecorator={<PixIcon sx={{ color: 'var(--color-primary)' }} />}
+                        sx={{ color: 'var(--color-primary)', fontWeight: 600 }}
+                        mb={2}
+                      >
+                        Credenciais GetNet PIX
+                      </Typography>
+
+                      <Stack spacing={2}>
+                        <FormControl required>
+                          <FormLabel>Chave PIX</FormLabel>
+                          <Input
+                            value={formData.chavePix}
+                            onChange={(e) =>
+                              setFormData({ ...formData, chavePix: e.target.value })
+                            }
+                            placeholder="CNPJ, e-mail, telefone ou chave aleatória"
+                          />
+                          <Typography level="body-xs" sx={{ mt: 0.5, color: 'text.secondary' }}>
+                            Chave PIX da conta recebedora cadastrada no GetNet
+                          </Typography>
+                        </FormControl>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <FormControl required>
+                          <FormLabel>OAuth Client ID</FormLabel>
+                          <Input
+                            type={showGetNetPixClientId ? "text" : "password"}
+                            value={formData.getNetPixClientId}
+                            onChange={(e) =>
+                              setFormData({ ...formData, getNetPixClientId: e.target.value })
+                            }
+                            placeholder="Client ID fornecido pelo GetNet"
+                            endDecorator={
+                              <IconButton
+                                size="sm"
+                                variant="plain"
+                                onClick={() => setShowGetNetPixClientId(!showGetNetPixClientId)}
+                              >
+                                {showGetNetPixClientId ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            }
+                          />
+                        </FormControl>
+
+                        <FormControl required>
+                          <FormLabel>OAuth Client Secret</FormLabel>
+                          <Input
+                            type={showGetNetPixClientSecret ? "text" : "password"}
+                            value={formData.getNetPixClientSecret}
+                            onChange={(e) =>
+                              setFormData({ ...formData, getNetPixClientSecret: e.target.value })
+                            }
+                            placeholder="Client Secret fornecido pelo GetNet"
+                            endDecorator={
+                              <IconButton
+                                size="sm"
+                                variant="plain"
+                                onClick={() => setShowGetNetPixClientSecret(!showGetNetPixClientSecret)}
+                              >
+                                {showGetNetPixClientSecret ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            }
+                          />
+                        </FormControl>
+
+                        <FormControl required>
+                          <FormLabel>Seller ID</FormLabel>
+                          <Input
+                            value={formData.getNetPixSellerId}
+                            onChange={(e) =>
+                              setFormData({ ...formData, getNetPixSellerId: e.target.value })
+                            }
+                            placeholder="Seller ID fornecido pelo GetNet"
+                          />
+                        </FormControl>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
               </Stack>
             </TabPanel>
 
@@ -905,10 +1009,12 @@ export default function NovaConfiguracaoPage() {
                   >
                     <Box>
                       <Typography fontWeight="bold">
-                        Certificado Digital Obrigatório
+                        {isGetNetPix ? 'Certificado Digital Opcional' : 'Certificado Digital Obrigatório'}
                       </Typography>
                       <Typography level="body-sm">
-                        Para realizar transações PIX com o {isItauPix ? 'Itaú' : 'Santander'}, é necessário enviar um certificado digital (.pfx ou .p12) fornecido pelo banco.
+                        {isGetNetPix 
+                          ? 'GetNet PIX não requer certificado digital. Você pode enviar um certificado opcionalmente se desejar.'
+                          : `Para realizar transações PIX com o ${isItauPix ? 'Itaú' : isSantanderPix ? 'Santander' : 'banco selecionado'}, é necessário enviar um certificado digital (.pfx ou .p12) fornecido pelo banco.`}
                       </Typography>
                     </Box>
                   </Alert>
@@ -925,7 +1031,7 @@ export default function NovaConfiguracaoPage() {
                       </Typography>
                       
                       <Stack spacing={2}>
-                        <FormControl required>
+                        <FormControl required={!isGetNetPix}>
                           <FormLabel>
                             Arquivo do Certificado (.pfx ou .p12)
                           </FormLabel>

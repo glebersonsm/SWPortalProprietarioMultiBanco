@@ -144,10 +144,9 @@ React.useEffect(() => {
           <FormControl>
             <FormLabel>Status transação</FormLabel>
             <Select value={filters.paymentStatus} onChange={handlePaymentStatusChangeSent}>
-              <Option value="captured">Autorizada</Option>
-              <Option value="cancelled">Cancelada</Option>
-              <Option value="pending">Pendente</Option>
-              <Option value="notpaid">Não paga</Option>
+              <Option value="autorizada">Autorizada</Option>
+              <Option value="cancelada">Cancelada</Option>
+              <Option value="pendente">Pendente</Option>
               <Option value="default">Selecione</Option>
             </Select>
           </FormControl>
@@ -182,7 +181,7 @@ React.useEffect(() => {
             setFilters(initialFilters);
             localStorage.removeItem(FILTERS_STORAGE_KEY);
           }}
-          gridSize={4}
+          gridSize={2}
         />
       </Grid>
     </>

@@ -78,6 +78,7 @@ export default function GatewayPagamentoListagemPage() {
           if (params.row.gatewaySysId === 'GATEWAY_PAGAMENTO_REDE') return 'secondary';
           if (params.row.gatewaySysId === 'GATEWAY_PAGAMENTO_ITAU_PIX') return 'success';
           if (params.row.gatewaySysId === 'GATEWAY_PAGAMENTO_SANTANDER_PIX') return 'error';
+          if (params.row.gatewaySysId === 'GATEWAY_PAGAMENTO_GETNET_PIX') return 'info';
           return 'default';
         };
         
@@ -189,6 +190,7 @@ export default function GatewayPagamentoListagemPage() {
               <MenuItem value="GATEWAY_PAGAMENTO_REDE">e.Rede</MenuItem>
               <MenuItem value="GATEWAY_PAGAMENTO_ITAU_PIX">Itaú PIX</MenuItem>
               <MenuItem value="GATEWAY_PAGAMENTO_SANTANDER_PIX">Santander PIX</MenuItem>
+              <MenuItem value="GATEWAY_PAGAMENTO_GETNET_PIX">GetNet PIX</MenuItem>
             </Select>
           </FormControl>
 
