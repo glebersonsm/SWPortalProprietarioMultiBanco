@@ -4,10 +4,10 @@ import * as React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import InputField from "@/components/InputField";
 import useCloseModal from "@/hooks/useCloseModal";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, FormLabel, Stack, Typography } from "@mui/joy";
 import CheckboxField from "@/components/CheckboxField";
-import { addUser, editUser } from "@/services/querys/users";
+import { addUser } from "@/services/querys/users";
 import TagsInput from "@/components/TagsInput";
 import DynamicMultiForm from "@/components/DynamicMultiForm";
 
@@ -91,6 +91,7 @@ export default function AddForm({
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack spacing={3}>
+          <InputField label="Login" field="login" />
           <InputField label="Nome" field="name" />
           <InputField label="Email" field="email" />
 
@@ -116,6 +117,7 @@ export default function AddForm({
               <DocumentFields index={index} documentTypes={documentTypes} />
             )}
             capacity={0}
+            verifyIfIsAdmin={false}
           />
           <DynamicMultiForm
             title="Endereços"
@@ -124,6 +126,7 @@ export default function AddForm({
               <AddressFields index={index} addressTypes={addressTypes} />
             )}
             capacity={0}
+            verifyIfIsAdmin={false}
           />
           <DynamicMultiForm
             title="Telefones"
@@ -132,6 +135,7 @@ export default function AddForm({
               <PhoneFields index={index} phoneTypes={phoneTypes} />
             )}
             capacity={0}
+            verifyIfIsAdmin={false}
           />
           <AlertError error={errors.root?.generalError?.message} />
         </Stack>

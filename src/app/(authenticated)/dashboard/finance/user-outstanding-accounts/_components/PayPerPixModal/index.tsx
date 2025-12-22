@@ -389,8 +389,6 @@ export default function PayPerPixModal({
         <ModalDialog sx={{ 
           minWidth: { xs: '95%', sm: 500, md: 600 }, 
           maxWidth: { xs: '95%', sm: 600, md: 700 },
-          // Removed internal scroll and max-height to let ModalOverflow handle it if needed,
-          // but content should be small enough now.
         }}>
           <DialogTitle sx={{ 
             color: 'var(--color-primary)', 
